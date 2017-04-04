@@ -1,0 +1,13 @@
+{
+  "name": "collegeChefsApp",
+  "app_id": "d6716ba8",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*",
+    "!www/**/*.map"
+  ]
+}
