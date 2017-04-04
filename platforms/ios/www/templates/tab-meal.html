@@ -1,0 +1,57 @@
+<!--
+  This template loads for the 'tab.meal' and tab.meal/:menuId states (app.js)
+  'meal' is a $scope variable created in the MealCtrl controller (controllers.js)
+  The MealCtrl pulls data from the Menus service (service.js)
+-->
+
+<ion-view ng-show="dataLoaded===true" on-swipe-right="goBack()" on-swipe-left="goNext()">
+	<ion-nav-title>{{getFormattedDate(meal.date)}}</ion-nav-title>
+  <ion-nav-bar class="bar-dark" align-title="center">
+    <ion-nav-buttons side="left">
+       <a href="#/tab/menus#today" nav-direction="swap" class="button button-icon icon-list"></a>
+       <button ng-if="index > 0" ng-click="goBack()" class="button button-icon icon-chevron-left"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+       <button ng-if="index < mealCount-1" ng-click="goNext()" class="button button-icon icon-chevron-right"></button>
+    </ion-nav-buttons>
+
+  </ion-nav-bar>
+
+  <ion-content class="padding">
+  	<div ng-if="mealHasPassed(meal.name, meal.date)" class="card alert alert-info item item-text-wrap item-positive" role="alert">
+		<div class="item item-text-wrap item-positive">This meal has passed.</div>
+	</div>
+	<h2>{{meal.name}}</h2>
+	<ul ng-bind-html="meal.fullmenu" class="meal-items"></ul>
+	
+	<!--
+	<ul>
+		<li ng-repeat="item in meal.items">{{item}}</li>
+	</ul>
+	-->
+	
+	<div ng-switch on="meal.latePlateStatus">
+		<div ng-switch-when="eligible">
+			<div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), mealIsToday(meal.date))">
+				<button type="button" class="button button-assertive request-lp" ng-click="modal.show()">Request Late Plate</button>
+				<p class="is-red" ng-bind-html="getLatePlateMsg(meal.name, mealIsToday(meal.date))"></p>
+			</div>
+		</div>
+		
+		<div ng-switch-when="pending">
+			<div class="alert alert-warning" role="alert">
+				Order Pending
+				<small>Your request has been submitted</small>
+			</div>
+		</div>
+		
+		<div ng-switch-when="complete">
+			<div class="alert alert-success" role="alert">
+				Order Complete
+				<small>Your request has been filled</small>
+			</div>
+		</div>
+	</div>
+
+  </ion-content>
+</ion-view>

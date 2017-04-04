@@ -1,0 +1,21 @@
+<ion-view view-title="Edit Profile">
+	<ion-content class="">
+		<div class="list">
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">First Name</span>
+			 <input type="text" value="{{userInfo.firstname}}">
+		  </label>
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">Last Name</span>
+			 <input type="text" value="{{userInfo.lastname}}">
+		  </label>
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">Email</span>
+			 <input type="text" value="{{userInfo.email}}">
+		  </label>
+		  <div class="padding">
+			  <button ng-click="updateProfile()" class="button button-block button-assertive">Save Profile Information</button>
+		  </div>
+		</div>
+	</ion-content>
+</ion-view>

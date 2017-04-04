@@ -1,0 +1,232 @@
+/* Empty. Add your own CSS if you like */
+
+/* @import url("http://chefnet.collegechefs.com/Portals/_default/Skins/App/bootstrap/css/bootstrap.css");
+@import url("http://chefnet.collegechefs.com/Portals/_default/Skins/App/css/styles.css?cdv=69"); */
+
+* {
+	    font-family: 'Roboto', sans-serif !important;
+		 font-size: 1.01em;
+}
+.padding {
+	padding :20px;	
+}
+.is-red {
+    color: #e03730 !important;
+}
+.right {
+	float: right;	
+	text-align: right;
+}
+small {
+    font-size: 80%;
+}
+.bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before, .bar button.button-icon .icon:before, .bar button.button-icon:before, .bar button.button-icon.icon-left:before, .bar button.button-icon.icon-right:before {
+    font-size: 16px
+}
+
+.item h2 {
+    font-weight: 500;
+	 font-size:.9em;
+}
+.item-note {
+    font-weight: 400;
+}
+.item-avatar > img:first-child, .item-avatar .item-image, .item-avatar .item-content > img:first-child, .item-avatar .item-content .item-image, .item-avatar-left > img:first-child, .item-avatar-left .item-image, .item-avatar-left .item-content > img:first-child, .item-avatar-left .item-content .item-image {
+	border-radius: 0;	
+    max-width: 48px;
+    max-height: 48px;
+    top: 10px;
+    left: 10px;
+}
+
+.pane, .view, .item-divider, .item-stacked-label input, .item-stacked-label textarea, .modal {
+	background-color: #faf8ed;	
+}
+
+.item {
+    font-size: 15px;
+	 font-weight: 800;
+}
+ion-item.has-passed {
+    opacity: .5;
+}
+.button.request-lp {
+    width: 100%;
+    box-shadow: 2px 2px 1px #7e1713;
+    color: #faf8ed;
+    margin: 30px 0 10px;
+    padding: 10px;
+    font-size: 1.25em;
+}
+button.button.request-lp-cancel {
+    width: 100%;
+    background: #a4a4a4;
+    color: #faf8ed;
+    padding: 10px;
+}
+.bar-dark .button {
+    color: #eaec92;
+}
+.item.item-divider {
+    color: #94907a;
+    font-size: 13px;
+    font-weight: 500;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    padding-top: 20px;
+    min-height: 0px;
+}
+ul.meal-items {
+    list-style: disc;
+    padding-left: 15px;
+}
+ul.meal-items li {
+    padding: 2px 0;
+}
+.tab-item .icon {
+    font-size: 29px;
+    margin: 2px 0 0;
+}
+
+.tab-item .icon.yellow {
+    color: #eaec92;
+}
+@font-face {
+  font-family: 'icomoon';
+  src: url("fonts/icomoon.ttf?9v48iv") format("truetype"), url("fonts/icomoon.woff?9v48iv") format("woff"), url("fonts/icomoon.svg?9v48iv#icomoon") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+.icon-check:before {
+  content: ""; }
+
+.icon-check-circle:before {
+  content: ""; }
+
+.icon-chevron-left:before {
+  content: ""; }
+
+.icon-chevron-right:before {
+  content: ""; }
+
+.icon-clock:before {
+  content: ""; }
+
+.icon-exclamation:before {
+  content: ""; }
+
+.icon-exclamation-circle:before {
+  content: ""; }
+
+.icon-gear:before {
+  content: ""; }
+
+.icon-heart:before {
+  content: ""; }
+
+.icon-list:before {
+  content: ""; }
+
+.icon-minus:before {
+  content: ""; }
+
+.icon-minus-circle:before {
+  content: ""; }
+
+.icon-plate:before {
+  content: ""; }
+
+.icon-plus:before {
+  content: ""; }
+
+.icon-plus-circle:before {
+  content: ""; }
+
+.icon-star:before {
+  content: ""; }
+
+.icon-strawberry:before {
+  content: ""; }
+
+.icon-x:before {
+  content: ""; }
+
+.icon-x-circle:before {
+  content: ""; }
+
+.background-dark {
+	background-color: #333333;	
+}
+.bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.account-text {
+    color: white;
+    text-align: center;
+    font-size: 18px;
+    line-height: 26px;
+}
+
+.is-block {
+    display: block;
+}
+
+.account-text a {
+    color: #eaec92;
+    
+}
+img.welcome-logo {
+    display: block;
+    margin: 30px auto;
+}
+.button.button-assertive {
+    box-shadow: 2px 2px 1px #7e1713;
+}
+p.password-help {
+    margin: 10px 0;
+    text-align: center;
+}
+
+p.password-help a {
+    color: #a4a4a4;
+}
+label.item.item-input {
+    /* margin-bottom: 10px; */
+}
+.account-actions {
+	margin-top: 30px;	
+}
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+.hideElements {
+	display:none;	
+}
+.loading-container .loading {
+    background: transparent;
+}
+
+.backdrop {
+    background-color: #333;
+}
+
+.spinner svg {
+    width: 50px;
+    height: 50px;
+}
