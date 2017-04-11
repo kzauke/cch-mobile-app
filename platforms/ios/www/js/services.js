@@ -1,29 +1,48 @@
 angular.module('collegeChefs.services', ['ionic.cloud'])
 
-//go back to oos inventory to clean this up
+// clean up by reading this article
+//http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
 
-.factory('Menus', function($http,$ionicLoading) {
- 
- 	var userid = CollegeChefs.helpers.getUserID();
-   //make sure items come out of database in sequential order
+.factory('Menus', function($http,$ionicLoading,$cacheFactory,$ionicUser) {
+	var Menus = this;
+
+ 	var userid = CollegeChefs.helpers.getUserID($ionicUser);
+
    var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
-	
+
 	//24 hour clock
 	var lunchLPEndTime = 10;			//no lunch late plate orders after 10am
 	var dinnerLPEndTime = 15;			//no dinner late plate orders after 3pm
 	var afterDinnerLPEndTime = 20;	//dinner ends after 8pm
-	 
-	 
-  return {
-	  
+	 	 
+	return {
+
+	 //late plate request 
+	 requestLatePlate: function($scope, mealId) {
+			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
+	
+			$http.get(latePlateURL).then(
+				function successCallback(response) {
+					$scope.meal.latePlateStatus = 'pending';
+				},
+				function errorCallback(response) {
+					console.log(response);
+				}
+			);	
+				
+			// close the modal	 
+			$scope.modal.hide();
+		},
+		
 	 //retrieve menu data 
     getAll: function() {
-
-		 return $http.get(dataSource,{ cache: true});
+		 return $http.get(dataSource, { cache: true });
     },
+	 
 	 getTodaysFirstMealIndex: function() {
 		//return 8; 
 	 },
+	 
 	 getLatePlateMsg: function(mealType, mealIsToday) {
 		 if (mealIsToday) {
 			 var latePlateString = "<span class='ion-android-time'></span> Late plate orders due by ";
@@ -101,14 +120,26 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		 return false;
 	 },
 	 
-	 showLatePlateButton: function(mealHasPassed) {
-		 //when do we show late plate button?
-		 //if meal has passed already - false
-		 //if meal is after cutoff - false
-		 //if lp is already requested - false
+	 showLatePlateButton: function(mealHasPassed, mealType, mealIsToday) {
+		 		
+		 var currHour = new Date().getHours();	
+		 
+		 //dont show if meal has passed
 		 if (mealHasPassed) {
 		 	return false;
 		 }
+		 
+		 //if meal is today, only show if it is still before cutoff times
+		 if (mealIsToday) {
+			 if (mealType === "Lunch" && (currHour >= lunchLPEndTime)) {
+				return false; 
+			 }
+			 if (mealType === "Dinner" && (currHour >= dinnerLPEndTime)) {
+				return false; 
+			 }
+		 }
+		 
+		 //show by default
 		 return true;
 	 },
 	
@@ -128,33 +159,14 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   };
 })
 
-.factory('LatePlate', function() { 
-	return {
-		 //late plate request 
-       requestLatePlate: function($scope) {
-			 
-			 //submit late plate request to DB (using $http.post()?)
-			 //https://lostechies.com/gabrielschenker/2013/12/17/angularjspart-5-pushing-data-to-the-server/
-			 console.log("submit late Plate");
-			 
-			 //do we get the data again to make sure that "is ordered" message is accurate?
-			 //hide the button, add 'order requested' message / should happen automatically when data is refreshed?
-	
-			 // close the modal	 
-			 $scope.modal.hide();
-	 	}
-	};
-})
-
-.factory('Account', function($http, $ionicAuth, $ionicUser) {
+.factory('Account', function($http, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
 	
 	//get user data from DB
-	
- 		
 	return {
 	 getUserInfo: function() {
 		 
 		 var userInfo = {
+			userid: $ionicUser.get('dnnuserid'),
 			chef: $ionicUser.get('chef'),
 			lastname: $ionicUser.get('lastname'), 
 			supervisor: $ionicUser.get('supervisor'),
@@ -166,6 +178,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		 return userInfo;
     },
+	 
 	 updateProfile: function($state) {
 		 //submit new user data to DB, refresh data
 		 //http://www.nikola-breznjak.com/blog/codeproject/posting-data-from-ionic-app-to-php-server/
@@ -180,12 +193,60 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		$state.go('tab.account');
 	 },
 	 
-	 registerUser: function($state, $ionicViewSwitcher, method, loginData) {
-		 
-		 
-		console.log(loginData);
-		//$ionicViewSwitcher.nextDirection('forward');		 
-		//$state.go('tab.meal', { menuId: 1 });
+	 registerUser: function($state, $ionicViewSwitcher, method, loginData, $location, $q) {
+			 
+		var placeholder = {};
+		var defer = $q.defer();
+		
+		
+		 //send registration data to custom handler that adds user to our system
+			var registerURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
+			
+			var location = $location;
+			
+			$http.get(registerURL).then(
+				function(response) {
+					//if return message is an error
+						if (response.data.error !== undefined) {
+							if (response.data.error === "UsernameAlreadyExists") {
+								placeholder.text = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
+							}
+							else if (response.data.error === "ActivationNotValid") {
+								placeholder.text = "Your activation code is invalid. To get the correct activation code for your house, please talk to your chef.";
+							}
+							else {
+								placeholder.text = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
+							}
+						}
+						else if (response.data.token !== undefined) {
+							var expToken = response.data.token;
+							//decode token
+								var decoded = jwt_decode(expToken);
+								console.log(decoded.username);
+								//if valid, authenticate user with our custom login
+								var loginOptions = {'inAppBrowserOptions': {'hidden': true}};
+								
+								var loginData = {'username': decoded.username, 'password': decoded.password};
+
+								$ionicAuth.login('custom', loginData, loginOptions).then(function(s) {
+										if ($ionicAuth.isAuthenticated()) {
+											location.path('/tab/meal/next');
+											
+										}
+										//else display error
+									}, function(e) {
+										console.log(e);	
+									}
+								);
+						}
+						else {
+							console.log("Something went wrong while registering your account. Please contact your administrator");
+						}
+					
+				}
+			);	
+			defer.resolve();
+			return placeholder;
 	 },
 	 
 	 requestActivation: function($state, $ionicViewSwitcher) {
@@ -194,6 +255,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		$state.go('register');
 
 	 },
+	 
 	 backToWelcome: function($state, $ionicViewSwitcher) {
 		$ionicViewSwitcher.nextDirection('back');
 		$state.go('welcome');
@@ -203,25 +265,45 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		console.log('password request');
 		$state.go('login');
 	 },
-	 authenticateUser: function($state, $ionicViewSwitcher, method, loginData,$location) {
+	 
+	 authenticateUser: function($state, $ionicViewSwitcher, method, loginData, $location) {
 		
 		if (method === 'chefnet') {
 			var loginOptions = {'inAppBrowserOptions': {'hidden': true}};
 			
 			$ionicAuth.login('custom', loginData, loginOptions).then(function(s) {
-					console.log(s);
-					$location.path('/tab/meal/next');
+					if ($ionicAuth.isAuthenticated()) {
+						$location.path('/tab/meal/next');
+					}
 				}, function(e) {
 					console.log(e);	
 				}
 			);
 		 }
 		 
+		if (method === 'facebook') {
+			 /*
+			 $ionicFacebookAuth.login().then(
+			 
+			 //is this user in dnn?
+			 //is there a house specified for this user?
+			 	//if no
+					//request activation code (rsvp)
+			 
+			 );
+			 */
+		 }
 		 
+		if (method === 'twitter') {
+			$ionicAuth.login('twitter').then(
+				//do something
+			); 
+		 }
 		 
 		 //CollegeChefs.helpers.goToTodaysMeals($state, $ionicViewSwitcher);
 		 
 	 },
+	 
 	 logoff: function($state, $ionicViewSwitcher) {
 		$ionicAuth.logout();
 		$ionicViewSwitcher.nextDirection('forward');		 
@@ -274,7 +356,13 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			month[11] = "Dec";
 
 			//return weekday[date.getUTCDay()];
-			return weekday[date.getUTCDay()] + ", " + month[date.getUTCMonth()] + " " + date.getUTCDate();
+			
+			if (isNaN(date.getUTCDay())) {
+				return "";			
+			}
+			else {
+				return weekday[date.getUTCDay()] + ", " + month[date.getUTCMonth()] + " " + date.getUTCDate();
+			}
 		},
 	};
 })
@@ -283,23 +371,23 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	var faqs = [
 	  {
 		 id: 1,
-		 question: 'Why is the sky blue?',
-		 answer: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis tristique felis, vel viverra sapien. Donec dignissim consequat interdum. Etiam nibh massa, rhoncus a semper ac, feugiat sit amet tortor.</p><p>Nulla facilisi. Sed pulvinar, nunc pretium tristique faucibus, odio urna commodo eros, nec luctus velit metus sit amet elit. Aenean laoreet ullamcorper dui a lacinia. Nam in ex eget tellus aliquet fringilla. Vestibulum dapibus id nisi eu eleifend. Sed id libero auctor, lobortis nisi vel, finibus nulla.</p>'
+		 question: 'Why can\'t I order a late plate for my next meal?',
+		 answer: '<p>Late plate orders for lunch must be placed by 10 a.m. the day of your meal. Late plate orders for dinner must be placed by 3 p.m. Late Plates are not available for breakfast.</p>'
 	  		},
 			{
 		 id: 2,
-		 question: 'Why is blood red?',
-		 answer: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis tristique felis, vel viverra sapien. Donec dignissim consequat interdum. Etiam nibh massa, rhoncus a semper ac, feugiat sit amet tortor.</p><p>Nulla facilisi. Sed pulvinar, nunc pretium tristique faucibus, odio urna commodo eros, nec luctus velit metus sit amet elit. Aenean laoreet ullamcorper dui a lacinia. Nam in ex eget tellus aliquet fringilla. Vestibulum dapibus id nisi eu eleifend. Sed id libero auctor, lobortis nisi vel, finibus nulla.</p>'
+		 question: 'How do I cancel my late plate order?',
+		 answer: '<p>Please contact your chef to cancel a late plate order.</p>'
 		},
 		{
 		 id: 3,
-		 question: 'What\'s for dinner?',
-		 answer: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis tristique felis, vel viverra sapien. Donec dignissim consequat interdum. Etiam nibh massa, rhoncus a semper ac, feugiat sit amet tortor.</p><p>Nulla facilisi. Sed pulvinar, nunc pretium tristique faucibus, odio urna commodo eros, nec luctus velit metus sit amet elit. Aenean laoreet ullamcorper dui a lacinia. Nam in ex eget tellus aliquet fringilla. Vestibulum dapibus id nisi eu eleifend. Sed id libero auctor, lobortis nisi vel, finibus nulla.</p>'
+		 question: 'How can I rate/review my meals?',
+		 answer: '<p>This feature is on our road map. Please stay tuned!</p>'
 		},
 		{
 		 id: 4,
-		 question: 'How many pennies are in a dollar?',
-		 answer: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis tristique felis, vel viverra sapien. Donec dignissim consequat interdum. Etiam nibh massa, rhoncus a semper ac, feugiat sit amet tortor.</p><p>Nulla facilisi. Sed pulvinar, nunc pretium tristique faucibus, odio urna commodo eros, nec luctus velit metus sit amet elit. Aenean laoreet ullamcorper dui a lacinia. Nam in ex eget tellus aliquet fringilla. Vestibulum dapibus id nisi eu eleifend. Sed id libero auctor, lobortis nisi vel, finibus nulla.</p>'
+		 question: 'Who is my chef?',
+		 answer: '<p>You can find your chef\'s name listed under the "Account" tab.</p>'
 	  }
 	];
 	
@@ -332,7 +420,13 @@ CollegeChefs.helpers = {
 			$ionicViewSwitcher.nextDirection('forward');		 
 			$state.go('tab.meal', { menuId: 1 });
 	},
-	getUserID: function() {
-		return 2452;
+	getUserID: function($ionicUser) {
+		if (ionic.Platform.is('browser')) {
+			return 2494;
+		}
+		else {
+			return $ionicUser.get('dnnuserid');
+		}
+		
 	}
  };

@@ -45,13 +45,17 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				abstract: true,
 				templateUrl: 'templates/tabs.html',
 				
-				/*
-				onEnter: function($state, $ionicAuth){
-					  if(!$ionicAuth.isAuthenticated()){
-						  $state.go('welcome');
-					  }
+				
+				onEnter: function($state, $ionicAuth){		
+					//if user is not authenticated, go to welcome screen
+				  if(!$ionicAuth.isAuthenticated()){
+						 // $state.go('login');
+					}
+					
+					
+					//if user is authenticated, but their activation code isn't valid
 				 }
-				 */
+				 
 			})
 			
 			// Each tab has its own nav history stack:
@@ -70,7 +74,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				views: {
 					'tab-meal': {
 						templateUrl: 'templates/tab-meal.html',
-						controller: 'MealCtrl'
+						controller: 'MenusCtrl'
 					}
 				}
 			})

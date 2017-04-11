@@ -28,6 +28,9 @@ small {
     font-weight: 500;
 	 font-size:.9em;
 }
+.help-content .item h2 {
+    font-size: 1em;
+}
 .item-note {
     font-weight: 400;
 }
@@ -39,10 +42,13 @@ small {
     left: 10px;
 }
 
-.pane, .view, .item-divider, .item-stacked-label input, .item-stacked-label textarea, .modal {
+.item, .pane, .view, .item-divider, .item-stacked-label input, .item-stacked-label textarea, .modal {
 	background-color: #faf8ed;	
 }
 
+.item-bg-white {
+	background-color: #fff;	
+}
 .item {
     font-size: 15px;
 	 font-weight: 800;
@@ -165,7 +171,10 @@ ul.meal-items li {
 
 .icon-x-circle:before {
   content: ""; }
-
+  
+.icon-exit:before {
+  content: "\ea14";
+}
 .background-dark {
 	background-color: #333333;	
 }
@@ -229,4 +238,50 @@ label.item.item-input {
 .spinner svg {
     width: 50px;
     height: 50px;
+}
+.error-message {
+    background: #585858;
+    color: white;
+}
+.error-message a {
+    color: #ef473a;
+    font-weight: bold;
+    text-decoration: none;
+}
+.error-message h3 {
+    font-size: 21px;
+    color: white;
+}	
+.alert.alert-warning.pending-warning-meal {
+    margin-top: 30px;
+    font-size: 23px;
+    line-height: 25px;
+	 font-weight:bold;
+}
+
+.alert.alert-warning {
+    color: #2b8838;
+}
+
+.pending-warning-meal small {
+    display: block;
+	 font-size:60%
+}
+.pending-warning-meal .icon {
+    font-size: 47px;
+    float: left;
+    margin-right: 15px;
+}
+.alert.alert-warning.meal-complete {
+    color: #e03730;
+}
+.no-items-icon {
+    font-size: 60px;
+    display: block;
+    padding: 30px;
+    text-shadow: 2px 2px 0px #444;
+}
+
+span.back-text {
+    display: none !important;
 }

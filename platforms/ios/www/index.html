@@ -26,6 +26,7 @@
 
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 	 <script src="lib/ionic.cloud.min.js"></script>
+    <script src="lib/jwt-decode.min.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
 	 <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
@@ -38,7 +39,7 @@
     <script src="js/services.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.11/angular-filter.js"></script>
   </head>
-  <body ng-app="collegeChefs">
+  <body ng-app="collegeChefs" class="platform-ios platform-cordova platform-webview">
     <!--
       The nav bar that will be updated as we navigate between views.
     -->

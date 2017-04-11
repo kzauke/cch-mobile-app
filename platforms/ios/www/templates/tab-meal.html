@@ -21,6 +21,9 @@
   	<div ng-if="mealHasPassed(meal.name, meal.date)" class="card alert alert-info item item-text-wrap item-positive" role="alert">
 		<div class="item item-text-wrap item-positive">This meal has passed.</div>
 	</div>
+	<div ng-show="meal == null" style="text-align:center">
+		<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>
+	</div>
 	<h2>{{meal.name}}</h2>
 	<ul ng-bind-html="meal.fullmenu" class="meal-items"></ul>
 	
@@ -32,21 +35,23 @@
 	
 	<div ng-switch on="meal.latePlateStatus">
 		<div ng-switch-when="eligible">
-			<div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), mealIsToday(meal.date))">
+			<div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), meal.name, mealIsToday(meal.date))">
 				<button type="button" class="button button-assertive request-lp" ng-click="modal.show()">Request Late Plate</button>
 				<p class="is-red" ng-bind-html="getLatePlateMsg(meal.name, mealIsToday(meal.date))"></p>
 			</div>
 		</div>
 		
 		<div ng-switch-when="pending">
-			<div class="alert alert-warning" role="alert">
+			<div class="alert alert-warning pending-warning-meal" role="alert">
+			<i class="icon ion-checkmark-circled"></i>
 				Order Pending
 				<small>Your request has been submitted</small>
 			</div>
 		</div>
 		
 		<div ng-switch-when="complete">
-			<div class="alert alert-success" role="alert">
+			<div class="alert alert-warning pending-warning-meal meal-complete" role="alert">
+				<i class="icon ion-happy"></i>
 				Order Complete
 				<small>Your request has been filled</small>
 			</div>
