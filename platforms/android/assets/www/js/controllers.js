@@ -7,7 +7,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 .controller('MenusCtrl', function($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll,$ionicPlatform,$ionicLoading,$ionicModal,$window,$timeout) {
 	$scope.index = Number($stateParams.menuId);
 
-
 	var getMealListings = Menus.getAll();
 	
 	//Init
@@ -116,7 +115,11 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 				$ionicLoading.hide();
 
 		 });
-			 
+		 
+		 //don't let the ionic loading wheel hang
+		$timeout(function() {
+			$ionicLoading.hide();	 
+		}, 3000);
 	}
 	
 })
