@@ -84,7 +84,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				views: {
 					'tab-meal': {
 						templateUrl: 'templates/tab-meal.html',
-						controller: 'MealCtrl'
+						controller: 'MenusCtrl'
 					}
 				}
 			})

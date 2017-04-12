@@ -4,28 +4,50 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*************************************/
 
 
-.controller('MenusCtrl', function($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll,$ionicPlatform,$ionicLoading,$ionicModal) {
+.controller('MenusCtrl', function($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll,$ionicPlatform,$ionicLoading,$ionicModal,$window,$timeout) {
+	$scope.index = Number($stateParams.menuId);
+
 
 	var getMealListings = Menus.getAll();
-
-	//upon load view, make sure we scroll to today
-	$location.hash('today');
-	$ionicScrollDelegate.anchorScroll(true);
-		 
+	
+	//Init
+	$ionicPlatform.ready(function(){
+		console.log('ready');
+		getMealListingsData();
+		
+		//upon load view, make sure we scroll to today
+		$location.hash('today');
+		
+	});
 	$ionicPlatform.on('resume', function(){
+		$location.hash('today');
 		getMealListingsData();
 	}); 
-	$ionicPlatform.ready(function(){
-		getMealListingsData();
-	});
-
-	//Late Plate
-	$ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
-		scope: $scope,
-		animation: 'slide-in-up'
-	}).then(function(modal) {
-		$scope.modal = modal;
-	});
+	
+	//Init Get Meal
+	if ($stateParams.menuId !== undefined) {
+		getMealListings.then(
+		 function(response) { 
+		 	var menus = response.data;
+			var menuid = $stateParams.menuId;
+			
+			for (var i = 0; i < menus.length; i++) {
+				if (menuid === "next") {
+					if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
+						$scope.meal = menus[i];
+						break;
+					}
+				}
+				else if ($scope.index === i) {
+          		$scope.meal = menus[i];
+					break;
+        		}
+			}
+		 },
+		 function(error) {
+			  console.log('error', error);
+		 });
+	}
 
 	$scope.noItems = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
 	$scope.icon = function(mealType) {
@@ -45,7 +67,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	$scope.goForward = function(toState) {
 		Globals.goForward($state, toState, $ionicViewSwitcher, $stateParams);
 	};
-	$scope.index = Number($stateParams.menuId);
 	$scope.dataLoaded = false;
 	$scope.showLatePlateButton = function(mealHasPassed, mealIsToday, mealType) {
 		return Menus.showLatePlateButton(mealHasPassed, mealIsToday, mealType);
@@ -54,73 +75,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		return Menus.getLatePlateMsg(mealType, mealIsToday);
 	};
 	
-	//get next meal if menuid is next, otherwise get menu id indicated
-	if ($stateParams.menuId === "next") {
-		getMealListings.then(
-		 function(response) { 
-		 	var menus = response.data;
-		 	for (var i = 0; i < menus.length; i++) {
-        		if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
-          		$scope.index = menus[i].id;
-					break;
-        		}
-			}
-		 },
-		 function(error) {
-			  console.log('error', error);
-		 });
-	}
-	
-	$ionicLoading.show({
-		template: '<ion-spinner class="spinner-assertive" icon="ripple"></ion-spinner>',
-	});
-
-	function getMealListingsData() {
-		$ionicLoading.show({
-			template: '<ion-spinner class="spinner-assertive" icon="ripple"></ion-spinner>',
-		});
-
-		getMealListings.then(
-		 function(response) { 
-			  $scope.menus = response.data;
-			  $scope.mealCount = response.data.length;
-			  if (response.data.length > 0) {
-					$scope.noItems = "";
-					for (var i = 0; i < $scope.menus.length; i++) {
-						if ($scope.menus[i].id == $scope.index) {
-							$scope.meal = $scope.menus[i];
-							console.log($scope.meal);
-							break;
-						}
-					}
-					$location.hash('today');
-					$ionicScrollDelegate.anchorScroll(true);
-				$ionicLoading.hide();
-
-			  }
-				$scope.dataLoaded = true;
-
-		 },
-		 function(error) {
-			  console.log('error', error);
-		 });
-			 
-	}
-	getMealListings.then(
-		 function(response) { 
-		 	var menus = response.data;
-			$scope.mealCount = response.data.length;
-			  for (var i = 0; i < menus.length; i++) {
-        		if (menus[i].id == $scope.index) {
-          		$scope.meal = menus[i];
-					break;
-        		}
-      	}
-			$ionicLoading.hide();
-		 },
-		 function(error) {
-			  console.log('error', error);
-		 });
 	//Next / Previous Meal functionality
 	$scope.goNext = function() {
 		Menus.goNext($scope.index, $state, $ionicViewSwitcher);	
@@ -128,11 +82,42 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	$scope.goBack = function() {
 		Menus.goBack($scope.index, $state, $ionicViewSwitcher);	
 	};
+
+	//Late Plate
+	$ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
+		scope: $scope,
+		animation: 'slide-in-up'
+	}).then(function(modal) {
+		$scope.modal = modal;
+	});
 	
 	$scope.requestLatePlate = function(mealId){
 		Menus.requestLatePlate($scope, mealId);
-		
 	};
+
+	function getMealListingsData() {
+		$ionicLoading.show({
+			template: '<ion-spinner class="spinner-assertive" icon="ripple"></ion-spinner>',
+		});
+		
+		
+		getMealListings.then(
+		 function(response) { 
+			$scope.menus = response.data;
+			$scope.mealCount = response.data.length;
+			if (response.data.length > 0) {
+				$scope.noItems = "";
+			}
+			$scope.dataLoaded = true;
+			$ionicLoading.hide();
+		 },
+		 function(error) {
+			  console.log('error', error);
+				$ionicLoading.hide();
+
+		 });
+			 
+	}
 	
 })
 

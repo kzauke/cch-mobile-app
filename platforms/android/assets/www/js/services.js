@@ -3,7 +3,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 // clean up by reading this article
 //http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
 
-.factory('Menus', function($http,$ionicLoading,$cacheFactory,$ionicUser) {
+.factory('Menus', function($http,$ionicLoading,$cacheFactory,$ionicUser,$window,$timeout) {
 	var Menus = this;
 
  	var userid = CollegeChefs.helpers.getUserID($ionicUser);
@@ -20,22 +20,27 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 //late plate request 
 	 requestLatePlate: function($scope, mealId) {
 			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
-	
+			
 			$http.get(latePlateURL).then(
 				function successCallback(response) {
+					
 					$scope.meal.latePlateStatus = 'pending';
+					$window.location.reload();
+					
+					$scope.modal.hide();
+
 				},
 				function errorCallback(response) {
+					$scope.modal.hide();
 					console.log(response);
 				}
 			);	
 				
-			// close the modal	 
-			$scope.modal.hide();
 		},
 		
 	 //retrieve menu data 
     getAll: function() {
+
 		 return $http.get(dataSource, { cache: true });
     },
 	 
@@ -422,7 +427,7 @@ CollegeChefs.helpers = {
 	},
 	getUserID: function($ionicUser) {
 		if (ionic.Platform.is('browser')) {
-			return 2494;
+			return 2556;
 		}
 		else {
 			return $ionicUser.get('dnnuserid');
