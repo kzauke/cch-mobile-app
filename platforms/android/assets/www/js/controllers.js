@@ -19,8 +19,9 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		
 	});
 	$ionicPlatform.on('resume', function(){
+		$window.location.reload();
 		$location.hash('today');
-		getMealListingsData();
+		document.getElementById("today").scrollIntoView();
 	}); 
 	
 	//Init Get Meal
