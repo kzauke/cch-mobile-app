@@ -16,7 +16,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 			}
 			if (window.StatusBar) {
 				// org.apache.cordova.statusbar required
-				StatusBar.styleDefault();
+				//StatusBar.styleDefault();
 			}
 		});
 	})

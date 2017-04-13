@@ -34,6 +34,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 				if (menuid === "next") {
 					if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
 						$scope.meal = menus[i];
+                        $scope.index = i
 						break;
 					}
 				}

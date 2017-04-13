@@ -4,9 +4,9 @@
   The MealCtrl pulls data from the Menus service (service.js)
 -->
 
-<ion-view ng-show="dataLoaded===true" on-swipe-right="goBack()" on-swipe-left="goNext()">
+<ion-view hide-back-button="true" ng-show="dataLoaded===true" on-swipe-right="goBack()" on-swipe-left="goNext()">
 	<ion-nav-title>{{getFormattedDate(meal.date)}}</ion-nav-title>
-  <ion-nav-bar class="bar-dark" align-title="center">
+
     <ion-nav-buttons side="left">
        <a href="#/tab/menus#today" nav-direction="swap" class="button button-icon icon-list"></a>
        <button ng-if="index > 0" ng-click="goBack()" class="button button-icon icon-chevron-left"></button>
@@ -15,7 +15,6 @@
        <button ng-if="index < mealCount-1" ng-click="goNext()" class="button button-icon icon-chevron-right"></button>
     </ion-nav-buttons>
 
-  </ion-nav-bar>
 
   <ion-content class="padding">
   	<div ng-if="mealHasPassed(meal.name, meal.date)" class="card alert alert-info item item-text-wrap item-positive" role="alert">

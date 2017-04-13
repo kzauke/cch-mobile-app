@@ -8,7 +8,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
  	var userid = CollegeChefs.helpers.getUserID($ionicUser);
 
-   var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
+    var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
 
 	//24 hour clock
 	var lunchLPEndTime = 10;			//no lunch late plate orders after 10am
