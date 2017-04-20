@@ -20,10 +20,9 @@
   	<div ng-if="mealHasPassed(meal.name, meal.date)" class="card alert alert-info item item-text-wrap item-positive" role="alert">
 		<div class="item item-text-wrap item-positive">This meal has passed.</div>
 	</div>
-	<div ng-show="meal == null" style="text-align:center">
-		<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>
-	</div>
-	<h2>{{meal.name}}</h2>
+    <div ng-show="noItems" ng-bind-html="noItems" style="text-align:center"></div>
+    
+    <h2>{{meal.name}}</h2>
 	<ul ng-bind-html="meal.fullmenu" class="meal-items"></ul>
 	
 	<!--
