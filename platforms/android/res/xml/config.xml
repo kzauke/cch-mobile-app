@@ -23,11 +23,11 @@
         <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
     </feature>
     <name>College Chefs</name>
-    <description>
-        View your house's meals, order late plates and more!
+    <description>
+        View your house's meals, order late plates and more!
     </description>
-    <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
-      Accuraty Solutions
+    <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
+      Accuraty Solutions
     </author>
     <content src="index.html" />
     <access origin="*" />

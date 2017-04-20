@@ -5,6 +5,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
 
 .controller('MenusCtrl', function($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll,$ionicPlatform,$ionicLoading,$ionicModal,$window,$timeout) {
+            
 	$scope.index = Number($stateParams.menuId);
 
 	var getMealListings = Menus.getAll();
@@ -50,9 +51,11 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	}
 
 	$scope.noItems = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
-	$scope.icon = function(mealType) {
+	
+    $scope.icon = function(mealType) {
 		return Menus.getIcon(mealType);
-	};	
+	};
+            
 	$scope.getFormattedDate = function(mealDate) {
 		return Globals.getFormattedDate(mealDate);
 	}; 
@@ -159,25 +162,21 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 })
 
 .controller('LoginCtrl', function($scope, $state, Account, $ionicViewSwitcher, $ionicAuth, $ionicUser,$location,$timeout) {
-	$scope.errorMsg = "";
-	
+    
+    $scope.loginMessage = "No Error Message Yet";
+
 	$scope.backToWelcome = function() {
 		$timeout(function() {
-			$scope.errorMsg = "";
+			$scope.loginMessage = "";
 		}, 10);
 		Account.backToWelcome($state, $ionicViewSwitcher)	;
-	};	
+	};
+            
 	$scope.authenticateUser = function(email, password, method) {
 		var loginData = {'username': email, 'password': password};
-		Account.authenticateUser($state, $ionicViewSwitcher, method, loginData,$location);	
-		if (!$ionicAuth.isAuthenticated()) {
-			$timeout(function() {
-			$scope.errorMsg = "<h3>Oops, there was an error logging in.</h3><p>Please check your credentials and try again, or try the \"Forgot your password?\" link below</p>";
-		}, 3000);
-		}
-		else {
-			$scope.errorMsg = "";
-		}
+        
+        $scope.loginMessage = Account.authenticateUser($state, $ionicViewSwitcher, method, loginData,$location);
+        
 	};	
 })
 

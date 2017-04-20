@@ -40,7 +40,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		
 	 //retrieve menu data 
     getAll: function() {
-
 		 return $http.get(dataSource, { cache: true });
     },
 	 
@@ -186,14 +185,13 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 
 	 updateProfile: function($state) {
 		 //submit new user data to DB, refresh data
-		 //http://www.nikola-breznjak.com/blog/codeproject/posting-data-from-ionic-app-to-php-server/
+		 
 		console.log('profile saved'); 
 		$state.go('tab.account');
 	 },
 	 
 	 updatePassword: function($state) {
 		 //submit new user data to DB, refresh data
-		 //http://www.nikola-breznjak.com/blog/codeproject/posting-data-from-ionic-app-to-php-server/
 		console.log('password saved'); 
 		$state.go('tab.account');
 	 },
@@ -217,7 +215,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 								placeholder.text = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
 							}
 							else if (response.data.error === "ActivationNotValid") {
-								placeholder.text = "Your activation code is invalid. To get the correct activation code for your house, please talk to your chef.";
+								placeholder.text = "Your house code is invalid. To get the correct house code for your house, please talk to your chef.";
 							}
 							else {
 								placeholder.text = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
@@ -263,7 +261,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 
 	 backToWelcome: function($state, $ionicViewSwitcher) {
 		$ionicViewSwitcher.nextDirection('back');
-		$state.go('welcome');
+		$state.go('login');
 	 },
 	 
 	 newPasswordRequest: function($state) {
@@ -272,20 +270,36 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 },
 	 
 	 authenticateUser: function($state, $ionicViewSwitcher, method, loginData, $location) {
+        var placeholder = {};
+		var errorMessageText = "There was an error logging in. Please check your credentials and try again.";
 		
-		if (method === 'chefnet') {
+        if (method === 'chefnet') {
 			var loginOptions = {'inAppBrowserOptions': {'hidden': true}};
-			
 			$ionicAuth.login('custom', loginData, loginOptions).then(function(s) {
-					if ($ionicAuth.isAuthenticated()) {
-						$location.path('/tab/meal/next');
-					}
+					
 				}, function(e) {
-					console.log(e);	
-				}
+                     placeholder.text = errorMessageText;
+                     return placeholder;
+                }
 			);
+         
+            if ($ionicAuth.isAuthenticated()) {
+                $location.path('/tab/meal/next');
+            }
+            else {
+                setTimeout(function() {
+                    placeholder.text = errorMessageText;
+                    return placeholder; 
+                },500);
+
+         }
+
+            //placeholder.text = errorMessageText;         
+            //return placeholder;
 		 }
-		 
+        
+        
+         
 		if (method === 'facebook') {
 			 /*
 			 $ionicFacebookAuth.login().then(
@@ -312,7 +326,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 logoff: function($state, $ionicViewSwitcher) {
 		$ionicAuth.logout();
 		$ionicViewSwitcher.nextDirection('forward');		 
-		$state.go('welcome');
+		$state.go('login');
 	 }
   };
 })
