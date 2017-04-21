@@ -5,23 +5,22 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
 
 .controller('MenusCtrl', function($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll,$ionicPlatform,$ionicLoading,$ionicModal,$window,$timeout) {
-            
+    
 	$scope.index = Number($stateParams.menuId);
 
+    var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
+    
+    $scope.noItems = "";
+            
 	var getMealListings = Menus.getAll();
 	
 	//Init
 	$ionicPlatform.ready(function(){
-		console.log('ready');
 		getMealListingsData();
-		
-		//upon load view, make sure we scroll to today
-		$location.hash('today');
-		
+				
 	});
 	$ionicPlatform.on('resume', function(){
 		$window.location.reload();
-		$location.hash('today');
 	}); 
 	
 	//Init Get Meal
@@ -35,25 +34,27 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 				if (menuid === "next") {
 					if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
 						$scope.meal = menus[i];
-                        $scope.index = i
+                        $scope.index = i;
 						break;
 					}
 				}
 				else if ($scope.index === i) {
-          		$scope.meal = menus[i];
+                    $scope.meal = menus[i];
+
 					break;
-        		}
+        		}                
 			}
 		 },
 		 function(error) {
+              $scope.noItems = noItemsMessage;
 			  console.log('error', error);
 		 });
 	}
-
-	$scope.noItems = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
-	$scope.icon = function(mealType) {
+    	
+    $scope.icon = function(mealType) {
 		return Menus.getIcon(mealType);
-	};	
+	};
+            
 	$scope.getFormattedDate = function(mealDate) {
 		return Globals.getFormattedDate(mealDate);
 	}; 
@@ -97,24 +98,30 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	};
 
 	function getMealListingsData() {
-		$ionicLoading.show({
+		
+        $ionicLoading.show({
 			template: '<ion-spinner class="spinner-assertive" icon="ripple"></ion-spinner>',
 		});
 		
 		
 		getMealListings.then(
 		 function(response) { 
+
 			$scope.menus = response.data;
 			$scope.mealCount = response.data.length;
 			if (response.data.length > 0) {
 				$scope.noItems = "";
+                $location.hash('today');
 			}
+            else {
+                $scope.noItems = noItemsMessage;
+            }
+            
 			$scope.dataLoaded = true;
 			$ionicLoading.hide();
 		 },
 		 function(error) {
-			  console.log('error', error);
-				$ionicLoading.hide();
+            $ionicLoading.hide();
 
 		 });
 		 
