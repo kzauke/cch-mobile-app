@@ -49,7 +49,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				onEnter: function($state, $ionicAuth){		
 					//if user is not authenticated, go to welcome screen
 				  if(!$ionicAuth.isAuthenticated()){
-                        $state.go('login');
+                        //$state.go('login');
 					}
 					
 					

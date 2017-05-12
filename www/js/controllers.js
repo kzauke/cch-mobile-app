@@ -7,6 +7,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 .controller('MenusCtrl', function($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll,$ionicPlatform,$ionicLoading,$ionicModal,$window,$timeout) {
     
 	$scope.index = Number($stateParams.menuId);
+    
 
     var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
     

@@ -441,7 +441,7 @@ CollegeChefs.helpers = {
 	},
 	getUserID: function($ionicUser) {
 		if (ionic.Platform.is('browser')) {
-			return 2556;
+			return 2570;
 		}
 		else {
 			return $ionicUser.get('dnnuserid');
