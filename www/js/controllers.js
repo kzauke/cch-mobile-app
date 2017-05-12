@@ -44,6 +44,11 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 					break;
         		}                
 			}
+            setTimeout(function() {
+                if (!$scope.meal){
+                       $scope.noItems = noItemsMessage;
+                }
+            },500)
 		 },
 		 function(error) {
               $scope.noItems = noItemsMessage;
