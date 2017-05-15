@@ -17,28 +17,48 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 	 
 	return {
 
-	 //late plate request 
-	 requestLatePlate: function($scope, mealId) {
-			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
-			
-			$http.get(latePlateURL).then(
-				function successCallback(response) {
-					
-					$scope.meal.latePlateStatus = 'pending';
-					$window.location.reload();
-					
-					$scope.modal.hide();
+    //late plate request 
+    requestLatePlate: function($scope, mealId) {
+        var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
-				},
-				function errorCallback(response) {
-					$scope.modal.hide();
-					console.log(response);
-				}
-			);	
-				
-		},
-		
-	 //retrieve menu data 
+        $http.get(latePlateURL).then(
+            function successCallback(response) {
+
+                $scope.meal.latePlateStatus = 'pending';
+                $window.location.reload();
+
+                $scope.modal.hide();
+
+            },
+            function errorCallback(response) {
+                $scope.modal.hide();
+                console.log(response);
+            }
+        );	
+
+    },
+    
+    //cancel late plate request 
+    cancelLatePlate: function($scope, mealId) {
+        var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
+
+        $http.get(cancelLatePlateURL).then(
+            function successCallback(response) {
+
+                $window.location.reload();
+
+                $scope.modal.hide();
+
+            },
+            function errorCallback(response) {
+                $scope.modal.hide();
+                console.log(response);
+            }
+        );	
+
+    },
+
+    //retrieve menu data 
     getAll: function() {
 		 return $http.get(dataSource, { cache: true });
     },

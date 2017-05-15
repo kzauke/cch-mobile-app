@@ -64,6 +64,9 @@ ion-item.has-passed {
     padding: 10px;
     font-size: 1.25em;
 }
+.button.cancel-lp {
+    padding: 0px !important;
+}
 button.button.request-lp-cancel {
     width: 100%;
     background: #a4a4a4;

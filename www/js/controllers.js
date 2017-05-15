@@ -8,12 +8,12 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
     
 	$scope.index = Number($stateParams.menuId);
     
-
     var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
+	var getMealListings = Menus.getAll();
+    var modalTemplate;
     
     $scope.noItems = "";
             
-	var getMealListings = Menus.getAll();
 	
 	//Init
 	$ionicPlatform.ready(function(){
@@ -90,19 +90,55 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	$scope.goBack = function() {
 		Menus.goBack($scope.index, $state, $ionicViewSwitcher);	
 	};
-
-	//Late Plate
+    
+    $scope.openModal = function(action){
+        if (action == "create") {
+            modalTemplate = "templates/modal-confirm-late-plate.html";
+        }
+        else if (action == "delete") {
+            modalTemplate = "templates/modal-cancel-late-plate.html";
+        }
+        $scope.modal.show();
+                
+    };
+    
+    //request late plate modal
 	$ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
-		scope: $scope,
-		animation: 'slide-in-up'
-	}).then(function(modal) {
-		$scope.modal = modal;
-	});
+        id: '1',
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.oModal1 = modal;
+    });
+
+    // Cancel late plate modal
+    $ionicModal.fromTemplateUrl('templates/modal-cancel-late-plate.html', {
+        id: '2',
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.oModal2 = modal;
+    });
+
+    $scope.openModal = function(action) {
+        if (action == 'create') $scope.oModal1.show();    //on create
+        else $scope.oModal2.show();                       //on delete
+    };
+
+    $scope.closeModal = function(action) {
+        if (action == 'create') $scope.oModal1.hide();
+        else $scope.oModal2.hide();
+    };
 	
+
 	$scope.requestLatePlate = function(mealId){
 		Menus.requestLatePlate($scope, mealId);
 	};
 
+    $scope.cancelLatePlate = function(mealId) {
+        Menus.cancelLatePlate($scope, mealId);
+    };
+    
 	function getMealListingsData() {
 		
         $ionicLoading.show({
