@@ -46,7 +46,7 @@
 				<small>Your request has been submitted</small>
 			</div>
             <div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), meal.name, mealIsToday(meal.date))">
-                <button class="button request-lp request-lp-cancel cancel-lp" ng-click="openModal('delete')">Cancel Late Plate</button>
+                <button class="button button-assertive request-lp cancel-lp" ng-click="openModal('delete')">Cancel Late Plate</button>
             </div>
         </div>
 		
