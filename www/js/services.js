@@ -8,8 +8,9 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
  	var userid = CollegeChefs.helpers.getUserID($ionicUser);
 
-    var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
+	var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
 
+	 
 	//24 hour clock
 	var lunchLPEndTime = 10;			//no lunch late plate orders after 10am
 	var dinnerLPEndTime = 15;			//no dinner late plate orders after 3pm
@@ -181,6 +182,37 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	 }
 	 
   };
+})
+
+.factory('Reviews', function($http,$ionicUser) {
+	
+ 	var userid = CollegeChefs.helpers.getUserID($ionicUser);
+
+	var reviewDataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetLatestMealsForReview&UserID=' + userid;
+
+	var reviewedMealsDataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetLatestUserReviewedMeals&UserID=' + userid;
+
+	var submitReviewURL = "";
+	return {
+		getRecentMealsForReviews: function() {
+			//return a list of the last two days meals both with and without reviews
+			console.log("getRecentMealsForReviews");
+			return $http.get(reviewDataSource, { cache: true });
+
+		},
+		getRecentlyReviewedMeals: function() {
+			//return a list of the most recently reviewed meals (top 20 in descending order)
+			return $http.get(reviewedMealsDataSource, { cache: true });
+		},
+		submitReviewForMeal: function(mealid, starCount, reviewText) {
+			
+			var submitString = submitReviewURL + "UserID=" + userid + "MealID=" + mealid + "StarCount=" + starCount + "reviewText=" + reviewText;
+			
+			return $http.get(submitString, { cache: true });
+			
+		}
+	};
+
 })
 
 .factory('Account', function($http, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
@@ -416,7 +448,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			{
 		 id: 2,
 		 question: 'How do I cancel my late plate order?',
-		 answer: '<p>Please contact your chef to cancel a late plate order.</p>'
+		 answer: '<p>Navigate to the meal for which you would like to cancel the order, and click "Cancel Order". Late plate orders for lunch must be cancelled by 10 a.m. the day of your meal. Late plate orders for dinner must be cancelled by 3 p.m.</p>'
 		},
 		{
 		 id: 3,

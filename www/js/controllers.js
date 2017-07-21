@@ -8,11 +8,12 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
     
 	$scope.index = Number($stateParams.menuId);
     
-    var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
+	var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
+	
 	var getMealListings = Menus.getAll();
-    var modalTemplate;
+  var modalTemplate;
     
-    $scope.noItems = "";
+  $scope.noItems = "";
             
 	
 	//Init
@@ -20,6 +21,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		getMealListingsData();
 				
 	});
+	
 	$ionicPlatform.on('resume', function(){
 		$window.location.reload();
 	}); 
@@ -35,29 +37,29 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 				if (menuid === "next") {
 					if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
 						$scope.meal = menus[i];
-                        $scope.index = i;
+            $scope.index = i;
 						break;
 					}
 				}
 				else if ($scope.index === i) {
-                    $scope.meal = menus[i];
+        	$scope.meal = menus[i];
 
 					break;
-        		}                
+				}                
 			}
-            setTimeout(function() {
-                if (!$scope.meal){
-                       $scope.noItems = noItemsMessage;
-                }
-            },500)
+      setTimeout(function() {
+      	if (!$scope.meal){
+        	$scope.noItems = noItemsMessage;
+				}
+			},500)
 		 },
 		 function(error) {
-              $scope.noItems = noItemsMessage;
+        $scope.noItems = noItemsMessage;
 			  console.log('error', error);
 		 });
 	}
     	
-    $scope.icon = function(mealType) {
+  $scope.icon = function(mealType) {
 		return Menus.getIcon(mealType);
 	};
             
@@ -91,16 +93,16 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		Menus.goBack($scope.index, $state, $ionicViewSwitcher);	
 	};
     
-    $scope.openModal = function(action){
-        if (action == "create") {
-            modalTemplate = "templates/modal-confirm-late-plate.html";
-        }
-        else if (action == "delete") {
-            modalTemplate = "templates/modal-cancel-late-plate.html";
-        }
-        $scope.modal.show();
-                
-    };
+	$scope.openModal = function(action){
+			if (action == "create") {
+					modalTemplate = "templates/modal-confirm-late-plate.html";
+			}
+			else if (action == "delete") {
+					modalTemplate = "templates/modal-cancel-late-plate.html";
+			}
+			$scope.modal.show();
+
+	};
     
     //request late plate modal
 	$ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
@@ -175,8 +177,13 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	
 })
 
-.controller('ReviewsCtrl', function($scope, Globals, Menus) {
-	var getMealListings = Menus.getAll();
+.controller('ReviewsCtrl', function($scope, Globals, Reviews, Menus) {
+	var getRecentMealsForReviews = Reviews.getRecentMealsForReviews();
+	var getRecentlyReviewedMeals = Reviews.getRecentlyReviewedMeals();
+
+	$scope.submitReviewForMeal = function(mealid, starCount, reviewText) {
+				return Reviews.submitReviewForMeal(mealid,starCount,reviewText);
+	}
 	
 	$scope.icon = function(mealType) {
 		return Menus.getIcon(mealType);
@@ -190,13 +197,24 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	$scope.getFormattedDate = function(mealDate) {
 		return Globals.getFormattedDate(mealDate);
 	};
-	getMealListings.then(
+	
+	getRecentlyReviewedMeals.then(
 		 function(response) { 
-			  $scope.menus = response.data;
-		 },
-		 function(error) {
-			  console.log('error', error);
-		 });
+			  $scope.reviewedMeals = response.data;
+  },
+ 	function(error) {
+		console.log('error', error);
+ 	});
+
+	getRecentMealsForReviews.then(
+	  function(response) { 
+		$scope.recentMeals = response.data;
+  },
+ 	function(error) {
+		console.log('error', error);
+ 	});
+	
+
 })
 
 /*********** Welcome / Login Screens ***********/

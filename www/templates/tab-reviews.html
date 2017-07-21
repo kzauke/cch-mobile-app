@@ -1,23 +1,30 @@
 <ion-view view-title="Reviews">
   <ion-content overflow-scroll="true">
-	<div class="menu-group" ng-repeat="(key, value) in menus | groupBy: 'date'" >
-		 <ion-list>
-		<a ng-if="mealIsToday(value[0].date)" name="today"></a>
-
-		<ion-item class="item item-divider">{{getFormattedDate(value[0].date)}} <small ng-if="mealIsToday(value[0].date)" name="today">Today</small></ion-item>
-			<ion-item class="item-avatar item-icon-right" ng-class="mealHasPassed(menu.name, menu.date) ? 'has-passed' : ''" ng-repeat="menu in value" type="item-text-wrap" nav-direction="forward">
-			  <img ng-src="{{icon(menu.name)}}">
-			  
-					
-					
-				
-				<p class="late-plate-detail" ng-bind-html="menu.latePlateMsg"></p>
-				<h2 class="menu-detail">{{menu.entree}}</h2>
-						<div class="is-red"><small class="assertive">Tap to rate this meal</small></div>
-			  
-			</ion-item>
-		 </ion-list>
-	 </div>
-
+    
+    <ion-item class="item item-divider">Rate Recent Meals //fix this query so it is only showing past meals</ion-item>
+    
+     <div class="menu-group" ng-repeat="(key, value) in recentMeals | groupBy: 'date'" >
+      <ion-list>
+        <ion-item class="item item-divider">{{getFormattedDate(value[0].date)}} <small ng-if="mealIsToday(value[0].date)" name="today">Today</small></ion-item>
+        <ion-item class="item-avatar item-icon-right" ng-class="mealHasPassed(menu.name, menu.date) ? 'has-passed' : ''" ng-repeat="menu in value" type="item-text-wrap" nav-direction="forward"> <img ng-src="{{icon(menu.name)}}">
+          <p class="late-plate-detail" ng-bind-html="menu.latePlateMsg"></p>
+          <h2 class="menu-detail">{{menu.entree}}</h2>
+          <div class="is-red"><small class="assertive">Tap to rate this meal</small></div>
+        </ion-item>
+      </ion-list>
+    </div>
+    
+    <ion-item class="item item-divider">Other Meals You've Rated'</ion-item>
+    
+     <div class="menu-group" ng-repeat="(key, value) in reviewedMeals | groupBy: 'date'" >
+      <ion-list>
+        <ion-item class="item item-divider">{{getFormattedDate(value[0].date)}} <small ng-if="mealIsToday(value[0].date)" name="today">Today</small></ion-item>
+        <ion-item class="item-avatar item-icon-right" ng-class="mealHasPassed(menu.name, menu.date) ? 'has-passed' : ''" ng-repeat="menu in value" type="item-text-wrap" nav-direction="forward"> <img ng-src="{{icon(menu.name)}}">
+          <p class="late-plate-detail" ng-bind-html="menu.latePlateMsg"></p>
+          <h2 class="menu-detail">{{menu.entree}}</h2>
+          <div class="is-red"><small class="assertive">[show star rating here]</small></div>
+        </ion-item>
+      </ion-list>
+    </div>
   </ion-content>
 </ion-view>
