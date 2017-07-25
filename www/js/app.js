@@ -6,7 +6,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter'])
-	.run(function($ionicPlatform) {
+	.run(function($ionicPlatform, $ionicPush) {
 		$ionicPlatform.ready(function() {
 			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 			// for form inputs)
@@ -18,16 +18,42 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				// org.apache.cordova.statusbar required
 				//StatusBar.styleDefault();
 			}
+			
+			/*
+			$ionicPush.register().then(function (t) {
+				return $ionicPush.saveToken(t);
+			}).then(function (t) {
+				console.log('Token saved:', t.token);
+			});
+			
+ 
+			$ionicPush.register(function(token) {
+				console.log("My Device token:",token.token);
+				push.saveToken(token);  // persist the token in the Ionic Platform
+			});
+			*/
 		});
 	})
 	
 	.config(function($ionicCloudProvider) {
-  		$ionicCloudProvider.init({
-		 "core": {
-			"app_id": "d6716ba8"
-		 }
-	  });
-	})	
+		$ionicCloudProvider.init({
+			'core': {
+				'app_id': 'd6716ba8'
+		 	},
+			'push': {
+				'sender_id': '208758143110',
+				'pluginConfig': {
+					'ios': {
+						'badge': true,
+						'sound': true
+					},
+					'android': {
+						'iconColor': '#343434'
+					}
+				}
+			}
+	  })
+	})
 	.config(function($ionicConfigProvider) {
 		$ionicConfigProvider.tabs.position('bottom');
 	})
@@ -45,15 +71,13 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				abstract: true,
 				templateUrl: 'templates/tabs.html',
 				
-				
 				onEnter: function($state, $ionicAuth){		
-					//if user is not authenticated, go to welcome screen
+					//if user is not authenticated, go to welcome screen (but if we are in a browser (testing) ignore this since authentication is not supported in browsers)
 				  if(!$ionicAuth.isAuthenticated()){
-                        //$state.go('login');
+						if (!ionic.Platform.is('browser')) {
+							$state.go('login');
+						}
 					}
-					
-					
-					//if user is authenticated, but their activation code isn't valid
 				 }
 				 
 			})
@@ -94,6 +118,17 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				views: {
 					'tab-reviews': {
 						templateUrl: 'templates/tab-reviews.html',
+						controller: 'ReviewsCtrl'
+					}
+				}
+			})
+		
+			
+			.state('tab.reviews/:menuId', {
+				url: '/reviews/:menuId',
+				views: {
+					'tab-reviews': {
+						templateUrl: 'templates/review-detail.html',
 						controller: 'ReviewsCtrl'
 					}
 				}

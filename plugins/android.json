@@ -27,6 +27,9 @@
         },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.collegechefs.meals"
+        },
+        "phonegap-plugin-push": {
+            "PACKAGE_NAME": "com.collegechefs.meals"
         }
     },
     "dependent_plugins": {}

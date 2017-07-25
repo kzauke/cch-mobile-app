@@ -1,11 +1,53 @@
 <!--
-  This template loads for the 'tab.friend-detail' state (app.js)
-  'friend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
-  The FriendsCtrl pulls data from the Friends service (service.js)
-  The Friends service returns an array of friend data
+  This template loads for the 'tab.meal' and tab.meal/:menuId states (app.js)
+  'meal' is a $scope variable created in the MealCtrl controller (controllers.js)
+  The MealCtrl pulls data from the Menus service (service.js)
 -->
-<ion-view view-title="{{review.name}}">
-  <ion-content class="padding">
-    <h2>Details here</h2>
-  </ion-content>
+
+<ion-view hide-back-button="false">
+	<ion-nav-title>{{getFormattedDate(meal.date)}}</ion-nav-title>
+	<ion-content>
+		<div class="padding">
+			<div ng-if="mealHasPassed(meal.name, meal.date)" class="card alert alert-info item item-text-wrap item-positive" role="alert">
+				<div class="item item-text-wrap item-positive">This meal has passed.</div>
+			</div>
+			<div ng-show="noItems" ng-bind-html="noItems" style="text-align:center"></div>
+			<h2>{{meal.name}}</h2>
+			<ul ng-bind-html="meal.fullmenu" class="meal-items">
+			</ul>
+		</div>
+		
+
+		
+		<form class="list" ng-submit="submitReviewForMeal(rating, meal.dnnMealId)">
+			<label class="item item-input item-stacked-label">
+				<span class="input-label is-block" ng-show="!isRated">Tap to rate</span>
+				<span class="input-label is-block" ng-show="isRated">Your rating</span>
+				<span class="star-rating is-block isRated-{{isRated}}">
+					<input type="radio" id="rating__star-5" name="rating" value="5" ng-model="rating.StarRating" ng-disabled="isRated" ng-checked="meal.StarRating == 5">
+					<label for="rating__star-5">5</label>
+					<input type="radio" id="rating__star-4" name="rating" value="4" ng-model="rating.StarRating" ng-disabled="isRated" ng-checked="meal.StarRating == 4">
+					<label for="rating__star-4">4</label>
+					<input type="radio" id="rating__star-3" name="rating" value="3" ng-model="rating.StarRating" ng-disabled="isRated" ng-checked="meal.StarRating == 3">
+					<label for="rating__star-3">3</label>
+					<input type="radio" id="rating__star-2" name="rating" value="2" ng-model="rating.StarRating" ng-disabled="isRated" ng-checked="meal.StarRating == 2">
+					<label for="rating__star-2">2</label>
+					<input type="radio" id="rating__star-1" name="rating" value="1" ng-model="rating.StarRating" ng-disabled="isRated" ng-checked="meal.StarRating == 1">
+					<label for="rating__star-1">1</label>
+				</span>
+			</label>
+			
+			<label class="item item-input item-stacked-label">
+				<span class="input-label" ng-show="!isRated">Leave a comment</span>
+				<span class="input-label" ng-show="isRated">Your comments</span>
+
+				<textarea rows="3" id="rating__comment" ng-disabled="isRated" ng-model="rating.Comments">{{meal.Comments}}</textarea>
+			</label>
+			<div class="padding">
+				<button class="button button-assertive request-lp">Submit</button>
+			</div>
+		</form>
+		
+		
+	</ion-content>
 </ion-view>
