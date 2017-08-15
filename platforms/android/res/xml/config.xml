@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.collegechefs.meals" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.collegechefs.meals" version="1.0.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <feature name="Device">
         <param name="android-package" value="org.apache.cordova.device.Device" />
     </feature>
@@ -23,13 +23,19 @@
         <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
     </feature>
     <name>College Chefs</name>
-    <description>
-        View your house's meals, order late plates and more!
+    <description>
+
+        View your house's meals, order late plates and more!
+
     </description>
-    <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
-      Accuraty Solutions
+    <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
+
+      Accuraty Solutions
+
     </author>
     <content src="index.html" />
+    <allow-navigation href="*" />
+    <allow-intent href="*" />
     <access origin="*" />
     <access launch-external="yes" origin="tel:*" />
     <access launch-external="yes" origin="mailto:*" />

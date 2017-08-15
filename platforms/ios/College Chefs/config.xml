@@ -37,12 +37,17 @@
     </feature>
     <name>College Chefs</name>
     <description>
+
         View your house's meals, order late plates and more!
+
     </description>
     <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
+
       Accuraty Solutions
+
     </author>
     <content src="index.html" />
+    <allow-navigation href="*" />
     <access origin="*" />
     <access launch-external="yes" origin="tel:*" />
     <access launch-external="yes" origin="mailto:*" />
