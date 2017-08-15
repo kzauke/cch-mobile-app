@@ -2,14 +2,10 @@
 <widget id="com.collegechefs.meals" version="1.0.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>College Chefs</name>
     <description>
-
         View your house's meals, order late plates and more!
-
     </description>
     <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
-
       Accuraty Solutions
-
     </author>
     <content src="index.html" />
     <allow-navigation href="*" />
