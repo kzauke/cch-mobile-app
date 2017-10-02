@@ -1,6 +1,6 @@
 <ion-view hide-nav-bar="true" hide-back-button="true" view-title="Login" class="background-dark">
 	<ion-content class="padding" scroll="false">
-	 <img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo"> 
+	 <!--<img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo"> 
          <div ng-show="loginMessage.text"  class="error-message card padding" ng-bind-html="loginMessage.text"></div>
 		<form ng-submit="authenticateUser(email, password, 'chefnet')">
 			<div class="list">
@@ -10,13 +10,49 @@
 				<label class="item item-input">
 					<input type="password" name="password" id="password" placeholder="Password" ng-model="password" autocorrect="off" autocapitalize="none">
 				</label>
-				<!-- <p class="password-help"><a href="#/forgot-password">Forgot your password?</a></p> -->
+				<!-- <p class="password-help"><a href="#/forgot-password">Forgot your password?</a></p> 
 				<div class="account-actions">
-					<button class="button button-block button-assertive">Log in</button>
-					<!-- <button ng-click="backToWelcome()" class="button button-block button-stable">Cancel</button> -->
+					<button class="button button-block button-assertive">Log in</button>-->
+					<!-- <button ng-click="backToWelcome()" class="button button-block button-stable">Cancel</button> 
 				</div>
 			</div>
 		</form>
-	<div class="padding account-text"> <span class="is-block">Don't have an account?</span> <span class="is-block"><a href="#/register">Register</a></span> </div>
+	<div class="padding account-text"> <span class="is-block">Don't have an account?</span> <span class="is-block"><a href="#/register">Register</a></span> </div> -->
+	
+	
+	<form name="form" ng-submit="vm.login()">
+	            <input type="password" name="password" class="form-control" ng-model="vm.password" required />
+
+	<input type="text" name="username" class="form-control" ng-model="vm.username" required />
+	<button type="submit" ng-disabled="vm.loading" class="btn btn-primary">Login</button>
+		</form>
+	<!--<div class="col-md-6 col-md-offset-3">
+    <div class="alert alert-info">
+        Username: test<br />
+        Password: test
+    </div>
+    <h2>Login</h2>
+    <form name="form" ng-submit="vm.login()" novalidate>
+        <div class="form-group" ng-class="{ 'has-error': form.$submitted && form.username.$invalid }">
+            <label for="username">Username</label>
+            <input type="text" name="username" class="form-control" ng-model="vm.username" required />
+            <div ng-messages="form.$submitted && form.username.$error" class="help-block">
+                <div ng-message="required">Username is required</div>
+            </div>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error': form.$submitted && form.password.$invalid }">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" ng-model="vm.password" required />
+            <div ng-messages="form.$submitted && form.password.$error" class="help-block">
+                <div ng-message="required">Password is required</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" ng-disabled="vm.loading" class="btn btn-primary">Login</button>
+            <img ng-if="vm.loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+        </div>
+        <div ng-if="vm.error" class="alert alert-danger">{{vm.error}}</div>
+    </form>
+</div>-->
 	</ion-content>
 </ion-view>

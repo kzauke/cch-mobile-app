@@ -1,7 +1,21 @@
 
-angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter'])
-	.run(function ($ionicPlatform) {
+angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router','ngMessages'])
+	.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage) {
 		$ionicPlatform.ready(function () {
+			
+		// keep user logged in after page refresh
+			if ($localStorage.currentUser) {
+					$http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
+			}
+
+			// redirect to login page if not logged in and trying to access a restricted page
+			$rootScope.$on('$locationChangeStart', function (event, next, current) {
+					var publicPages = ['/login'];
+					var restrictedPage = publicPages.indexOf($location.path()) === -1;
+					if (restrictedPage && !$localStorage.currentUser) {
+							$location.path('/login');
+					}
+			});
 			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 			// for form inputs)
 			if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -15,13 +29,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 		});
 	})
 
-.config(function ($ionicCloudProvider) {
-		$ionicCloudProvider.init({
-			"core": {
-				"app_id": "d6716ba8"
-			}
-		});
-	})
+
 	.config(function ($ionicConfigProvider) {
 		$ionicConfigProvider.tabs.position('bottom');
 	})
@@ -164,7 +172,8 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 		.state('login', {
 			url: '/login',
 			templateUrl: 'templates/login.html',
-			controller: 'LoginCtrl'
+			controller: 'LoginCtrl',
+			controllerAs: 'vm'
 		})
 
 		.state('forgot-password', {

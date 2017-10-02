@@ -205,9 +205,33 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	};
 })
 
-.controller('LoginCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $ionicAuth, $ionicUser, $location, $timeout) {
+.controller('LoginCtrl', function ($scope, $location, AuthenticationService) {
+	
+	var vm = this;
 
-	$scope.loginMessage = "No Error Message Yet";
+	vm.login = login;
+
+	initController();
+
+	function initController() {
+			// reset login status
+			AuthenticationService.Logout();
+	};
+
+	function login() {
+		console.log("in function");
+			vm.loading = true;
+			AuthenticationService.Login(vm.username, vm.password, function (result) {
+					if (result === true) {
+							$location.path('/');
+					} else {
+							vm.error = 'Username or password is incorrect';
+							vm.loading = false;
+					}
+			});
+	};
+	
+	/*$scope.loginMessage = "No Error Message Yet";
 
 	$scope.backToWelcome = function () {
 		$timeout(function () {
@@ -224,7 +248,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
 		$scope.loginMessage = Account.authenticateUser($state, $ionicViewSwitcher, method, loginData, $location);
 
-	};
+	};*/
+	
 })
 
 .controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {
