@@ -208,48 +208,27 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 .controller('LoginCtrl', function ($scope, $location, AuthenticationService) {
 	
 	var vm = this;
-
 	vm.login = login;
 
 	initController();
 
 	function initController() {
-			// reset login status
+			//reset login status
 			AuthenticationService.Logout();
-	};
+	}
 
 	function login() {
-		console.log("in function");
-			vm.loading = true;
-			AuthenticationService.Login(vm.username, vm.password, function (result) {
-					if (result === true) {
-							$location.path('/');
-					} else {
-							vm.error = 'Username or password is incorrect';
-							vm.loading = false;
-					}
-			});
-	};
-	
-	/*$scope.loginMessage = "No Error Message Yet";
-
-	$scope.backToWelcome = function () {
-		$timeout(function () {
-			$scope.loginMessage = "";
-		}, 10);
-		Account.backToWelcome($state, $ionicViewSwitcher);
-	};
-
-	$scope.authenticateUser = function (email, password, method) {
-		var loginData = {
-			'username': email,
-			'password': password
-		};
-
-		$scope.loginMessage = Account.authenticateUser($state, $ionicViewSwitcher, method, loginData, $location);
-
-	};*/
-	
+		vm.loading = true;
+		
+		AuthenticationService.Login(vm.username, vm.password, function (result) {
+			if (result === true) {
+								$location.path('/');
+			} else {
+				vm.error = 'There was an error logging you in. Please check your username or password and try again.';
+				vm.loading = false;
+			}
+		});
+	}	
 })
 
 .controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {

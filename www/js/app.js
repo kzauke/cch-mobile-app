@@ -1,5 +1,5 @@
 
-angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router','ngMessages'])
+angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
 	.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage) {
 		$ionicPlatform.ready(function () {
 			
@@ -28,7 +28,19 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 			}
 		});
 	})
+	
+/********************************************************/
+	//prevents preflight by Chrome when testing locally, 
+	//COMMENT OUT FOR PRODUCTION
 
+	.config(function ($httpProvider) {
+		$httpProvider.defaults.headers.common = {};
+		$httpProvider.defaults.headers.post = {};
+		$httpProvider.defaults.headers.put = {};
+		$httpProvider.defaults.headers.patch = {};
+	})
+
+/******************************************************/
 
 	.config(function ($ionicConfigProvider) {
 		$ionicConfigProvider.tabs.position('bottom');

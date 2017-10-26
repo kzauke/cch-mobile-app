@@ -328,29 +328,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 				//return placeholder;
 			}
 
-
-
-			if (method === 'facebook') {
-				/*
-			 $ionicFacebookAuth.login().then(
-			 
-			 //is this user in dnn?
-			 //is there a house specified for this user?
-			 	//if no
-					//request activation code (rsvp)
-			 
-			 );
-			 */
-			}
-
-			if (method === 'twitter') {
-				$ionicAuth.login('twitter').then(
-					//do something
-				);
-			}
-
-			//CollegeChefs.helpers.goToTodaysMeals($state, $ionicViewSwitcher);
-
 		},
 
 		logoff: function ($state, $ionicViewSwitcher) {
@@ -417,47 +394,47 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 .factory('AuthenticationService', function($http,$localStorage){
 	
-	var service = {};
- 
+	var authService = {};
 
-	service.Login = Login;
-	service.Logout = Logout;
-
-	return service;
-
+	authService.Login = Login;
+	authService.Logout = Logout;
+	
+	return authService;
+	
 	function Login(username, password, callback) {
-		console.log("login");
-		
-		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetAuthUserData_v2";
-		
-		$http.post(loginAPI, { token: username })
-				.success(function (response) {
-					console.log(response);
-						// login successful if there's a token in the response
-			/*
-						if (response.token) {
-								// store username and token in local storage to keep user logged in between page refreshes
-								$localStorage.currentUser = { username: username, token: response.token };
+		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
+	
+		$http.post(loginAPI, { username: username, password: password })
+			.success(function(response) {
+					// login successful if there's a token in the response
+					if (response.token) {
+							console.log(response.token);
+							// store username and token in local storage to keep user logged in between page refreshes
+							$localStorage.currentUser = { username: username, token: response.token };
 
-								// add jwt token to auth header for all requests made by the $http service
-								$http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+							// add jwt token to auth header for all requests made by the $http service
+							$http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
 
-								// execute callback with true to indicate successful login
-								callback(true);
-						} else {
-								// execute callback with false to indicate failed login
-								callback(false);
-						}
-						*/
-				});
+							// execute callback with true to indicate successful login
+							callback(true);
+					} else {
+						console.log('failed');
+						// execute callback with false to indicate failed login
+						callback(false);
+					}
+			})
+			.error(function(e) {
+				callback(false);
+				console.log(e);
+			});
 	}
-
+	
 	function Logout() {
 			// remove user from local storage and clear http auth header
 			delete $localStorage.currentUser;
 			$http.defaults.headers.common.Authorization = '';
 	}	
-	
+
 })
 
 .factory('Help', function () {
@@ -512,7 +489,7 @@ CollegeChefs.helpers = {
 	},
 	getUserID: function ($ionicUser) {
 		if (ionic.Platform.is('browser')) {
-			return 2570;
+			return 7501;
 		} else {
 			return $ionicUser.get('dnnuserid');
 		}

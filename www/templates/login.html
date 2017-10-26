@@ -1,31 +1,23 @@
 <ion-view hide-nav-bar="true" hide-back-button="true" view-title="Login" class="background-dark">
 	<ion-content class="padding" scroll="false">
-	 <!--<img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo"> 
-         <div ng-show="loginMessage.text"  class="error-message card padding" ng-bind-html="loginMessage.text"></div>
-		<form ng-submit="authenticateUser(email, password, 'chefnet')">
+	<img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo">
+	<form name="form" ng-submit="vm.login()">
+			<div ng-if="vm.error" class="error-message card padding">{{vm.error}}</div>
+
 			<div class="list">
 				<label class="item item-input">
-					<input type="text" name="email" id="email" placeholder="Email" ng-model="email" autocorrect="off" autocapitalize="none">
+					<input type="text" name="username" id="username" placeholder="Email" ng-model="vm.username" autocorrect="off" autocapitalize="none">
 				</label>
 				<label class="item item-input">
-					<input type="password" name="password" id="password" placeholder="Password" ng-model="password" autocorrect="off" autocapitalize="none">
+					<input type="password" name="password" id="password" placeholder="Password" ng-model="vm.password" autocorrect="off" autocapitalize="none">
 				</label>
-				<!-- <p class="password-help"><a href="#/forgot-password">Forgot your password?</a></p> 
 				<div class="account-actions">
-					<button class="button button-block button-assertive">Log in</button>-->
-					<!-- <button ng-click="backToWelcome()" class="button button-block button-stable">Cancel</button> 
+					<button class="button button-block button-assertive">Log in</button>
 				</div>
 			</div>
 		</form>
-	<div class="padding account-text"> <span class="is-block">Don't have an account?</span> <span class="is-block"><a href="#/register">Register</a></span> </div> -->
-	
-	
-	<form name="form" ng-submit="vm.login()">
-	            <input type="password" name="password" class="form-control" ng-model="vm.password" required />
+		<div class="padding account-text"> <span class="is-block">Don't have an account?</span> <span class="is-block"><a href="#/register">Register</a></span> </div>
 
-	<input type="text" name="username" class="form-control" ng-model="vm.username" required />
-	<button type="submit" ng-disabled="vm.loading" class="btn btn-primary">Login</button>
-		</form>
 	<!--<div class="col-md-6 col-md-offset-3">
     <div class="alert alert-info">
         Username: test<br />
