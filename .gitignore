@@ -15,3 +15,5 @@ gulpfile.js
 ionic.config.json
 package.json
 npm-debug.log
+*.sublime-workspace
+*.sublime-project
