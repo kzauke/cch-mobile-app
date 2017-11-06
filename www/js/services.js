@@ -17,7 +17,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//late plate request 
+		//late plate request
 		requestLatePlate: function ($scope, mealId) {
 			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -38,7 +38,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//cancel late plate request 
+		//cancel late plate request
 		cancelLatePlate: function ($scope, mealId) {
 			var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -58,7 +58,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//retrieve menu data 
+		//retrieve menu data
 		getAll: function () {
 			return $http.get(dataSource, {
 				cache: true
@@ -66,7 +66,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		},
 
 		getTodaysFirstMealIndex: function () {
-			//return 8; 
+			//return 8;
 		},
 
 		getLatePlateMsg: function (mealType, mealIsToday) {
@@ -324,7 +324,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 				}
 
-				//placeholder.text = errorMessageText;         
+				//placeholder.text = errorMessageText;
 				//return placeholder;
 			}
 
@@ -441,6 +441,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 })
 
+
 .factory('Help', function () {
 	var faqs = [{
 		id: 1,
@@ -462,7 +463,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//retrieve menu data 
+		//retrieve menu data
 		all: function () {
 			return faqs;
 		},
@@ -475,7 +476,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			return null;
 		},
 		submitBugReport: function () {
-			//submit bug report here		 
+			//submit bug report here
 		}
 
 	};

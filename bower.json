@@ -7,6 +7,6 @@
   "dependencies": {
     "angular-filter": "^0.5.16",
 		"angular-messages": "~1.6.6",
-		"angular": "~1.6.6",
+		"angular": "~1.6.6"
   }
 }

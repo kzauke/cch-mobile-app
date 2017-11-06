@@ -1,33 +1,36 @@
 {
-    "prepare_queue": {
-        "installed": [],
-        "uninstalled": []
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
     },
-    "config_munge": {
-        "files": {}
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
     },
-    "installed_plugins": {
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-        },
-        "cordova-plugin-inappbrowser": {
-            "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-        },
-        "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.collegechefs.meals"
-        }
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
     },
-    "dependent_plugins": {}
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
+    },
+    "ionic-plugin-keyboard": {
+      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
+    },
+    "cordova-plugin-inappbrowser": {
+      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
+    },
+    "cordova-plugin-console": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    }
+  },
+  "dependent_plugins": {}
 }

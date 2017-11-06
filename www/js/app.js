@@ -1,9 +1,39 @@
+// Database instance
+var db;
 
-angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
-	.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage) {
+angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
+	.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage, $cordovaSQLite) {
 		$ionicPlatform.ready(function () {
-			
-		// keep user logged in after page refresh
+
+			db = $cordovaSQLite.openDB({ name: 'test.db', location: 'default' });
+			$cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Messages (id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT)');
+
+      $cordovaSQLite.execute(db, 'INSERT INTO Messages (message) VALUES (?)', 'test')
+        .then(function(result) {
+            $rootScope.statusMessage = "Message saved successfully!";
+            console.log("Message saved successfully");
+        }, function(error) {
+            $rootScope.statusMessage = "Error on saving: " + error.message;
+            console.log("Error on saving: " + error.message);
+        });
+
+      // $cordovaSQLite.execute(db, 'SELECT * FROM Messages ORDER BY id DESC')
+      // 	.then(
+      // 		function(result) {
+      // 			if (result.rows.length > 0) {
+      // 				$rootScope.newMessage = result.rows.item(0).message;
+      // 				$rootScope.statusMessage = "Message loaded successfully!";
+      // 				console.log("Message loaded successfully");
+      // 			}
+      // 		},
+      // 		function(error) {
+      // 			$rootScope.statusMessage = "Error on loading: " + error.message;
+      // 			console.log("Error on loading: " + error.message);
+      // 		}
+      // 	);
+
+
+			// keep user logged in after page refresh
 			if ($localStorage.currentUser) {
 					//$http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
 			}
@@ -28,17 +58,17 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 			}
 		});
 	})
-	
+
 /********************************************************/
-	//prevents preflight by Chrome when testing locally, 
+	//prevents preflight by Chrome when testing locally,
 	//COMMENT OUT FOR PRODUCTION
 
-	.config(function ($httpProvider) {
-		$httpProvider.defaults.headers.common = {};
-		$httpProvider.defaults.headers.post = {};
-		$httpProvider.defaults.headers.put = {};
-		$httpProvider.defaults.headers.patch = {};
-	})
+	// .config(function ($httpProvider) {
+	// 	$httpProvider.defaults.headers.common = {};
+	// 	$httpProvider.defaults.headers.post = {};
+	// 	$httpProvider.defaults.headers.put = {};
+	// 	$httpProvider.defaults.headers.patch = {};
+	// })
 
 /******************************************************/
 
