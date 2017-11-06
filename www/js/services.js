@@ -17,7 +17,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//late plate request 
+		//late plate request
 		requestLatePlate: function ($scope, mealId) {
 			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -38,7 +38,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//cancel late plate request 
+		//cancel late plate request
 		cancelLatePlate: function ($scope, mealId) {
 			var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -58,7 +58,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//retrieve menu data 
+		//retrieve menu data
 		getAll: function () {
 			return $http.get(dataSource, {
 				cache: true
@@ -66,7 +66,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		},
 
 		getTodaysFirstMealIndex: function () {
-			//return 8; 
+			//return 8;
 		},
 
 		getLatePlateMsg: function (mealType, mealIsToday) {
@@ -324,7 +324,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 				}
 
-				//placeholder.text = errorMessageText;         
+				//placeholder.text = errorMessageText;
 				//return placeholder;
 			}
 
@@ -392,48 +392,49 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
-.factory('AuthenticationService', function($http,$localStorage){
-	
+.factory('AuthenticationService', function($http, $localStorage){
+
 	var authService = {};
 
 	authService.Login = Login;
 	authService.Logout = Logout;
-	
+
 	return authService;
-	
+
 	function Login(username, password, callback) {
-		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
-	
-		$http.post(loginAPI, { username: username, password: password })
+		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData&username=" + username + "&password=" + password;
+
+		$http.get(loginAPI)
 			.success(function(response) {
+				console.log(response);
 					// login successful if there's a token in the response
 					if (response.token) {
 							console.log(response.token);
 							// store username and token in local storage to keep user logged in between page refreshes
-							$localStorage.currentUser = { username: username, token: response.token };
+							// $localStorage.currentUser = { username: username, token: response.token };
 
 							// add jwt token to auth header for all requests made by the $http service
-							$http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+							// $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
 
 							// execute callback with true to indicate successful login
-							callback(true);
+							// callback(true);
 					} else {
 						console.log('failed');
 						// execute callback with false to indicate failed login
-						callback(false);
+						// callback(false);
 					}
 			})
 			.error(function(e) {
-				callback(false);
+				// callback(false);
 				console.log(e);
 			});
 	}
-	
+
 	function Logout() {
 			// remove user from local storage and clear http auth header
 			delete $localStorage.currentUser;
 			$http.defaults.headers.common.Authorization = '';
-	}	
+	}
 
 })
 
@@ -458,7 +459,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//retrieve menu data 
+		//retrieve menu data
 		all: function () {
 			return faqs;
 		},
@@ -471,7 +472,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			return null;
 		},
 		submitBugReport: function () {
-			//submit bug report here		 
+			//submit bug report here
 		}
 
 	};
