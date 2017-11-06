@@ -403,8 +403,12 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	
 	function Login(username, password, callback) {
 		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
+		
+		var config = {
+			params: { username: username, password: password }
+		};
 	
-		$http.post(loginAPI, { username: username, password: password })
+		$http.get(loginAPI, config)
 			.success(function(response) {
 					// login successful if there's a token in the response
 					if (response.token) {
@@ -413,12 +417,12 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 							$localStorage.currentUser = { username: username, token: response.token };
 
 							// add jwt token to auth header for all requests made by the $http service
-							$http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+							//$http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
 
 							// execute callback with true to indicate successful login
 							callback(true);
 					} else {
-						console.log('failed');
+						console.log(response);
 						// execute callback with false to indicate failed login
 						callback(false);
 					}
@@ -432,7 +436,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	function Logout() {
 			// remove user from local storage and clear http auth header
 			delete $localStorage.currentUser;
-			$http.defaults.headers.common.Authorization = '';
+			//$http.defaults.headers.common.Authorization = '';
 	}	
 
 })
