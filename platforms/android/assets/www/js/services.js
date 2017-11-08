@@ -1,7 +1,7 @@
 angular.module('collegeChefs.services', ['ionic.cloud'])
 
 // clean up by reading this article
-//http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
+// http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
 
 .factory('Menus', function ($http, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
 	var Menus = this;
@@ -10,10 +10,10 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
 
-	//24 hour clock
-	var lunchLPEndTime = 10; //no lunch late plate orders after 10am
-	var dinnerLPEndTime = 15; //no dinner late plate orders after 3pm
-	var afterDinnerLPEndTime = 20; //dinner ends after 8pm
+	// 24 hour clock
+	var lunchLPEndTime = 10; // no lunch late plate orders after 10am
+	var dinnerLPEndTime = 15; // no dinner late plate orders after 3pm
+	var afterDinnerLPEndTime = 20; // dinner ends after 8pm
 
 	return {
 
@@ -191,7 +191,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 .factory('Account', function ($http, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
 
-	//get user data from DB
+	// get user data from DB
 	return {
 		getUserInfo: function () {
 
@@ -392,7 +392,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
-.factory('AuthenticationService', function($http, $localStorage){
+.factory('AuthenticationService', function($http, $cordovaSQLite, $state){
 
 	var authService = {};
 
@@ -402,40 +402,80 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	return authService;
 
 	function Login(username, password, callback) {
-		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData&username=" + username + "&password=" + password;
 
-		$http.get(loginAPI)
+		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
+		var config = { params: { username: username, password: password } };
+
+		$http.get(loginAPI, config)
 			.success(function(response) {
-				console.log(response);
+
 					// login successful if there's a token in the response
 					if (response.token) {
-							console.log(response.token);
-							// store username and token in local storage to keep user logged in between page refreshes
-							// $localStorage.currentUser = { username: username, token: response.token };
 
-							// add jwt token to auth header for all requests made by the $http service
-							// $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+						// add token to auth header for all requests made by $http service
+						// $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
 
-							// execute callback with true to indicate successful login
-							// callback(true);
+						// store username and token in SQLite
+						$cordovaSQLite.execute(db, 'INSERT INTO Session (username, token) VALUES (?, ?)', [username, response.token])
+			        .then(function(result) {
+			            console.log("Session saved successfully");
+			        }, function(error) {
+			            console.log("Error on saving: " + error.message);
+			        }
+			      );
+
+			      // $cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
+			      // 	.then(function(result) {
+			      // 		if (result.rows.length > 0) {
+			      // 			console.log("SELECTED -> " + result.rows.item(0).username + " " + result.rows.item(0).token);
+			      // 		} else {
+			      // 			console.log("No results found.");
+			      // 		}
+			      // 	}, function(error) {
+			      // 		console.log("Error on loading: " + error.message);
+			      // 	}
+			      // );
+
+						// var token = response.token;
+						var decoded = jwt_decode(response.token);
+						var tokenUserId = decoded.user_id;
+						var tokenUser = decoded.custom.username;
+						var tokenFirstName = decoded.custom.firstname;
+						var tokenLastName = decoded.custom.lastname;
+						var tokenEmail = decoded.custom.email;
+						var tokenHouse = decoded.custom.house;
+						var tokenSupervisor = decoded.custom.supervisor;
+						var tokenChef = decoded.custom.chef;
+
+						console.log("User ID: " + tokenUserId);
+						console.log("Username: " + tokenUser);
+						console.log("First Name: " + tokenFirstName);
+						console.log("Last Name: " + tokenLastName);
+						console.log("Email: " + tokenEmail);
+						console.log("House: " + tokenHouse);
+						console.log("Supervisor: " + tokenSupervisor);
+						console.log("Chef: " + tokenChef);
+
+						// execute callback with true to indicate successful login
+						callback(true);
 					} else {
-						console.log('failed');
+						console.log(response);
 						// execute callback with false to indicate failed login
-						// callback(false);
+						callback(false);
 					}
 			})
 			.error(function(e) {
-				// callback(false);
+				callback(false);
 				console.log(e);
-			});
+			}
+		);
 	}
 
 	function Logout() {
 			// remove user from local storage and clear http auth header
-			delete $localStorage.currentUser;
-			$http.defaults.headers.common.Authorization = '';
+			// delete $localStorage.currentUser;
+			//$http.defaults.headers.common.Authorization = '';
 	}
-
 })
 
 .factory('Help', function () {
@@ -459,7 +499,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//retrieve menu data
+		// retrieve menu data
 		all: function () {
 			return faqs;
 		},
@@ -472,11 +512,9 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			return null;
 		},
 		submitBugReport: function () {
-			//submit bug report here
+			// submit bug report here
 		}
-
 	};
-
 });
 
 var CollegeChefs = CollegeChefs || {};
@@ -494,6 +532,5 @@ CollegeChefs.helpers = {
 		} else {
 			return $ionicUser.get('dnnuserid');
 		}
-
 	}
 };

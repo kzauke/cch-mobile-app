@@ -205,30 +205,30 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	};
 })
 
-.controller('LoginCtrl', function ($scope, $location, AuthenticationService) {
-	
+.controller('LoginCtrl', function ($location, AuthenticationService, $state) {
+
 	var vm = this;
 	vm.login = login;
 
 	initController();
 
 	function initController() {
-			//reset login status
+			// reset login status
 			AuthenticationService.Logout();
 	}
 
 	function login() {
 		vm.loading = true;
-		
+
 		AuthenticationService.Login(vm.username, vm.password, function (result) {
 			if (result === true) {
-								$location.path('/');
+				$location.path('/tab/meal/next');
 			} else {
 				vm.error = 'There was an error logging you in. Please check your username or password and try again.';
 				vm.loading = false;
 			}
 		});
-	}	
+	}
 })
 
 .controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {
