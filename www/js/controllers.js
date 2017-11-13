@@ -97,7 +97,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 			modalTemplate = "templates/modal-cancel-late-plate.html";
 		}
 		$scope.modal.show();
-
 	};
 
 	//request late plate modal
@@ -169,7 +168,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 			$ionicLoading.hide();
 		}, 3000);
 	}
-
 })
 
 .controller('ReviewsCtrl', function ($scope, Globals, Menus) {
@@ -213,8 +211,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	initController();
 
 	function initController() {
-			// reset login status
-			AuthenticationService.Logout();
+		// reset login status
+		AuthenticationService.Logout();
 	}
 
 	function login() {

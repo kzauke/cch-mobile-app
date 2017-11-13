@@ -189,9 +189,9 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
-.factory('Account', function ($http, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
+.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
 
-	// get user data from DB
+	// get user data from db
 	return {
 		getUserInfo: function () {
 
@@ -321,11 +321,10 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 						placeholder.text = errorMessageText;
 						return placeholder;
 					}, 500);
-
 				}
 
-				//placeholder.text = errorMessageText;
-				//return placeholder;
+				// placeholder.text = errorMessageText;
+				// return placeholder;
 			}
 
 		},
@@ -334,6 +333,8 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			$ionicAuth.logout();
 			$ionicViewSwitcher.nextDirection('forward');
 			$state.go('login');
+
+			console.log("Account.logoff() triggered");
 		}
 	};
 })
@@ -398,6 +399,8 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	authService.Login = Login;
 	authService.Logout = Logout;
+	authService.isAuthenticated = isAuthenticated;
+	authService.getUserInfo = getUserInfo;
 
 	return authService;
 
@@ -424,38 +427,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			        }
 			      );
 
-			      // $cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
-			      // 	.then(function(result) {
-			      // 		if (result.rows.length > 0) {
-			      // 			console.log("SELECTED -> " + result.rows.item(0).username + " " + result.rows.item(0).token);
-			      // 		} else {
-			      // 			console.log("No results found.");
-			      // 		}
-			      // 	}, function(error) {
-			      // 		console.log("Error on loading: " + error.message);
-			      // 	}
-			      // );
-
-						// var token = response.token;
-						var decoded = jwt_decode(response.token);
-						var tokenUserId = decoded.user_id;
-						var tokenUser = decoded.custom.username;
-						var tokenFirstName = decoded.custom.firstname;
-						var tokenLastName = decoded.custom.lastname;
-						var tokenEmail = decoded.custom.email;
-						var tokenHouse = decoded.custom.house;
-						var tokenSupervisor = decoded.custom.supervisor;
-						var tokenChef = decoded.custom.chef;
-
-						console.log("User ID: " + tokenUserId);
-						console.log("Username: " + tokenUser);
-						console.log("First Name: " + tokenFirstName);
-						console.log("Last Name: " + tokenLastName);
-						console.log("Email: " + tokenEmail);
-						console.log("House: " + tokenHouse);
-						console.log("Supervisor: " + tokenSupervisor);
-						console.log("Chef: " + tokenChef);
-
 						// execute callback with true to indicate successful login
 						callback(true);
 					} else {
@@ -474,7 +445,50 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	function Logout() {
 			// remove user from local storage and clear http auth header
 			// delete $localStorage.currentUser;
-			//$http.defaults.headers.common.Authorization = '';
+			// $http.defaults.headers.common.Authorization = '';
+
+			// var query = 'DELETE FROM Session WHERE id = ?';
+			// $cordovaSQLite.execute(db, query, [userInfo.id]);
+
+			// console.log(userInfo.id);
+			console.log("AuthenticationService.Logout() triggered");
+	}
+
+	// function isAuthenticated() {
+	// 	if (1===1) {
+	// 		return true;
+	// 	} else {
+	// 		return false;
+	// 	}
+	// }
+
+	function getUserInfo(db) {
+
+		var userInfo = {};
+
+		$cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
+    	.then(function(result) {
+    		if (result.rows.length > 0) {
+
+	   			var decoded = jwt_decode(result.rows.item(0).token);
+
+	   			userInfo.id = decoded.user_id;
+					userInfo.username = decoded.custom.username;
+					userInfo.firstname = decoded.custom.firstname;
+					userInfo.lastname = decoded.custom.lastname;
+					userInfo.email = decoded.custom.email;
+					userInfo.house = decoded.custom.house;
+					userInfo.supervisor = decoded.custom.supervisor;
+					userInfo.chef = decoded.custom.chef;
+    		} else {
+    			console.log("No results found.");
+    		}
+    	}, function(error) {
+    		console.log("Error on loading: " + error.message);
+    	}
+    );
+
+    return userInfo;
 	}
 })
 

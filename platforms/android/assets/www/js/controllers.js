@@ -213,8 +213,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	initController();
 
 	function initController() {
-			// reset login status
-			AuthenticationService.Logout();
+		// reset login status
+		AuthenticationService.Logout();
 	}
 
 	function login() {

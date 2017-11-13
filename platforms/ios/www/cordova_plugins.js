@@ -77,7 +77,7 @@ module.exports.metadata =
     "cordova-plugin-statusbar": "2.2.0",
     "cordova-plugin-whitelist": "1.3.0",
     "ionic-plugin-keyboard": "2.2.1",
-    "cordova-sqlite-storage": "2.1.0"
+    "cordova-sqlite-storage": "2.1.1"
 };
 // BOTTOM OF METADATA
 });

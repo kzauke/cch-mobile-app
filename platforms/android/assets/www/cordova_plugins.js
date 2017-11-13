@@ -61,7 +61,7 @@ module.exports.metadata =
     "ionic-plugin-keyboard": "2.2.1",
     "cordova-plugin-inappbrowser": "1.6.1",
     "cordova-plugin-console": "1.0.6",
-    "cordova-sqlite-storage": "2.1.0"
+    "cordova-sqlite-storage": "2.1.1"
 };
 // BOTTOM OF METADATA
 });

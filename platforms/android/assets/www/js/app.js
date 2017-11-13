@@ -1,8 +1,10 @@
 // Database instance
 var db = null;
+var isAuthenticated = false;
+var userInfo;
 
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
-	.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage, $cordovaSQLite) {
+	.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage, $cordovaSQLite, $injector, $state) {
 		$ionicPlatform.ready(function () {
 
       // Instantiate SQLite database connection after platform is ready
@@ -13,6 +15,18 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			if ($localStorage.currentUser) {
 					// $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.currentUser.token;
 			}
+
+      var AuthenticationService = $injector.get('AuthenticationService');
+      userInfo = AuthenticationService.getUserInfo(db);
+
+      console.log(userInfo);
+
+      if (userInfo.id != null) {
+        isAuthenticated = true;
+        $state.go('tab.account');
+      } else {
+        $state.go('login');
+      }
 
 			// // redirect to login page if not logged in and trying to access a restricted page
 			// $rootScope.$on('$locationChangeStart', function (event, next, current) {
@@ -66,11 +80,20 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
   			url: '/tab',
   			abstract: true,
   			templateUrl: 'templates/tabs.html',
-  			onEnter: function ($state, $ionicAuth) {
+  			onEnter: function ($state, $injector) {
   				// if user is not authenticated, go to welcome screen
-  				if (!$ionicAuth.isAuthenticated()) {
-  					// $state.go('login');
-  				}
+          // query the db, see if there's a user id
+
+          if (!isAuthenticated) {
+            $state.go('login');
+          }
+
+          // var AuthenticationService = $injector.get('AuthenticationService');
+          // // console.log(AuthenticationService);
+          // AuthenticationService.getUserInfo();
+          // if (NOT AUTHENTICATED) {
+            // $state.go('login');
+          // }
   			}
   		})
 
