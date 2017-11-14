@@ -189,7 +189,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
-.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
+.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicUser) {
 
 	// get user data from db
 	return {
@@ -210,23 +210,20 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		},
 
 		updateProfile: function ($state) {
-			//submit new user data to DB, refresh data
-
+			// submit new user data to DB, refresh data
 			console.log('profile saved');
 			$state.go('tab.account');
 		},
 
 		updatePassword: function ($state) {
-			//submit new user data to DB, refresh data
+			// submit new user data to DB, refresh data
 			console.log('password saved');
 			$state.go('tab.account');
 		},
 
 		registerUser: function ($state, $ionicViewSwitcher, method, loginData, $location, $q) {
-
 			var placeholder = {};
 			var defer = $q.defer();
-
 
 			//send registration data to custom handler that adds user to our system
 			var registerURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
@@ -246,10 +243,10 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 						}
 					} else if (response.data.token !== undefined) {
 						var expToken = response.data.token;
-						//decode token
+						// decode token
 						var decoded = jwt_decode(expToken);
 						console.log(decoded.username);
-						//if valid, authenticate user with our custom login
+						// if valid, authenticate user with our custom login
 						var loginOptions = {
 							'inAppBrowserOptions': {
 								'hidden': true
@@ -273,7 +270,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 					} else {
 						console.log("Something went wrong while registering your account. Please contact your administrator");
 					}
-
 				}
 			);
 			defer.resolve();
@@ -284,7 +280,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			$ionicViewSwitcher.nextDirection('back');
 			console.log("request activation");
 			$state.go('register');
-
 		},
 
 		backToWelcome: function ($state, $ionicViewSwitcher) {
@@ -307,6 +302,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 						'hidden': true
 					}
 				};
+
 				$ionicAuth.login('custom', loginData, loginOptions).then(function (s) {
 
 				}, function (e) {
@@ -322,19 +318,16 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 						return placeholder;
 					}, 500);
 				}
-
 				// placeholder.text = errorMessageText;
 				// return placeholder;
 			}
-
 		},
 
 		logoff: function ($state, $ionicViewSwitcher) {
 			$ionicAuth.logout();
 			$ionicViewSwitcher.nextDirection('forward');
 			$state.go('login');
-
-			console.log("Account.logoff() triggered");
+			console.log("`Account.logoff()` triggered");
 		}
 	};
 })
