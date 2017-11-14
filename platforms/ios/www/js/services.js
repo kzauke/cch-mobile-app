@@ -1,7 +1,7 @@
 angular.module('collegeChefs.services', ['ionic.cloud'])
 
 // clean up by reading this article
-//http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
+// http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
 
 .factory('Menus', function ($http, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
 	var Menus = this;
@@ -10,14 +10,14 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
 
-	//24 hour clock
-	var lunchLPEndTime = 10; //no lunch late plate orders after 10am
-	var dinnerLPEndTime = 15; //no dinner late plate orders after 3pm
-	var afterDinnerLPEndTime = 20; //dinner ends after 8pm
+	// 24 hour clock
+	var lunchLPEndTime = 10; // no lunch late plate orders after 10am
+	var dinnerLPEndTime = 15; // no dinner late plate orders after 3pm
+	var afterDinnerLPEndTime = 20; // dinner ends after 8pm
 
 	return {
 
-		//late plate request 
+		//late plate request
 		requestLatePlate: function ($scope, mealId) {
 			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -38,7 +38,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//cancel late plate request 
+		//cancel late plate request
 		cancelLatePlate: function ($scope, mealId) {
 			var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -58,7 +58,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//retrieve menu data 
+		//retrieve menu data
 		getAll: function () {
 			return $http.get(dataSource, {
 				cache: true
@@ -66,7 +66,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		},
 
 		getTodaysFirstMealIndex: function () {
-			//return 8; 
+			//return 8;
 		},
 
 		getLatePlateMsg: function (mealType, mealIsToday) {
@@ -189,9 +189,9 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
-.factory('Account', function ($http, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
+.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicFacebookAuth, $ionicUser) {
 
-	//get user data from DB
+	// get user data from db
 	return {
 		getUserInfo: function () {
 
@@ -321,35 +321,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 						placeholder.text = errorMessageText;
 						return placeholder;
 					}, 500);
-
 				}
 
-				//placeholder.text = errorMessageText;         
-				//return placeholder;
+				// placeholder.text = errorMessageText;
+				// return placeholder;
 			}
-
-
-
-			if (method === 'facebook') {
-				/*
-			 $ionicFacebookAuth.login().then(
-			 
-			 //is this user in dnn?
-			 //is there a house specified for this user?
-			 	//if no
-					//request activation code (rsvp)
-			 
-			 );
-			 */
-			}
-
-			if (method === 'twitter') {
-				$ionicAuth.login('twitter').then(
-					//do something
-				);
-			}
-
-			//CollegeChefs.helpers.goToTodaysMeals($state, $ionicViewSwitcher);
 
 		},
 
@@ -357,6 +333,8 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			$ionicAuth.logout();
 			$ionicViewSwitcher.nextDirection('forward');
 			$state.go('login');
+
+			console.log("Account.logoff() triggered");
 		}
 	};
 })
@@ -415,6 +393,100 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
+.factory('AuthenticationService', function($http, $cordovaSQLite, $state){
+
+	var authService = {};
+
+	authService.Login = Login;
+	authService.Logout = Logout;
+	authService.getUserInfo = getUserInfo;
+
+	return authService;
+
+	function Login(username, password, callback) {
+
+		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
+		var config = { params: { username: username, password: password } };
+
+		$http.get(loginAPI, config)
+			.success(function(response) {
+
+					// login successful if there's a token in the response
+					if (response.token) {
+
+						// add token to auth header for all requests made by $http service
+						// $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+
+						// store username and token in SQLite
+						$cordovaSQLite.execute(db, 'INSERT INTO Session (username, token) VALUES (?, ?)', [username, response.token])
+			        .then(function(result) {
+			            console.log("Session saved successfully");
+			        }, function(error) {
+			            console.log("Error on saving: " + error.message);
+			        }
+			      );
+
+						// execute callback with true to indicate successful login
+						callback(true);
+					} else {
+						console.log(response);
+						// execute callback with false to indicate failed login
+						callback(false);
+					}
+			})
+			.error(function(e) {
+				callback(false);
+				console.log(e);
+			}
+		);
+	}
+
+	function Logout(db) {
+			// remove user from local storage and clear http auth header
+			// delete $localStorage.currentUser;
+			// $http.defaults.headers.common.Authorization = '';
+
+			// var query = 'DELETE FROM Session WHERE id = ?';
+			// $cordovaSQLite.execute(db, query, [userInfo.id]);
+
+			// console.log(userInfo.id);
+			console.log("AuthenticationService.Logout() triggered");
+
+			// $cordovaSQLite.execute(db, 'DROP TABLE IF EXISTS Session');
+	}
+
+	function getUserInfo(db, callback) {
+
+		var userInfo = {};
+
+		$cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
+    	.then(function(result) {
+    		if (result.rows.length > 0) {
+
+	   			var decoded = jwt_decode(result.rows.item(0).token);
+
+	   			userInfo.id = decoded.user_id;
+					userInfo.username = decoded.custom.username;
+					userInfo.firstname = decoded.custom.firstname;
+					userInfo.lastname = decoded.custom.lastname;
+					userInfo.email = decoded.custom.email;
+					userInfo.house = decoded.custom.house;
+					userInfo.supervisor = decoded.custom.supervisor;
+					userInfo.chef = decoded.custom.chef;
+
+					callback(true);
+    		} else {
+    			console.log("No results found.");
+    		}
+    	}, function(error) {
+    		console.log("Error on loading: " + error.message);
+    	}
+    );
+
+    return userInfo;
+	}
+})
+
 .factory('Help', function () {
 	var faqs = [{
 		id: 1,
@@ -436,7 +508,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//retrieve menu data 
+		// retrieve menu data
 		all: function () {
 			return faqs;
 		},
@@ -449,11 +521,9 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			return null;
 		},
 		submitBugReport: function () {
-			//submit bug report here		 
+			// submit bug report here
 		}
-
 	};
-
 });
 
 var CollegeChefs = CollegeChefs || {};
@@ -467,10 +537,9 @@ CollegeChefs.helpers = {
 	},
 	getUserID: function ($ionicUser) {
 		if (ionic.Platform.is('browser')) {
-			return 2570;
+			return 7501;
 		} else {
 			return $ionicUser.get('dnnuserid');
 		}
-
 	}
 };

@@ -97,7 +97,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 			modalTemplate = "templates/modal-cancel-late-plate.html";
 		}
 		$scope.modal.show();
-
 	};
 
 	//request late plate modal
@@ -169,7 +168,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 			$ionicLoading.hide();
 		}, 3000);
 	}
-
 })
 
 .controller('ReviewsCtrl', function ($scope, Globals, Menus) {
@@ -205,26 +203,30 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	};
 })
 
-.controller('LoginCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $ionicAuth, $ionicUser, $location, $timeout) {
+.controller('LoginCtrl', function ($location, AuthenticationService, $state) {
 
-	$scope.loginMessage = "No Error Message Yet";
+	var vm = this;
+	vm.login = login;
 
-	$scope.backToWelcome = function () {
-		$timeout(function () {
-			$scope.loginMessage = "";
-		}, 10);
-		Account.backToWelcome($state, $ionicViewSwitcher);
-	};
+	initController();
 
-	$scope.authenticateUser = function (email, password, method) {
-		var loginData = {
-			'username': email,
-			'password': password
-		};
+	function initController() {
+		// reset login status
+		AuthenticationService.Logout();
+	}
 
-		$scope.loginMessage = Account.authenticateUser($state, $ionicViewSwitcher, method, loginData, $location);
+	function login() {
+		vm.loading = true;
 
-	};
+		AuthenticationService.Login(vm.username, vm.password, function (result) {
+			if (result === true) {
+				$location.path('/tab/meal/next');
+			} else {
+				vm.error = 'There was an error logging you in. Please check your username or password and try again.';
+				vm.loading = false;
+			}
+		});
+	}
 })
 
 .controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {

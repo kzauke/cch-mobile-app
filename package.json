@@ -35,7 +35,8 @@
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
     "cordova-sqlite-storage@^2.1.0",
-    "cordova-sqlite-storage"
+    "cordova-sqlite-storage",
+    "cordova-sqlite-storage@^2.1.1"
   ],
   "cordovaPlatforms": [],
   "cordova": {

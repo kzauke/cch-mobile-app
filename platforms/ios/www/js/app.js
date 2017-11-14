@@ -1,49 +1,82 @@
+// Database instance
+var db = null;
+var userInfo;
 
-angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter'])
-	.run(function ($ionicPlatform) {
-		$ionicPlatform.ready(function () {
-			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-			// for form inputs)
-			if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-				cordova.plugins.Keyboard.disableScroll(true);
-			}
-			if (window.StatusBar) {
-				// org.apache.cordova.statusbar required
-				//StatusBar.styleDefault();
-			}
-		});
-	})
+angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
 
-.config(function ($ionicCloudProvider) {
-		$ionicCloudProvider.init({
-			"core": {
-				"app_id": "d6716ba8"
-			}
-		});
-	})
-	.config(function ($ionicConfigProvider) {
-		$ionicConfigProvider.tabs.position('bottom');
-	})
-	.config(function ($stateProvider, $urlRouterProvider) {
+.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage, $cordovaSQLite, $injector, $state) {
+	$ionicPlatform.ready(function () {
 
-		$stateProvider
+    // Instantiate SQLite database connection after platform is ready
+		db = $cordovaSQLite.openDB({ name: 'authentication.db', location: 'default' });
+		$cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)');
 
+    var AuthenticationService = $injector.get('AuthenticationService');
+    userInfo = AuthenticationService.getUserInfo(db, function(result){
+      if (!result) {
+        $state.go('login');
+      }
+    });
+
+		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard for form inputs)
+		if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+			cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+			cordova.plugins.Keyboard.disableScroll(true);
+		}
+
+		if (window.StatusBar) {
+			// org.apache.cordova.statusbar required
+			//StatusBar.styleDefault();
+		}
+	});
+})
+
+
+
+/********************************************************/
+	//prevents preflight by Chrome when testing locally,
+	//COMMENT OUT FOR PRODUCTION
+
+	// .config(function ($httpProvider) {
+	// 	$httpProvider.defaults.headers.common = {};
+	// 	$httpProvider.defaults.headers.post = {};
+	// 	$httpProvider.defaults.headers.put = {};
+	// 	$httpProvider.defaults.headers.patch = {};
+	// })
+/******************************************************/
+
+
+
+.config(function ($ionicConfigProvider) {
+	$ionicConfigProvider.tabs.position('bottom');
+})
+.config(function ($stateProvider, $urlRouterProvider) {
+  // default route
+  // return correct result based on datetime.now
+  $urlRouterProvider.otherwise('/tab/meal/next');
+
+  // app routes
+	$stateProvider
 		.state('tab', {
 			url: '/tab',
 			abstract: true,
 			templateUrl: 'templates/tabs.html',
+			onEnter: function ($state, $injector) {
+				// if user is not authenticated, go to welcome screen
+        // query the db, see if there's a user id
 
+        // if (!isAuthenticated) {
+        //   $state.go('login');
+        // }
 
-			onEnter: function ($state, $ionicAuth) {
-				//if user is not authenticated, go to welcome screen
-				if (!$ionicAuth.isAuthenticated()) {
-					$state.go('login');
-				}
+        // var AuthenticationService = $injector.get('AuthenticationService');
+        // // console.log(AuthenticationService);
+        // AuthenticationService.getUserInfo();
+        // if (NOT AUTHENTICATED) {
+          // $state.go('login');
+        // }
 			}
-
 		})
-
 		// Each tab has its own nav history stack:
 		.state('tab.menus', {
 			url: '/menus',
@@ -54,8 +87,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.meal', {
+    .state('tab.meal', {
 			url: '/meal/:menuId',
 			views: {
 				'tab-meal': {
@@ -64,8 +96,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.meal/:menuId', {
+    .state('tab.meal/:menuId', {
 			url: '/meal/:menuId',
 			views: {
 				'tab-meal': {
@@ -74,8 +105,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.reviews', {
+    .state('tab.reviews', {
 			url: '/reviews',
 			views: {
 				'tab-reviews': {
@@ -84,8 +114,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.profile', {
+    .state('tab.profile', {
 			url: '/profile',
 			views: {
 				'tab-account': {
@@ -94,8 +123,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.password', {
+    .state('tab.password', {
 			url: '/password',
 			views: {
 				'tab-account': {
@@ -104,8 +132,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.contact', {
+    .state('tab.contact', {
 			url: '/contact',
 			views: {
 				'tab-account': {
@@ -114,8 +141,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.reporting', {
+    .state('tab.reporting', {
 			url: '/reporting',
 			views: {
 				'tab-account': {
@@ -124,8 +150,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.help', {
+    .state('tab.help', {
 			url: '/help',
 			views: {
 				'tab-account': {
@@ -134,8 +159,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.help/:faqId', {
+    .state('tab.help/:faqId', {
 			url: '/help/:faqId',
 			views: {
 				'tab-account': {
@@ -144,8 +168,7 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('tab.account', {
+    .state('tab.account', {
 			url: '/account',
 			views: {
 				'tab-account': {
@@ -154,45 +177,39 @@ angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChe
 				}
 			}
 		})
-
-		.state('activation', {
+    .state('activation', {
 			url: '/activation',
 			templateUrl: 'templates/activation.html',
 			controller: 'ActivationCtrl'
 		})
-
-		.state('login', {
+    .state('login', {
 			url: '/login',
 			templateUrl: 'templates/login.html',
-			controller: 'LoginCtrl'
+			controller: 'LoginCtrl',
+			controllerAs: 'vm',
+      onEnter: function ($state) {
+        console.log("Login state?");
+      }
 		})
-
-		.state('forgot-password', {
+    .state('forgot-password', {
 			url: '/forgot-password',
 			templateUrl: 'templates/forgot-password.html',
 			controller: 'ForgotPasswordCtrl'
 		})
-
-		.state('request-activation', {
+    .state('request-activation', {
 			url: '/request-activation',
 			templateUrl: 'templates/request-activation.html',
 			controller: 'RequestActivationCtrl'
 		})
-
-		.state('register', {
+    .state('register', {
 			url: '/register',
 			templateUrl: 'templates/register.html',
 			controller: 'RegisterCtrl'
 		})
-
-		.state('welcome', {
+    .state('welcome', {
 			url: '/welcome',
 			templateUrl: 'templates/welcome.html',
 			controller: 'WelcomeCtrl'
-		});
-
-		// if none of the above states are matched, use this as the fallback
-
-		$urlRouterProvider.otherwise('/tab/meal/next'); //return correct result based on datetime.now
-
-	});
+		}
+  );
+});
