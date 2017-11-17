@@ -15,7 +15,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	$scope.noItems = "";
 
 
-	//Init
+	// Init
 	$ionicPlatform.ready(function () {
 		getMealListingsData();
 
@@ -24,7 +24,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		$window.location.reload();
 	});
 
-	//Init Get Meal
+	// Init Get Meal
 	if ($stateParams.menuId !== undefined) {
 		getMealListings.then(
 			function (response) {
@@ -209,10 +209,9 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	vm.login = login;
 
 	initController();
-
 	function initController() {
 		// reset login status
-		AuthenticationService.Logout();
+		// AuthenticationService.Logout();
 	}
 
 	function login() {
@@ -276,15 +275,15 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 .controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher) {
 
 	$scope.userInfo = Account.getUserInfo();
-	$scope.logoff = function () {
-		Account.logoff($state, $ionicViewSwitcher);
+	$scope.logout = function() {
+		Account.logout($state, $ionicViewSwitcher);
 	};
 })
 
 .controller('ContactUsCtrl', function ($scope) {})
 
 .controller('EditProfileCtrl', function ($scope, Account, $state) {
-	$scope.userInfo = Account.getUserInfo();
+	// $scope.userInfo = Account.getUserInfo();
 	$scope.updateProfile = function () {
 		Account.updateProfile($state);
 	};

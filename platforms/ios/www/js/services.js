@@ -3,10 +3,259 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 // clean up by reading this article
 // http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
 
-.factory('Menus', function ($http, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
+.factory('$sqliteFactory', function($cordovaSQLite) {
+	console.log("$sqliteFactory instantiated");
+
+	var _db;
+
+	return {
+		db: function() {
+			if (!_db) {
+				// Instantiate SQLite database connection after platform is ready
+				_db = $cordovaSQLite.openDB({ name: 'options.db', location: 'default' });
+	    	// console.log("Opened the database");
+			}
+
+			return _db;
+		},
+
+		executeSql: function(query, parameters) {
+			return $cordovaSQLite.execute(this.db(), query, parameters);
+		}
+	}
+})
+
+.factory('AuthenticationService', ['$http', '$sqliteFactory', function($http, $sqliteFactory, $cordovaSQLite, $state){
+	console.log("AuthenticationService factory instantiated");
+
+	return {
+		Login: function (username, password, callback) {
+			console.log("AuthenticationService.Login() started");
+			var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
+			var config = { params: { username: username, password: password } };
+
+			$http.get(loginAPI, config)
+				.success(function(response) {
+
+						// login successful if there's a token in the response
+						if (response.token) {
+							console.log("Login is successful");
+
+							// add token to auth header for all requests made by $http service
+							// $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
+
+							// create table in SQLite
+							$sqliteFactory.executeSql('CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)')
+								.then(function(result) {
+										console.log("Table created successfully");
+								}, function(error) {
+										console.log("Error creating table: " + error.message);
+								}
+							);
+
+							// store username and token in SQLite
+							$sqliteFactory.executeSql('INSERT INTO Session (username, token) VALUES (?, ?)', [username, response.token])
+								.then(function(result) {
+										console.log("Session saved successfully");
+								}, function(error) {
+										console.log("Error saving to table: " + error.message);
+								}
+							);
+
+							// execute callback with true to indicate successful login
+							callback(true);
+						} else {
+							console.log(response);
+							// execute callback with false to indicate failed login
+							callback(false);
+						}
+				})
+				.error(function(e) {
+					callback(false);
+					console.log(e);
+				}
+			);
+		},
+
+		// Logout: function () {
+		// 	// remove user from local storage and clear http auth header
+		// 	// delete $localStorage.currentUser;
+		// 	// $http.defaults.headers.common.Authorization = '';
+
+		// 	console.log("AuthenticationService.Logout() triggered");
+
+		// 	$sqliteFactory.executeSql('DELETE FROM Session')
+		// 		.then(function(result) {
+		// 				console.log("Session rows deleted");
+		// 		}, function(error) {
+		// 				console.log("Error deleting from table: " + error.message);
+		// 		}
+		// 	);
+		// }
+	}
+}])
+
+.factory('Account', function ($sqliteFactory, $http, $ionicAuth) {
+	console.log("Account factory instantiated");
+
+	var _userInfo = {};
+
+	return {
+		getUserInfo: function () {
+			if (_userInfo.id === undefined) {
+				// get user data from db
+				$sqliteFactory.executeSql('SELECT * FROM Session ORDER BY id DESC')
+		    	.then(function(result) {
+		    		console.log("Rows length: " + result.rows.length);
+		    		if (result.rows.length > 0) {
+
+			   			var decoded = jwt_decode(result.rows.item(0).token);
+
+			   			_userInfo.id = decoded.user_id;
+							_userInfo.username = decoded.custom.username;
+							_userInfo.firstname = decoded.custom.firstname;
+							_userInfo.lastname = decoded.custom.lastname;
+							_userInfo.email = decoded.custom.email;
+							_userInfo.house = decoded.custom.house;
+							_userInfo.supervisor = decoded.custom.supervisor;
+							_userInfo.chef = decoded.custom.chef;
+
+							console.log("ID: " + _userInfo.id);
+							console.log("User: " + _userInfo.username);
+							console.log("Chef: " + _userInfo.chef);
+							console.log("House: " + _userInfo.house);
+		    		} else {
+		    			console.log("No results found.");
+		    		}
+		    	}, function(error) {
+		    		console.log("Error on loading: " + error.message);
+		    	}
+		    );
+		  }
+
+			return _userInfo;
+		},
+
+		updateProfile: function ($state) {
+			// submit new user data to DB, refresh data
+			console.log('profile saved');
+			$state.go('tab.account');
+		},
+
+		updatePassword: function ($state) {
+			// submit new user data to DB, refresh data
+			console.log('password saved');
+			$state.go('tab.account');
+		},
+
+		registerUser: function ($state, $ionicViewSwitcher, method, loginData, $location, $q) {
+			var placeholder = {};
+			var defer = $q.defer();
+
+			// send registration data to custom handler that adds user to our system
+			var registerURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
+
+			var location = $location;
+
+			$http.get(registerURL).then(
+				function (response) {
+					// if return message is an error
+					if (response.data.error !== undefined) {
+						if (response.data.error === "UsernameAlreadyExists") {
+							placeholder.text = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
+						} else if (response.data.error === "ActivationNotValid") {
+							placeholder.text = "Your house code is invalid. To get the correct house code for your house, please talk to your chef.";
+						} else {
+							placeholder.text = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
+						}
+					} else if (response.data.token !== undefined) {
+						var expToken = response.data.token;
+						// decode token
+						var decoded = jwt_decode(expToken);
+						console.log(decoded.username);
+						// if valid, authenticate user with our custom login
+						var loginOptions = {
+							'inAppBrowserOptions': {
+								'hidden': true
+							}
+						};
+
+						var loginData = {
+							'username': decoded.username,
+							'password': decoded.password
+						};
+
+						$ionicAuth.login('custom', loginData, loginOptions).then(function (s) {
+							if ($ionicAuth.isAuthenticated()) {
+								location.path('/tab/meal/next');
+
+							}
+							// else display error
+						}, function (e) {
+							console.log(e);
+						});
+					} else {
+						console.log("Something went wrong while registering your account. Please contact your administrator");
+					}
+				}
+			);
+			defer.resolve();
+			return placeholder;
+		},
+
+		requestActivation: function ($state, $ionicViewSwitcher) {
+			$ionicViewSwitcher.nextDirection('back');
+			console.log("request activation");
+			$state.go('register');
+		},
+
+		backToWelcome: function ($state, $ionicViewSwitcher) {
+			$ionicViewSwitcher.nextDirection('back');
+			$state.go('login');
+		},
+
+		newPasswordRequest: function ($state) {
+			console.log('password request');
+			$state.go('login');
+		},
+
+		// logoff: function ($state, $ionicViewSwitcher) {
+		// 	$ionicAuth.logout();
+		// 	$ionicViewSwitcher.nextDirection('forward');
+		// 	$state.go('login');
+		// 	console.log("`Account.logoff()` triggered");
+		// },
+
+		logout: function ($state, $ionicViewSwitcher) {
+			// remove user from local storage and clear http auth header
+			// delete $localStorage.currentUser;
+			// $http.defaults.headers.common.Authorization = '';
+
+			console.log("Account.logout() triggered");
+
+			$sqliteFactory.executeSql('DELETE FROM Session')
+				.then(function(result) {
+						console.log("Session rows deleted");
+						$ionicViewSwitcher.nextDirection('forward');
+						$state.go('login');
+				}, function(error) {
+						console.log("Error deleting from table: " + error.message);
+				}
+			);
+		}
+	};
+})
+
+.factory('Menus', function ($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
+	console.log("Menus factory instantiated");
 	var Menus = this;
 
-	var userid = CollegeChefs.helpers.getUserID($ionicUser);
+	// var userid = CollegeChefs.helpers.getUserID($ionicUser);
+
+	var userInfo = Account.getUserInfo();
+	var userid = userInfo.id;
+
+	console.log("userid: " + userid);
 
 	var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
 
@@ -17,7 +266,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//late plate request
+		// late plate request
 		requestLatePlate: function ($scope, mealId) {
 			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -35,10 +284,9 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 					console.log(response);
 				}
 			);
-
 		},
 
-		//cancel late plate request
+		// cancel late plate request
 		cancelLatePlate: function ($scope, mealId) {
 			var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -58,7 +306,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 		},
 
-		//retrieve menu data
+		// retrieve menu data
 		getAll: function () {
 			return $http.get(dataSource, {
 				cache: true
@@ -66,7 +314,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 		},
 
 		getTodaysFirstMealIndex: function () {
-			//return 8;
+			// return 8;
 		},
 
 		getLatePlateMsg: function (mealType, mealIsToday) {
@@ -106,36 +354,36 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			mealDateTime.setHours(0, 0, 0, 0);
 
 
-			//if meal date is before today return true
+			// if meal date is before today return true
 			if (mealDateTime < today) {
 				return true;
 			}
 
-			//if meal date is after today return false
+			// if meal date is after today return false
 			if (mealDateTime > today) {
 				return false;
 			}
 
-			//if meal date is today
+			// if meal date is today
 			if (mealDateTime.getUTCDate() === today.getUTCDate()) {
 
 				var curTime = new Date().getHours();
 
 				switch (mealType) {
 					case "Breakfast":
-						//if meal type is breakfast and current time is after lunchLPEndTime(10) return true
+						// if meal type is breakfast and current time is after lunchLPEndTime(10) return true
 						if (curTime >= lunchLPEndTime) {
 							return true;
 						}
 						break;
 					case "Lunch":
-						//if meal type is lunch and current time is after dinnerLPEndTime(3) return true
+						// if meal type is lunch and current time is after dinnerLPEndTime(3) return true
 						if (curTime >= dinnerLPEndTime) {
 							return true;
 						}
 						break;
 					case "Dinner":
-						//if meal type is dinner and current time is after afterDinnerLPEndTime (8) return true
+						// if meal type is dinner and current time is after afterDinnerLPEndTime (8) return true
 						if (curTime >= afterDinnerLPEndTime) {
 							return true;
 						}
@@ -150,12 +398,12 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 			var currHour = new Date().getHours();
 
-			//dont show if meal has passed
+			// don't show if meal has passed
 			if (mealHasPassed) {
 				return false;
 			}
 
-			//if meal is today, only show if it is still before cutoff times
+			// if meal is today, only show if it is still before cutoff times
 			if (mealIsToday) {
 				if (mealType === "Lunch" && (currHour >= lunchLPEndTime)) {
 					return false;
@@ -165,11 +413,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 				}
 			}
 
-			//show by default
+			// show by default
 			return true;
 		},
 
-		//navigate menu data
+		// navigate menu data
 		goNext: function ($index, $state, $ionicViewSwitcher) {
 			$ionicViewSwitcher.nextDirection('forward');
 			var nextIndex = Number($index) + 1;
@@ -185,163 +433,23 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 				menuId: prevIndex
 			});
 		}
-
-	};
-})
-
-.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicUser) {
-
-	// get user data from db
-	return {
-		getUserInfo: function () {
-
-			var userInfo = {
-				userid: $ionicUser.get('dnnuserid'),
-				chef: $ionicUser.get('chef'),
-				lastname: $ionicUser.get('lastname'),
-				supervisor: $ionicUser.get('supervisor'),
-				house: $ionicUser.get('house'),
-				username: $ionicUser.get('username'),
-				email: $ionicUser.get('email'),
-				firstname: $ionicUser.get('firstname')
-			};
-
-			return userInfo;
-		},
-
-		updateProfile: function ($state) {
-			// submit new user data to DB, refresh data
-			console.log('profile saved');
-			$state.go('tab.account');
-		},
-
-		updatePassword: function ($state) {
-			// submit new user data to DB, refresh data
-			console.log('password saved');
-			$state.go('tab.account');
-		},
-
-		registerUser: function ($state, $ionicViewSwitcher, method, loginData, $location, $q) {
-			var placeholder = {};
-			var defer = $q.defer();
-
-			//send registration data to custom handler that adds user to our system
-			var registerURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
-
-			var location = $location;
-
-			$http.get(registerURL).then(
-				function (response) {
-					//if return message is an error
-					if (response.data.error !== undefined) {
-						if (response.data.error === "UsernameAlreadyExists") {
-							placeholder.text = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
-						} else if (response.data.error === "ActivationNotValid") {
-							placeholder.text = "Your house code is invalid. To get the correct house code for your house, please talk to your chef.";
-						} else {
-							placeholder.text = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
-						}
-					} else if (response.data.token !== undefined) {
-						var expToken = response.data.token;
-						// decode token
-						var decoded = jwt_decode(expToken);
-						console.log(decoded.username);
-						// if valid, authenticate user with our custom login
-						var loginOptions = {
-							'inAppBrowserOptions': {
-								'hidden': true
-							}
-						};
-
-						var loginData = {
-							'username': decoded.username,
-							'password': decoded.password
-						};
-
-						$ionicAuth.login('custom', loginData, loginOptions).then(function (s) {
-							if ($ionicAuth.isAuthenticated()) {
-								location.path('/tab/meal/next');
-
-							}
-							//else display error
-						}, function (e) {
-							console.log(e);
-						});
-					} else {
-						console.log("Something went wrong while registering your account. Please contact your administrator");
-					}
-				}
-			);
-			defer.resolve();
-			return placeholder;
-		},
-
-		requestActivation: function ($state, $ionicViewSwitcher) {
-			$ionicViewSwitcher.nextDirection('back');
-			console.log("request activation");
-			$state.go('register');
-		},
-
-		backToWelcome: function ($state, $ionicViewSwitcher) {
-			$ionicViewSwitcher.nextDirection('back');
-			$state.go('login');
-		},
-
-		newPasswordRequest: function ($state) {
-			console.log('password request');
-			$state.go('login');
-		},
-
-		authenticateUser: function ($state, $ionicViewSwitcher, method, loginData, $location) {
-			var placeholder = {};
-			var errorMessageText = "There was an error logging in. Please check your credentials and try again.";
-
-			if (method === 'chefnet') {
-				var loginOptions = {
-					'inAppBrowserOptions': {
-						'hidden': true
-					}
-				};
-
-				$ionicAuth.login('custom', loginData, loginOptions).then(function (s) {
-
-				}, function (e) {
-					placeholder.text = errorMessageText;
-					return placeholder;
-				});
-
-				if ($ionicAuth.isAuthenticated()) {
-					$location.path('/tab/meal/next');
-				} else {
-					setTimeout(function () {
-						placeholder.text = errorMessageText;
-						return placeholder;
-					}, 500);
-				}
-				// placeholder.text = errorMessageText;
-				// return placeholder;
-			}
-		},
-
-		logoff: function ($state, $ionicViewSwitcher) {
-			$ionicAuth.logout();
-			$ionicViewSwitcher.nextDirection('forward');
-			$state.go('login');
-			console.log("`Account.logoff()` triggered");
-		}
 	};
 })
 
 .factory('Globals', function () {
+	console.log("Globals factory instantiated");
+
 	return {
 		backButton: function ($ionicHistory) {
 			$ionicHistory.goBack();
 		},
+
 		goForward: function ($state, toState, $ionicViewSwitcher, params) {
 			console.log('something something');
 			$ionicViewSwitcher.nextDirection('forward');
 			$state.go(toState, params);
 		},
+
 		isDateSame: function (d1, d2) {
 			d1 = new Date(d1);
 			d1.setHours(0, 0, 0, 0);
@@ -349,13 +457,14 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			d2.setHours(0, 0, 0, 0);
 			return (d1.getUTCDate() === d2.getUTCDate());
 		},
+
 		getFormattedDate: function (date) {
 			date = new Date(date);
 
 			var weekday = new Array(7);
 			weekday[0] = "Sun";
 			weekday[1] = "Mon";
-			weekday[2] = "Tues";
+			weekday[2] = "Tue";
 			weekday[3] = "Wed";
 			weekday[4] = "Thu";
 			weekday[5] = "Fri";
@@ -370,117 +479,25 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			month[5] = "Jun";
 			month[6] = "Jul";
 			month[7] = "Aug";
-			month[8] = "Sept";
+			month[8] = "Sep";
 			month[9] = "Oct";
 			month[10] = "Nov";
 			month[11] = "Dec";
 
-			//return weekday[date.getUTCDay()];
+			// return weekday[date.getUTCDay()];
 
 			if (isNaN(date.getUTCDay())) {
 				return "";
 			} else {
 				return weekday[date.getUTCDay()] + ", " + month[date.getUTCMonth()] + " " + date.getUTCDate();
 			}
-		},
+		}
 	};
 })
 
-.factory('AuthenticationService', function($http, $cordovaSQLite, $state){
-
-	var authService = {};
-
-	authService.Login = Login;
-	authService.Logout = Logout;
-	authService.getUserInfo = getUserInfo;
-
-	return authService;
-
-	function Login(username, password, callback) {
-
-		var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
-		var config = { params: { username: username, password: password } };
-
-		$http.get(loginAPI, config)
-			.success(function(response) {
-
-					// login successful if there's a token in the response
-					if (response.token) {
-
-						// add token to auth header for all requests made by $http service
-						// $http.defaults.headers.common.Authorization = 'Bearer ' + response.token;
-
-						// store username and token in SQLite
-						$cordovaSQLite.execute(db, 'INSERT INTO Session (username, token) VALUES (?, ?)', [username, response.token])
-			        .then(function(result) {
-			            console.log("Session saved successfully");
-			        }, function(error) {
-			            console.log("Error on saving: " + error.message);
-			        }
-			      );
-
-						// execute callback with true to indicate successful login
-						callback(true);
-					} else {
-						console.log(response);
-						// execute callback with false to indicate failed login
-						callback(false);
-					}
-			})
-			.error(function(e) {
-				callback(false);
-				console.log(e);
-			}
-		);
-	}
-
-	function Logout(db) {
-			// remove user from local storage and clear http auth header
-			// delete $localStorage.currentUser;
-			// $http.defaults.headers.common.Authorization = '';
-
-			// var query = 'DELETE FROM Session WHERE id = ?';
-			// $cordovaSQLite.execute(db, query, [userInfo.id]);
-
-			// console.log(userInfo.id);
-			console.log("AuthenticationService.Logout() triggered");
-
-			// $cordovaSQLite.execute(db, 'DROP TABLE IF EXISTS Session');
-	}
-
-	function getUserInfo(db, callback) {
-
-		var userInfo = {};
-
-		$cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
-    	.then(function(result) {
-    		if (result.rows.length > 0) {
-
-	   			var decoded = jwt_decode(result.rows.item(0).token);
-
-	   			userInfo.id = decoded.user_id;
-					userInfo.username = decoded.custom.username;
-					userInfo.firstname = decoded.custom.firstname;
-					userInfo.lastname = decoded.custom.lastname;
-					userInfo.email = decoded.custom.email;
-					userInfo.house = decoded.custom.house;
-					userInfo.supervisor = decoded.custom.supervisor;
-					userInfo.chef = decoded.custom.chef;
-
-					callback(true);
-    		} else {
-    			console.log("No results found.");
-    		}
-    	}, function(error) {
-    		console.log("Error on loading: " + error.message);
-    	}
-    );
-
-    return userInfo;
-	}
-})
-
 .factory('Help', function () {
+	console.log("Help factory instantiated");
+
 	var faqs = [{
 		id: 1,
 		question: 'Why can\'t I order a late plate for my next meal?',
@@ -522,12 +539,14 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 var CollegeChefs = CollegeChefs || {};
 
 CollegeChefs.helpers = {
+
 	goToTodaysMeals: function ($state, $ionicViewSwitcher) {
 		$ionicViewSwitcher.nextDirection('forward');
 		$state.go('tab.meal', {
 			menuId: 1
 		});
 	},
+
 	getUserID: function ($ionicUser) {
 		if (ionic.Platform.is('browser')) {
 			return 7501;

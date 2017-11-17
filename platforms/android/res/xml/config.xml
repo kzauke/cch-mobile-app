@@ -28,7 +28,7 @@
     <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
       Accuraty Solutions
     </author>
-    <content original-src="index.html" src="http://172.24.64.50:8100" />
+    <content original-src="index.html" src="http://10.0.0.4:8100" />
     <allow-navigation href="*" />
     <allow-intent href="*" />
     <access origin="*" />
@@ -37,6 +37,7 @@
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
     <allow-navigation href="http://192.168.188.2:8100" />
     <allow-navigation href="http://172.24.64.50:8100" />
+    <allow-navigation href="http://10.0.0.4:8100" />
     <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
     <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
     <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />

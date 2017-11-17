@@ -1,49 +1,56 @@
-// Database instance
-var db = null;
-console.log("Just created db object");
+// // Database instance
+// var db = null;
+// console.log("Just created db object");
 
-angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
+angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
 
-.run(function ($ionicPlatform, $rootScope, $http, $location, $localStorage, $cordovaSQLite, $injector, $state) {
-	$ionicPlatform.ready(function () {
+.run(['$ionicPlatform',
+      '$sqliteFactory',
+      function($ionicPlatform, $sqliteFactory, $rootScope, $cordovaSQLite, $injector, $state) {
+  $ionicPlatform.ready(function() {
 
-    // Instantiate SQLite database connection after platform is ready
-		db = $cordovaSQLite.openDB({ name: 'authentication.db', location: 'default' });
-    console.log("Opened the database");
-		$cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)');
-    console.log("Created the table");
+    // // Instantiate SQLite database connection after platform is ready
+    // db = $cordovaSQLite.openDB({ name: 'options.db', location: 'default' });
+    // console.log("Opened the database");
+    // $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)');
+    // console.log("Created the table, if it doesn't exist yet.");
 
-    var AuthenticationService = $injector.get('AuthenticationService');
-    $rootScope.userInfo = AuthenticationService.getUserInfo(db, function(result){
-      if (!result) {
-        $state.go('login');
-      } else {
-        console.log("username is: " + $rootScope.userInfo.username);
-        console.log("firstname is: " + $rootScope.userInfo.firstname);
-        console.log("house is: " + $rootScope.userInfo.house);
 
-        console.log("$rootScope.userInfo = " + $rootScope.userInfo);
-      }
-    });
 
-		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard for form inputs)
-		if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-			cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-			cordova.plugins.Keyboard.disableScroll(true);
-		}
+    // var AuthenticationService = $injector.get('AuthenticationService');
+    // $rootScope.userInfo = AuthenticationService.getUserInfo(db, function(result){
+    //   if (!result) {
+    //     $state.go('login');
+    //   } else {
+    //     console.log("username is: " + $rootScope.userInfo.username);
+    //     console.log("firstname is: " + $rootScope.userInfo.firstname);
+    //     console.log("house is: " + $rootScope.userInfo.house);
 
-		if (window.StatusBar) {
-			// org.apache.cordova.statusbar required
-			//StatusBar.styleDefault();
-		}
+    //     console.log("$rootScope.userInfo = " + $rootScope.userInfo);
+    //   }
+    // });
+
+    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+      // Hide the accessory bar by default
+      // (remove to show accessory bar above keyboard for form inputs)
+      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
+      // HEY! Don't remove this unless you know what you are doing!
+      // It stops the viewport from snapping when text inputs are focused.
+      // Ionic handles this internally for a much nicer keyboard experience.
+      cordova.plugins.Keyboard.disableScroll(true);
+    }
+
+    if (window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      // StatusBar.styleDefault();
+    }
 	});
-})
-
-
+}])
 
 /********************************************************/
-	//prevents preflight by Chrome when testing locally,
-	//COMMENT OUT FOR PRODUCTION
+	// prevents preflight by Chrome when testing locally,
+	// COMMENT OUT FOR PRODUCTION
 
 	// .config(function ($httpProvider) {
 	// 	$httpProvider.defaults.headers.common = {};
@@ -53,15 +60,13 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 	// })
 /******************************************************/
 
+.config(['$stateProvider',
+         '$urlRouterProvider',
+         '$ionicConfigProvider',
+         function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 
-
-.config(function ($ionicConfigProvider) {
-	$ionicConfigProvider.tabs.position('bottom');
-})
-.config(function ($stateProvider, $urlRouterProvider) {
-  // default route
-  // return correct result based on datetime.now
-  $urlRouterProvider.otherwise('/tab/meal/next');
+  $ionicConfigProvider.scrolling.jsScrolling(ionic.Platform.isIOS());
+  $ionicConfigProvider.tabs.position('bottom');
 
   // app routes
 	$stateProvider
@@ -69,18 +74,11 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			url: '/tab',
 			abstract: true,
 			templateUrl: 'templates/tabs.html',
-			onEnter: function ($state, $injector) {
+			onEnter: function ($state) {
 				// if user is not authenticated, go to welcome screen
         // query the db, see if there's a user id
 
         // if (!isAuthenticated) {
-        //   $state.go('login');
-        // }
-
-        // var AuthenticationService = $injector.get('AuthenticationService');
-        // // console.log(AuthenticationService);
-        // AuthenticationService.getUserInfo();
-        // if (NOT AUTHENTICATED) {
           // $state.go('login');
         // }
 			}
@@ -127,7 +125,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			views: {
 				'tab-account': {
 					templateUrl: 'templates/profile.html',
-					controller: 'EditProfileCtrl'
+					controller: 'AccountCtrl'
 				}
 			}
 		})
@@ -192,11 +190,12 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 		})
     .state('login', {
 			url: '/login',
+      cache: false,
 			templateUrl: 'templates/login.html',
 			controller: 'LoginCtrl',
 			controllerAs: 'vm',
       onEnter: function ($state) {
-        console.log("Login state?");
+        console.log("You have now entered the login state");
       }
 		})
     .state('forgot-password', {
@@ -220,4 +219,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			controller: 'WelcomeCtrl'
 		}
   );
-});
+
+  // default route
+  // return correct result based on datetime.now
+  $urlRouterProvider.otherwise('/tab/meal/next');
+}]);

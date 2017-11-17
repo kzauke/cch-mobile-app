@@ -1,21 +1,30 @@
 angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
+
+
+
 /*********** Meals / Menus ***********/
 /*************************************/
 
-
-.controller('MenusCtrl', function ($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
+.controller('MenusCtrl', function ($scope, Globals, Account, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
 
 	$scope.index = Number($stateParams.menuId);
 
 	var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
-	var getMealListings = Menus.getAll();
+
+  var userInfo = Account.getUserInfo();
+  var userId = userInfo.id;
+
+  console.log("userId: " + userId);
+
+  console.log("Call Menus.getAll()");
+	var getMealListings = Menus.getAll(userId);
 	var modalTemplate;
 
 	$scope.noItems = "";
 
 
-	//Init
+	// Init
 	$ionicPlatform.ready(function () {
 		getMealListingsData();
 
@@ -24,7 +33,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		$window.location.reload();
 	});
 
-	//Init Get Meal
+	// Init Get Meal
 	if ($stateParams.menuId !== undefined) {
 		getMealListings.then(
 			function (response) {
@@ -194,6 +203,9 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		});
 })
 
+
+
+
 /*********** Welcome / Login Screens ***********/
 /***********************************************/
 
@@ -207,13 +219,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
 	var vm = this;
 	vm.login = login;
-
-	initController();
-
-	function initController() {
-		// reset login status
-		AuthenticationService.Logout();
-	}
 
 	function login() {
 		vm.loading = true;
@@ -270,32 +275,37 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 })
 
 
+
+
 /*********** Account Tab ***********/
 /*************************************/
 
-.controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $rootScope) {
+.controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $timeout, $ionicHistory) {
 
-	$scope.userInfo = Account.getUserInfo(db, function(result) {
-		if (result === true) {
-			console.log('getUserInfo() is true');
-		} else {
-			console.log('getUserInfo() is FALSE');
-		}
-	});
-	console.log("Get the user info from the Account factory");
-	$scope.logoff = function () {
-		Account.logoff($state, $ionicViewSwitcher);
+	$scope.userInfo = Account.getUserInfo();
+	$scope.logout = function() {
+		Account.logout($state, $ionicViewSwitcher);
+    $timeout(function() {
+      $ionicHistory.clearCache();
+      $ionicHistory.clearHistory();
+      console.log("Clear cache and history");
+    }, 150);
 	};
 })
 
 .controller('ContactUsCtrl', function ($scope) {})
 
-.controller('EditProfileCtrl', function ($scope, Account, $state) {
-	$scope.userInfo = Account.getUserInfo();
-	$scope.updateProfile = function () {
-		Account.updateProfile($state);
-	};
-})
+//
+// Note: The `EditProfileCtrl` is not being used and duplicates `AccountCtrl`,
+//       so I reassigned "tab.profile" Controller in `app.js`. -CML
+// ----------------------------------------------------------------------------
+
+// .controller('EditProfileCtrl', function ($scope, Account, $state) {
+// 	$scope.userInfo = Account.getUserInfo();
+// 	$scope.updateProfile = function () {
+// 		Account.updateProfile($state);
+// 	};
+// })
 
 .controller('PasswordCtrl', function ($scope, Account, $state) {
 	$scope.updatePassword = function () {

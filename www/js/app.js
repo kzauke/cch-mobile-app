@@ -74,18 +74,11 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			url: '/tab',
 			abstract: true,
 			templateUrl: 'templates/tabs.html',
-			onEnter: function ($state, $injector) {
+			onEnter: function ($state) {
 				// if user is not authenticated, go to welcome screen
         // query the db, see if there's a user id
 
         // if (!isAuthenticated) {
-        //   $state.go('login');
-        // }
-
-        // var AuthenticationService = $injector.get('AuthenticationService');
-        // // console.log(AuthenticationService);
-        // AuthenticationService.getUserInfo();
-        // if (NOT AUTHENTICATED) {
           // $state.go('login');
         // }
 			}
@@ -132,7 +125,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			views: {
 				'tab-account': {
 					templateUrl: 'templates/profile.html',
-					controller: 'EditProfileCtrl'
+					controller: 'AccountCtrl'
 				}
 			}
 		})
@@ -197,6 +190,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 		})
     .state('login', {
 			url: '/login',
+      cache: false,
 			templateUrl: 'templates/login.html',
 			controller: 'LoginCtrl',
 			controllerAs: 'vm',
