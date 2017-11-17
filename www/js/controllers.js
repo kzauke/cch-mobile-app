@@ -273,9 +273,16 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*********** Account Tab ***********/
 /*************************************/
 
-.controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher) {
+.controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $rootScope) {
 
-	$scope.userInfo = Account.getUserInfo();
+	$scope.userInfo = Account.getUserInfo(db, function(result) {
+		if (result === true) {
+			console.log('getUserInfo() is true');
+		} else {
+			console.log('getUserInfo() is FALSE');
+		}
+	});
+	console.log("Get the user info from the Account factory");
 	$scope.logoff = function () {
 		Account.logoff($state, $ionicViewSwitcher);
 	};

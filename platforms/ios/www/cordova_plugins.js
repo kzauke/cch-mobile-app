@@ -50,14 +50,6 @@ module.exports = [
     ]
   },
   {
-    "id": "cordova-sqlite-storage.SQLitePlugin",
-    "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
-    "pluginId": "cordova-sqlite-storage",
-    "clobbers": [
-      "SQLitePlugin"
-    ]
-  },
-  {
     "id": "ionic-plugin-keyboard.keyboard",
     "file": "plugins/ionic-plugin-keyboard/www/ios/keyboard.js",
     "pluginId": "ionic-plugin-keyboard",
@@ -65,6 +57,14 @@ module.exports = [
       "cordova.plugins.Keyboard"
     ],
     "runs": true
+  },
+  {
+    "id": "cordova-sqlite-storage.SQLitePlugin",
+    "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+    "pluginId": "cordova-sqlite-storage",
+    "clobbers": [
+      "SQLitePlugin"
+    ]
   }
 ];
 module.exports.metadata = 
@@ -76,8 +76,8 @@ module.exports.metadata =
   "cordova-plugin-splashscreen": "4.0.0",
   "cordova-plugin-statusbar": "2.2.0",
   "cordova-plugin-whitelist": "1.3.0",
-  "cordova-sqlite-storage": "2.1.2",
-  "ionic-plugin-keyboard": "2.2.1"
+  "ionic-plugin-keyboard": "2.2.1",
+  "cordova-sqlite-storage": "2.1.2"
 };
 // BOTTOM OF METADATA
 });

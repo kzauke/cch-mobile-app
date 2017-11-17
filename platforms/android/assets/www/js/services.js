@@ -17,7 +17,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 	return {
 
-		//late plate request
+		// late plate request
 		requestLatePlate: function ($scope, mealId) {
 			var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
 
@@ -189,13 +189,43 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 	};
 })
 
-.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicUser) {
+.factory('Account', function ($http, $cordovaSQLite, $ionicAuth, $ionicUser, $rootScope) {
 
 	// get user data from db
 	return {
-		getUserInfo: function () {
+		getUserInfo: function (db, callback) {
 
-			var userInfo = {
+			var userInfo = {};
+
+			if (db) {
+				$cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
+		    	.then(function(result) {
+		    		if (result.rows.length > 0) {
+
+			   			var decoded = jwt_decode(result.rows.item(0).token);
+
+			   			userInfo.id = decoded.user_id;
+							userInfo.username = decoded.custom.username;
+							userInfo.firstname = decoded.custom.firstname;
+							userInfo.lastname = decoded.custom.lastname;
+							userInfo.email = decoded.custom.email;
+							userInfo.house = decoded.custom.house;
+							userInfo.supervisor = decoded.custom.supervisor;
+							userInfo.chef = decoded.custom.chef;
+
+							callback(true);
+		    		} else {
+		    			console.log("No results found.");
+		    		}
+		    	}, function(error) {
+		    		console.log("Error on loading: " + error.message);
+		    	}
+		    );
+			}
+
+			return userInfo;
+
+			var userInfoOLD = {
 				userid: $ionicUser.get('dnnuserid'),
 				chef: $ionicUser.get('chef'),
 				lastname: $ionicUser.get('lastname'),
@@ -203,11 +233,43 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 				house: $ionicUser.get('house'),
 				username: $ionicUser.get('username'),
 				email: $ionicUser.get('email'),
-				firstname: $ionicUser.get('firstname')
+				// firstname: $ionicUser.get('firstname'),
+				firstname: $rootScope.userInfo.firstname
 			};
 
-			return userInfo;
+			return userInfoOLD;
 		},
+
+		// getUserInfo: function(db, callback) {
+
+		// 	// var userInfo = {};
+
+		// 	$cordovaSQLite.execute(db, 'SELECT * FROM Session ORDER BY id DESC')
+	 //    	.then(function(result) {
+	 //    		if (result.rows.length > 0) {
+
+		//    			var decoded = jwt_decode(result.rows.item(0).token);
+
+		//    			userInfo.id = decoded.user_id;
+		// 				userInfo.username = decoded.custom.username;
+		// 				userInfo.firstname = decoded.custom.firstname;
+		// 				userInfo.lastname = decoded.custom.lastname;
+		// 				userInfo.email = decoded.custom.email;
+		// 				userInfo.house = decoded.custom.house;
+		// 				userInfo.supervisor = decoded.custom.supervisor;
+		// 				userInfo.chef = decoded.custom.chef;
+
+		// 				callback(true);
+	 //    		} else {
+	 //    			console.log("No results found.");
+	 //    		}
+	 //    	}, function(error) {
+	 //    		console.log("Error on loading: " + error.message);
+	 //    	}
+	 //    );
+
+	 //    return userInfo;
+		// },
 
 		updateProfile: function ($state) {
 			// submit new user data to DB, refresh data
@@ -355,7 +417,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			var weekday = new Array(7);
 			weekday[0] = "Sun";
 			weekday[1] = "Mon";
-			weekday[2] = "Tues";
+			weekday[2] = "Tue";
 			weekday[3] = "Wed";
 			weekday[4] = "Thu";
 			weekday[5] = "Fri";
@@ -370,7 +432,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 			month[5] = "Jun";
 			month[6] = "Jul";
 			month[7] = "Aug";
-			month[8] = "Sept";
+			month[8] = "Sep";
 			month[9] = "Oct";
 			month[10] = "Nov";
 			month[11] = "Dec";

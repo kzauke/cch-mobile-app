@@ -1,6 +1,6 @@
 // Database instance
 var db = null;
-var userInfo;
+console.log("Just created db object");
 
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage','ui.router'])
 
@@ -9,12 +9,20 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
     // Instantiate SQLite database connection after platform is ready
 		db = $cordovaSQLite.openDB({ name: 'authentication.db', location: 'default' });
+    console.log("Opened the database");
 		$cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)');
+    console.log("Created the table");
 
     var AuthenticationService = $injector.get('AuthenticationService');
-    userInfo = AuthenticationService.getUserInfo(db, function(result){
+    $rootScope.userInfo = AuthenticationService.getUserInfo(db, function(result){
       if (!result) {
         $state.go('login');
+      } else {
+        console.log("username is: " + $rootScope.userInfo.username);
+        console.log("firstname is: " + $rootScope.userInfo.firstname);
+        console.log("house is: " + $rootScope.userInfo.house);
+
+        console.log("$rootScope.userInfo = " + $rootScope.userInfo);
       }
     });
 

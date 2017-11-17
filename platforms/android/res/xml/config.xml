@@ -3,6 +3,9 @@
     <feature name="Device">
         <param name="android-package" value="org.apache.cordova.device.Device" />
     </feature>
+    <feature name="InAppBrowser">
+        <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
+    </feature>
     <feature name="SplashScreen">
         <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
         <param name="onload" value="true" />
@@ -15,13 +18,6 @@
         <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
         <param name="onload" value="true" />
     </feature>
-    <feature name="Keyboard">
-        <param name="android-package" value="io.ionic.keyboard.IonicKeyboard" />
-        <param name="onload" value="true" />
-    </feature>
-    <feature name="InAppBrowser">
-        <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
-    </feature>
     <feature name="SQLitePlugin">
         <param name="android-package" value="io.sqlc.SQLitePlugin" />
     </feature>
@@ -32,7 +28,7 @@
     <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
       Accuraty Solutions
     </author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://172.24.64.50:8100" />
     <allow-navigation href="*" />
     <allow-intent href="*" />
     <access origin="*" />

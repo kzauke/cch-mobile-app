@@ -7,30 +7,34 @@
     "files": {}
   },
   "installed_plugins": {
+    "cordova-plugin-console": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
     "cordova-plugin-device": {
-      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-    },
-    "cordova-plugin-splashscreen": {
-      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-    },
-    "cordova-plugin-statusbar": {
-      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-    },
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
-    },
-    "ionic-plugin-keyboard": {
-      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
+      "PACKAGE_NAME": "com.collegechefs.meals"
     },
     "cordova-plugin-inappbrowser": {
-      "PACKAGE_NAME": "com.ionicframework.collegechefsapp693100"
+      "PACKAGE_NAME": "com.collegechefs.meals"
     },
-    "cordova-plugin-console": {
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
+    "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     },
     "cordova-sqlite-storage": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     }
   },
-  "dependent_plugins": {}
+  "dependent_plugins": {
+    "cordova-plugin-ionic-webview": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
+    "cordova-sqlite-ext": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    }
+  }
 }
