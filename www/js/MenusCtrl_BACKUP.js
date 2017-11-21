@@ -1,0 +1,176 @@
+.controller('MenusCtrl', function ($scope, Account, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
+  console.log("MenusCtrl is initialized");
+
+  $scope.userInfo = Account.getUserInfo("MenusCtrl");
+
+  console.log($scope.userInfo);
+
+  $scope.index = Number($stateParams.menuId);
+
+  var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
+
+  // var userId = 7741;
+
+  // var getMealListings = Menus.getAll(userId);
+
+  var getMealListings = Menus.getAll($scope.userInfo.id);
+
+  // var getMealListings = Menus.getAll();
+  var modalTemplate;
+
+  $scope.noItems = "";
+
+  // Init
+  $ionicPlatform.ready(function () {
+    getMealListingsData();
+  });
+
+  $ionicPlatform.on('resume', function () {
+    $window.location.reload();
+  });
+
+  // Init Get Meal
+  if ($stateParams.menuId !== undefined) {
+    getMealListings.then(
+      function (response) {
+        var menus = response.data;
+        var menuid = $stateParams.menuId;
+
+        for (var i = 0; i < menus.length; i++) {
+          if (menuid === "next") {
+            if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
+              $scope.meal = menus[i];
+              $scope.index = i;
+              break;
+            }
+          } else if ($scope.index === i) {
+            $scope.meal = menus[i];
+
+            break;
+          }
+        }
+        setTimeout(function () {
+          if (!$scope.meal) {
+            $scope.noItems = noItemsMessage;
+          }
+        }, 500)
+      },
+      function (error) {
+        $scope.noItems = noItemsMessage;
+        console.log('error', error);
+      });
+  }
+
+  $scope.icon = function (mealType) {
+    return Menus.getIcon(mealType);
+  };
+
+  $scope.getFormattedDate = function (mealDate) {
+    return Globals.getFormattedDate(mealDate);
+  };
+  $scope.mealIsToday = function (mealDate) {
+    var d1 = new Date();
+    var d2 = new Date(mealDate);
+    return Globals.isDateSame(d1, d2);
+  };
+  $scope.mealHasPassed = function (mealType, mealDate) {
+    return Menus.mealHasPassed(mealType, mealDate);
+  };
+  $scope.goForward = function (toState) {
+    Globals.goForward($state, toState, $ionicViewSwitcher, $stateParams);
+  };
+  $scope.dataLoaded = false;
+  $scope.showLatePlateButton = function (mealHasPassed, mealIsToday, mealType) {
+    return Menus.showLatePlateButton(mealHasPassed, mealIsToday, mealType);
+  };
+  $scope.getLatePlateMsg = function (mealType, mealIsToday) {
+    return Menus.getLatePlateMsg(mealType, mealIsToday);
+  };
+
+  //Next / Previous Meal functionality
+  $scope.goNext = function () {
+    Menus.goNext($scope.index, $state, $ionicViewSwitcher);
+  };
+  $scope.goBack = function () {
+    Menus.goBack($scope.index, $state, $ionicViewSwitcher);
+  };
+
+  $scope.openModal = function (action) {
+    if (action == "create") {
+      modalTemplate = "templates/modal-confirm-late-plate.html";
+    } else if (action == "delete") {
+      modalTemplate = "templates/modal-cancel-late-plate.html";
+    }
+    $scope.modal.show();
+  };
+
+  // request late plate modal
+  $ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
+    id: '1',
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function (modal) {
+    $scope.oModal1 = modal;
+  });
+
+  // Cancel late plate modal
+  $ionicModal.fromTemplateUrl('templates/modal-cancel-late-plate.html', {
+    id: '2',
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function (modal) {
+    $scope.oModal2 = modal;
+  });
+
+  $scope.openModal = function (action) {
+    if (action == 'create') $scope.oModal1.show(); //on create
+    else $scope.oModal2.show(); //on delete
+  };
+
+  $scope.closeModal = function (action) {
+    if (action == 'create') $scope.oModal1.hide();
+    else $scope.oModal2.hide();
+  };
+
+
+  $scope.requestLatePlate = function (mealId) {
+    Menus.requestLatePlate($scope, mealId);
+  };
+
+  $scope.cancelLatePlate = function (mealId) {
+    Menus.cancelLatePlate($scope, mealId);
+  };
+
+  function getMealListingsData() {
+
+    $ionicLoading.show({
+      template: '<ion-spinner class="spinner-assertive" icon="ripple"></ion-spinner>',
+    });
+
+
+    getMealListings.then(
+      function (response) {
+
+        $scope.menus = response.data;
+        $scope.mealCount = response.data.length;
+        if (response.data.length > 0) {
+          $scope.noItems = "";
+          $location.hash('today');
+        } else {
+          $scope.noItems = noItemsMessage;
+        }
+
+        $scope.dataLoaded = true;
+        $ionicLoading.hide();
+      },
+      function (error) {
+        $ionicLoading.hide();
+
+      });
+
+    //don't let the ionic loading wheel hang
+    $timeout(function () {
+      $ionicLoading.hide();
+    }, 3000);
+  }
+})

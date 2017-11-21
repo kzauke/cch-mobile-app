@@ -6,20 +6,49 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*********** Meals / Menus ***********/
 /*************************************/
 
-.controller('MenusCtrl', function ($scope, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
+.controller('MenusCtrl', function ($scope, Account, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
+  console.log("MenusCtrl is instantiated");
+
+  $scope.userInfo = Account.getUserInfo();
+  console.log("Hi, too");
+  console.log($scope.userInfo);
 
 	$scope.index = Number($stateParams.menuId);
 
 	var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
-	var getMealListings = Menus.getAll();
-	var modalTemplate;
+
+  console.log("Hi");
+
+  // console.log("userid = " + $scope.userInfo.id);
+
+
+
+  // var userInfo = Account.getUserInfo();
+  // console.log(userInfo);
+  // var userId = userInfo.id;
+
+  // var userInfo = Account.getUserInfo();
+
+  // console.log(userInfo);
+  // var userId = userInfo.id;
+
+  // var userId = 7741;
+
+  // console.log("userId: " + userId);
+
+
+
+	// var getMealListings = Menus.getAll($scope.userInfo.id);
+
+  // var getMealListings = Menus.getAll();
+	// var modalTemplate;
 
 	$scope.noItems = "";
 
 
 	// Init
 	$ionicPlatform.ready(function () {
-		getMealListingsData();
+		// getMealListingsData();
 
 	});
 	$ionicPlatform.on('resume', function () {
@@ -28,34 +57,34 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
 	// Init Get Meal
 	if ($stateParams.menuId !== undefined) {
-		getMealListings.then(
-			function (response) {
-				var menus = response.data;
-				var menuid = $stateParams.menuId;
+		// getMealListings.then(
+		// 	function (response) {
+		// 		var menus = response.data;
+		// 		var menuid = $stateParams.menuId;
 
-				for (var i = 0; i < menus.length; i++) {
-					if (menuid === "next") {
-						if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
-							$scope.meal = menus[i];
-							$scope.index = i;
-							break;
-						}
-					} else if ($scope.index === i) {
-						$scope.meal = menus[i];
+		// 		for (var i = 0; i < menus.length; i++) {
+		// 			if (menuid === "next") {
+		// 				if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
+		// 					$scope.meal = menus[i];
+		// 					$scope.index = i;
+		// 					break;
+		// 				}
+		// 			} else if ($scope.index === i) {
+		// 				$scope.meal = menus[i];
 
-						break;
-					}
-				}
-				setTimeout(function () {
-					if (!$scope.meal) {
-						$scope.noItems = noItemsMessage;
-					}
-				}, 500)
-			},
-			function (error) {
-				$scope.noItems = noItemsMessage;
-				console.log('error', error);
-			});
+		// 				break;
+		// 			}
+		// 		}
+		// 		setTimeout(function () {
+		// 			if (!$scope.meal) {
+		// 				$scope.noItems = noItemsMessage;
+		// 			}
+		// 		}, 500)
+		// 	},
+		// 	function (error) {
+		// 		$scope.noItems = noItemsMessage;
+		// 		console.log('error', error);
+		// 	});
 	}
 
 	$scope.icon = function (mealType) {
@@ -101,7 +130,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 		$scope.modal.show();
 	};
 
-	//request late plate modal
+	// request late plate modal
 	$ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
 		id: '1',
 		scope: $scope,
@@ -208,23 +237,21 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	};
 })
 
-.controller('LoginCtrl', function ($location, AuthenticationService, $state) {
+.controller('LoginCtrl', function ($scope, $location, AuthenticationService) {
 
-	var vm = this;
-	vm.login = login;
+  var vm = this;
+  vm.formSubmit = formSubmit;
 
-	function login() {
-		vm.loading = true;
-
-		AuthenticationService.Login(vm.username, vm.password, function (result) {
-			if (result === true) {
-				$location.path('/tab/meal/next');
-			} else {
-				vm.error = 'There was an error logging you in. Please check your username or password and try again.';
-				vm.loading = false;
-			}
-		});
-	}
+  function formSubmit() {
+    AuthenticationService.login(vm.username, vm.password, function(result) {
+      if (result === true) {
+        $location.path('/tab/meal/next');
+        // $location.path('/tab/account');
+      } else {
+        vm.error = 'There was an error logging you in. Please check your username or password and try again.';
+      }
+    });
+  }
 })
 
 .controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {
@@ -274,6 +301,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*************************************/
 
 .controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $timeout, $ionicHistory) {
+
+  console.log("AccountCtrl is instantiated");
 
 	$scope.userInfo = Account.getUserInfo();
 	$scope.logout = function() {

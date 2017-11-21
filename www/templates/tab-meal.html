@@ -5,7 +5,7 @@
 -->
 
 <ion-view hide-back-button="true" ng-show="dataLoaded===true" on-swipe-right="goBack()" on-swipe-left="goNext()">
-	<ion-nav-title>{{getFormattedDate(meal.date)}}</ion-nav-title>
+	<ion-nav-title>{{ getFormattedDate(meal.date) }}</ion-nav-title>
 
     <ion-nav-buttons side="left">
        <a href="#/tab/menus#today" nav-direction="swap" class="button button-icon icon-list"></a>
@@ -21,16 +21,16 @@
 		<div class="item item-text-wrap item-positive">This meal has passed.</div>
 	</div>
     <div ng-show="noItems" ng-bind-html="noItems" style="text-align:center"></div>
-    
-    <h2>{{meal.name}}</h2>
+
+    <h2>{{ meal.name }}</h2>
 	<ul ng-bind-html="meal.fullmenu" class="meal-items"></ul>
-	
+
 	<!--
 	<ul>
 		<li ng-repeat="item in meal.items">{{item}}</li>
 	</ul>
 	-->
-	
+
 	<div ng-switch on="meal.latePlateStatus">
 		<div ng-switch-when="eligible" ng-if="meal.name != 'Breakfast' && meal.entree.toUpperCase() != 'NO SERVICE'">
 			<div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), meal.name, mealIsToday(meal.date))">
@@ -38,7 +38,7 @@
 				<p class="is-red" ng-bind-html="getLatePlateMsg(meal.name, mealIsToday(meal.date))"></p>
 			</div>
 		</div>
-		
+
 		<div ng-switch-when="pending">
 			<div class="alert alert-warning pending-warning-meal" role="alert">
 			<i class="icon ion-checkmark-circled"></i>
@@ -49,7 +49,7 @@
                 <button class="button button-assertive request-lp cancel-lp" ng-click="openModal('delete')">Cancel Late Plate</button>
             </div>
         </div>
-		
+
 		<div ng-switch-when="complete">
 			<div class="alert alert-warning pending-warning-meal meal-complete" role="alert">
 				<i class="icon ion-happy"></i>

@@ -1,35 +1,11 @@
-// // Database instance
-// var db = null;
-// console.log("Just created db object");
+// College Chefs app
 
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
 
 .run(['$ionicPlatform',
       '$sqliteFactory',
-      function($ionicPlatform, $sqliteFactory, $rootScope, $cordovaSQLite, $injector, $state) {
+      function($ionicPlatform, $sqliteFactory) {
   $ionicPlatform.ready(function() {
-
-    // // Instantiate SQLite database connection after platform is ready
-    // db = $cordovaSQLite.openDB({ name: 'options.db', location: 'default' });
-    // console.log("Opened the database");
-    // $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)');
-    // console.log("Created the table, if it doesn't exist yet.");
-
-
-
-    // var AuthenticationService = $injector.get('AuthenticationService');
-    // $rootScope.userInfo = AuthenticationService.getUserInfo(db, function(result){
-    //   if (!result) {
-    //     $state.go('login');
-    //   } else {
-    //     console.log("username is: " + $rootScope.userInfo.username);
-    //     console.log("firstname is: " + $rootScope.userInfo.firstname);
-    //     console.log("house is: " + $rootScope.userInfo.house);
-
-    //     console.log("$rootScope.userInfo = " + $rootScope.userInfo);
-    //   }
-    // });
-
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default
       // (remove to show accessory bar above keyboard for form inputs)
@@ -43,21 +19,24 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
-      // StatusBar.styleDefault();
+      StatusBar.styleDefault();
     }
+
+    // Load the database, true = debug
+    // $sqliteFactory.loadDatabase(true);
 	});
 }])
 
 /********************************************************/
-	// prevents preflight by Chrome when testing locally,
-	// COMMENT OUT FOR PRODUCTION
+  // prevents preflight by Chrome when testing locally,
+  // COMMENT OUT FOR PRODUCTION
 
-	// .config(function ($httpProvider) {
-	// 	$httpProvider.defaults.headers.common = {};
-	// 	$httpProvider.defaults.headers.post = {};
-	// 	$httpProvider.defaults.headers.put = {};
-	// 	$httpProvider.defaults.headers.patch = {};
-	// })
+  // .config(function ($httpProvider) {
+  // 	$httpProvider.defaults.headers.common = {};
+  // 	$httpProvider.defaults.headers.post = {};
+  // 	$httpProvider.defaults.headers.put = {};
+  // 	$httpProvider.defaults.headers.patch = {};
+  // })
 /******************************************************/
 
 .config(['$stateProvider',
@@ -98,7 +77,15 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			views: {
 				'tab-meal': {
 					templateUrl: 'templates/tab-meal.html',
-					controller: 'MenusCtrl'
+					controller: 'MenusCtrl',
+          // resolve: {
+          //   userAccountInfo: userAccountInfo
+          // }
+          // resolve: {
+          //   userInfo: function(Account) {
+          //     return Account.getUserInfo();
+          //   }
+          // }
 				}
 			}
 		})
@@ -222,5 +209,20 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
   // default route
   // return correct result based on datetime.now
-  $urlRouterProvider.otherwise('/tab/meal/next');
+  // $urlRouterProvider.otherwise('/tab/meal/next');
+  $urlRouterProvider.otherwise(function ($injector, $location) {
+      // var $state = $injector.get('$state');
+      // $state.go('tab.meal');
+
+      if (1 === 2) {
+        return '/login';
+      } else {
+        return '/tab/meal/next'
+      }
+  });
 }]);
+
+
+// function userAccountInfo(Account) {
+//   return Account.getUserInfo();
+// }

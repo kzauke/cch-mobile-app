@@ -1,8 +1,8 @@
 <ion-view hide-nav-bar="true" hide-back-button="true" view-title="Login" class="background-dark">
     <ion-content class="padding" scroll="false">
         <img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo">
-        <form name="form" ng-submit="vm.login()">
-            <div ng-if="vm.error" class="error-message card padding">{{vm.error}}</div>
+        <form name="form" ng-submit="vm.formSubmit()">
+            <div ng-if="vm.error" class="error-message card padding">{{ vm.error }}</div>
 
             <div class="list">
                 <label class="item item-input">

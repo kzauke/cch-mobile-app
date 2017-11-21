@@ -7,7 +7,7 @@
     <author email="kzauke@accuraty.com" href="http://www.accuraty.com/">
       Accuraty Solutions
     </author>
-    <content original-src="index.html" src="http://10.0.0.4:8100" />
+    <content original-src="index.html" src="http://172.24.64.50:8100" />
     <allow-navigation href="*" />
     <allow-intent href="*" />
     <access origin="*" />
