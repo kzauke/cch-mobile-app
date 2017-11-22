@@ -3,8 +3,8 @@
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
 
 .run(['$ionicPlatform',
-      '$sqliteFactory',
-      function($ionicPlatform, $sqliteFactory) {
+      '$sqliteService',
+      function($ionicPlatform, $sqliteService) {
   $ionicPlatform.ready(function() {
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default
@@ -23,7 +23,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
     }
 
     // Load the database, true = debug
-    // $sqliteFactory.loadDatabase(true);
+    // $sqliteService.loadDatabase(true);
 	});
 }])
 
@@ -49,6 +49,14 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
   // app routes
 	$stateProvider
+    //
+    // NEW MEAL TAB FOR TESTING
+    // ========================
+    .state('new', {
+      url: '/new',
+      templateUrl: 'templates/_new.html',
+      controller: 'MenusController'
+    })
 		.state('tab', {
 			url: '/tab',
 			abstract: true,
@@ -79,11 +87,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 					templateUrl: 'templates/tab-meal.html',
 					controller: 'MenusCtrl',
           // resolve: {
-          //   userAccountInfo: userAccountInfo
-          // }
-          // resolve: {
-          //   userInfo: function(Account) {
-          //     return Account.getUserInfo();
+          //   'UserData': function(Account) {
+          //     return Account.getUserInfo;
           //   }
           // }
 				}

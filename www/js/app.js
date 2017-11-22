@@ -49,6 +49,14 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
   // app routes
 	$stateProvider
+    //
+    // NEW MEAL TAB FOR TESTING
+    // ========================
+    .state('new', {
+      url: '/new',
+      templateUrl: 'templates/_new.html',
+      controller: 'MenusController'
+    })
 		.state('tab', {
 			url: '/tab',
 			abstract: true,
@@ -78,11 +86,6 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				'tab-meal': {
 					templateUrl: 'templates/tab-meal.html',
 					controller: 'MenusCtrl',
-          // resolve: {
-          //   'UserData': function(Account) {
-          //     return Account.getUserInfo;
-          //   }
-          // }
 				}
 			}
 		})
@@ -177,10 +180,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
       cache: false,
 			templateUrl: 'templates/login.html',
 			controller: 'LoginCtrl',
-			controllerAs: 'vm',
-      onEnter: function ($state) {
-        console.log("You have now entered the login state");
-      }
+			controllerAs: 'vm'
 		})
     .state('forgot-password', {
 			url: '/forgot-password',
@@ -208,18 +208,13 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
   // return correct result based on datetime.now
   // $urlRouterProvider.otherwise('/tab/meal/next');
   $urlRouterProvider.otherwise(function ($injector, $location) {
-      // var $state = $injector.get('$state');
-      // $state.go('tab.meal');
+      var $state = $injector.get('$state');
+      $state.go('tab.meal');
 
-      if (1 === 2) {
-        return '/login';
-      } else {
-        return '/tab/meal/next'
-      }
+      // if (1 === 2) {
+      //   return '/login';
+      // } else {
+      //   return '/tab/meal/next'
+      // }
   });
 }]);
-
-
-// function userAccountInfo(Account) {
-//   return Account.getUserInfo();
-// }

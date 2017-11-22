@@ -3,79 +3,76 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 // clean up by reading this article
 // http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
 
-.factory('$sqliteFactory', function($q, $cordovaSQLite) {
-  console.log("$sqliteFactory instantiated");
+.service('$sqliteService', function($q, $cordovaSQLite) {
+  console.log("$sqliteService initialized");
 
+  var self = this;
   var _db;
 
-  return {
-    db: function() {
-      if (!_db) {
-        if (window.sqlitePlugin !== undefined) {
-          _db = window.sqlitePlugin.openDatabase({ name: "options.db", location: 2, createFromLocation: 1 });
-        } else {
-          // For debugging in the browser
-          console.warn("Storage: SQLite plugin not installed, falling back to WebSQL. Be sure to install cordova-sqlite-storage in production!");
-          _db = window.openDatabase("options.db", "1.0", "Database", 200000);
-        }
+  self.db = function() {
+    if (!_db) {
+      if (window.sqlitePlugin !== undefined) {
+        _db = window.sqlitePlugin.openDatabase({ name: "options.db", location: 2, createFromLocation: 1 });
+      } else {
+        // For debugging in the browser
+        console.warn("Storage: SQLite plugin not installed, falling back to WebSQL. Be sure to install cordova-sqlite-storage in production!");
+        _db = window.openDatabase("options.db", "1.0", "Database", 200000);
       }
-
-      return _db;
-    },
-
-    getFirstItem: function(query, parameters) {
-      var deferred = $q.defer();
-      this.executeSql(query, parameters).then(function(result) {
-        // console.log("Rows length: " + result.rows.length);
-        if (result.rows.length > 0) {
-          return deferred.resolve(result.rows.item(0));
-        } else {
-          return deferred.reject("There aren't items matching");
-        }
-      }, function (error) {
-        return deferred.reject(error);
-      });
-
-      return deferred.promise;
-    },
-
-    loadDatabase: function(enableLog) {
-      var deferred = $q.defer();
-
-      var queries = [
-
-        "DROP TABLE IF EXISTS Session;",
-
-        "CREATE TABLE Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, token TEXT NOT NULL);"
-      ];
-
-      this.db().transaction(function(result) {
-        for (var i = 0; i < queries.length; i++) {
-          var query = queries[i].replace(/\\n/g, '\n');
-
-          if(enableLog) console.log(queries[i]);
-          result.executeSql(query);
-        }
-      }, function(error) {
-        deferred.reject(error);
-      }, function () {
-        deferred.resolve("OK");
-      });
-
-      return deferred.promise;
-    },
-
-    executeSql: function(query, parameters) {
-      return $cordovaSQLite.execute(this.db(), query, parameters);
     }
-  }
+
+    return _db;
+  };
+
+  self.getFirstItem = function(query, parameters) {
+    var deferred = $q.defer();
+    self.executeSql(query, parameters).then(function(result) {
+      // console.log("Rows length: " + result.rows.length);
+      if (result.rows.length > 0) {
+        return deferred.resolve(result.rows.item(0));
+      } else {
+        return deferred.reject("There aren't items matching");
+      }
+    }, function (error) {
+      return deferred.reject(error);
+    });
+
+    return deferred.promise;
+  };
+
+  self.loadDatabase = function(enableLog) {
+    var deferred = $q.defer();
+
+    var queries = [
+      "DROP TABLE IF EXISTS Session;",
+      "CREATE TABLE Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, token TEXT NOT NULL);"
+    ];
+
+    self.db().transaction(function(result) {
+      for (var i = 0; i < queries.length; i++) {
+        var query = queries[i].replace(/\\n/g, '\n');
+
+        if(enableLog) console.log(queries[i]);
+        result.executeSql(query);
+      }
+    }, function(error) {
+      deferred.reject(error);
+    }, function () {
+      deferred.resolve("OK");
+    });
+
+    return deferred.promise;
+  };
+
+  self.executeSql = function(query, parameters) {
+    return $cordovaSQLite.execute(self.db(), query, parameters);
+  };
 })
 
-.factory('AuthenticationService',  function($q, $http, $sqliteFactory){
-  console.log("AuthenticationService factory instantiated");
+.factory('AuthenticationService',  function($q, $http, $sqliteService){
+  console.log("AuthenticationService factory initialized");
 
   // Load the database, true = debug
-  $sqliteFactory.loadDatabase(true);
+  $sqliteService.loadDatabase(true);
 
   var _token;
 
@@ -92,12 +89,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     //   });
     // },
 
-    // addUser: function(username, token) {
-    //   var query = "INSERT INTO Session (username, token) VALUES (?, ?)";
-    //   console.log("addUser() running");
-    //   return $q.when($sqliteFactory.executeSql(query, [username, token]))
-    // },
-
     login: function(username, password, callback) {
       var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
       var config = { params: { username: username, password: password } };
@@ -105,7 +96,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       $http.get(loginAPI, config)
         .success(function(response) {
           if (response.token) {
-            $q.when($sqliteFactory.executeSql("INSERT INTO Session (username, token) VALUES (?, ?)", [username, response.token]));
+            $q.when($sqliteService.executeSql("INSERT INTO Session (username, token) VALUES (?, ?)", [username, response.token]));
             callback(true);
           } else {
             callback(false);
@@ -120,48 +111,40 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   }
 })
 
-.factory('Account', function ($q, $sqliteFactory, $http, $ionicAuth) {
-  console.log("Account factory instantiated");
+.factory('Account', function ($q, $sqliteService, $http, $ionicAuth) {
+  console.log("Account factory initialized");
 
   var _userInfo;
+  console.log("Account factory var `_userInfo` = " + _userInfo);
 
   return {
     getUser: function() {
       var query = "SELECT * FROM Session ORDER BY id DESC";
-      return $q.when($sqliteFactory.getFirstItem(query));
+      return $q.when($sqliteService.getFirstItem(query));
     },
 
-    getUserInfo: function() {
-      console.log("inside getUserInfo()");
+    getUserInfo: function(user) {
       if (!_userInfo) {
-        console.log("inside (!_userInfo)");
-        this.getUser().then(function(user) {
+        var decoded = jwt_decode(user.token);
+        _userInfo = {
+          // id: decoded.user_id,
+          id: 6441,
+          username: decoded.custom.username,
+          email: decoded.custom.email,
+          firstname: decoded.custom.firstname,
+          lastname: decoded.custom.lastname,
+          // house: decoded.custom.house,
+          house: "Alpha Beta Testa",
+          // chef: decoded.custom.chef,
+          chef: "Swedish Chef",
+          supervisor: decoded.custom.supervisor
+        };
 
-          var decoded = jwt_decode(user.token);
-
-          console.log("Token has been decoded");
-
-          _userInfo = {
-            id: decoded.user_id,
-            username: decoded.custom.username,
-            email: decoded.custom.email,
-            firstname: decoded.custom.firstname,
-            lastname: decoded.custom.lastname,
-            house: decoded.custom.house,
-            chef: decoded.custom.chef,
-            supervisor: decoded.custom.supervisor
-          };
-
-          console.log(_userInfo);
-
-          console.log("ID: " + _userInfo.id);
-          console.log("User: " + _userInfo.username);
-          console.log("House: " + _userInfo.house);
-          console.log("Supervisor: " + _userInfo.supervisor);
-          console.log("Chef: " + _userInfo.chef);
-        }, function(error) {
-          console.log(error.message);
-        });
+        console.log(_userInfo);
+        console.log("ID: " + _userInfo.id);
+        console.log("User: " + _userInfo.username);
+        console.log("House: " + _userInfo.house);
+        console.log("Chef: " + _userInfo.chef);
       }
 
       return _userInfo;
@@ -251,7 +234,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     logout: function ($state, $ionicViewSwitcher) {
-      $sqliteFactory.executeSql('DROP TABLE IF EXISTS Session')
+      $sqliteService.executeSql('DROP TABLE IF EXISTS Session')
         .then(function(result) {
             console.log("Session table deleted");
             $ionicViewSwitcher.nextDirection('forward');
@@ -265,38 +248,25 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Menus', function ($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
-  console.log("Menus factory instantiated");
-  // var Menus = this;
+  console.log("Menus factory initialized");
 
-  // var userid = CollegeChefs.helpers.getUserID(Account);
-
-  // var userInfo = Account.getUserInfo();
-  // var userid = userInfo.id;
-
-  // console.log("userid: " + userid);
-
-  // // random id to test since mine doesn't have any data. -CML
-  userid = 6641;
-
-  // var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=' + userid;
-
-  var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=';
+  var Menus = this;
 
   // 24 hour clock
   var lunchLPEndTime = 10; // no lunch late plate orders after 10am
   var dinnerLPEndTime = 15; // no dinner late plate orders after 3pm
   var afterDinnerLPEndTime = 20; // dinner ends after 8pm
 
+  var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=';
+
   return {
     requestLatePlate: function ($scope, mealId) {
-      var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
+      var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
 
       $http.get(latePlateURL).then(
         function successCallback(response) {
-
           $scope.meal.latePlateStatus = 'pending';
           $window.location.reload();
-
           $scope.modal.hide();
 
         },
@@ -308,15 +278,12 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     cancelLatePlate: function ($scope, mealId) {
-      var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
+      var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
 
       $http.get(cancelLatePlateURL).then(
         function successCallback(response) {
-
           $window.location.reload();
-
           $scope.modal.hide();
-
         },
         function errorCallback(response) {
           $scope.modal.hide();
@@ -329,18 +296,14 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       console.log("Menus.getAll() called");
       dataSourceWithId = dataSource + userId;
 
+      // return $http.get({
+      //   method: 'GET',
+      //   url: dataSourceWithId
+      // });
       return $http.get(dataSourceWithId, {
         cache: true
       });
     },
-
-    // // retrieve menu data
-    // getAll: function () {
-    //  console.log("Menus.getAll() called?");
-    //  return $http.get(dataSource, {
-    //    cache: true
-    //  });
-    // },
 
     getTodaysFirstMealIndex: function () {
       // return 8;
@@ -375,13 +338,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     mealHasPassed: function (mealType, mealDate) {
-
       var today = new Date();
       today.setHours(0, 0, 0, 0);
 
       var mealDateTime = new Date(mealDate);
       mealDateTime.setHours(0, 0, 0, 0);
-
 
       // if meal date is before today return true
       if (mealDateTime < today) {
@@ -419,12 +380,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
             break;
         }
       }
-      //default to false
+      // default to false
       return false;
     },
 
     showLatePlateButton: function (mealHasPassed, mealType, mealIsToday) {
-
       var currHour = new Date().getHours();
 
       // don't show if meal has passed
@@ -450,23 +410,25 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     goNext: function ($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
-      $state.go('tab.meal', {
-        menuId: nextIndex
-      });
+      console.log("nextIndex: " + nextIndex);
+      // $state.go('tab.meal', {
+      //   menuId: nextIndex
+      // });
     },
 
     goBack: function ($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       var prevIndex = Number($index) - 1;
-      $state.go('tab.meal', {
-        menuId: prevIndex
-      });
+      console.log("prevIndex: " + prevIndex);
+      // $state.go('tab.meal', {
+      //   menuId: prevIndex
+      // });
     }
   };
 })
 
 .factory('Globals', function () {
-  console.log("Globals factory instantiated");
+  console.log("Globals factory initialized");
 
   return {
     backButton: function ($ionicHistory) {
@@ -525,7 +487,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Help', function () {
-  console.log("Help factory instantiated");
+  console.log("Help factory initialized");
 
   var faqs = [{
     id: 1,
@@ -576,13 +538,13 @@ CollegeChefs.helpers = {
     });
   },
 
-  getUserID: function (Account) {
-    var userInfo = Account.getUserInfo();
+  // getUserID: function (Account) {
+  //   var userInfo = Account.getUserInfo();
 
-    var userid = userInfo.id;
-    console.log("userid from helper: " + userid);
-    return userid;
-  },
+  //   var userid = userInfo.id;
+  //   console.log("userid from helper: " + userid);
+  //   return userid;
+  // },
 
   // getUserID: function ($ionicUser) {
   //  if (ionic.Platform.is('browser')) {

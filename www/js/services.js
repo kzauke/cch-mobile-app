@@ -115,7 +115,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   console.log("Account factory initialized");
 
   var _userInfo;
-  console.log("Account factory var `_userInfo` = " + _userInfo);
 
   return {
     getUser: function() {
@@ -126,68 +125,29 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     getUserInfo: function(user) {
       if (!_userInfo) {
         var decoded = jwt_decode(user.token);
-
-        console.log("Token has been decoded");
-
         _userInfo = {
-          id: decoded.user_id,
+          // id: decoded.user_id,
+          id: 6441,
           username: decoded.custom.username,
           email: decoded.custom.email,
           firstname: decoded.custom.firstname,
           lastname: decoded.custom.lastname,
-          house: decoded.custom.house,
-          chef: decoded.custom.chef,
+          // house: decoded.custom.house,
+          house: "Alpha Beta Testa",
+          // chef: decoded.custom.chef,
+          chef: "Swedish Chef",
           supervisor: decoded.custom.supervisor
         };
 
         console.log(_userInfo);
-
-        console.log("ID: " + _userInfo.id);
-        console.log("User: " + _userInfo.username);
-        console.log("House: " + _userInfo.house);
-        console.log("Supervisor: " + _userInfo.supervisor);
-        console.log("Chef: " + _userInfo.chef);
+        // console.log("ID: " + _userInfo.id);
+        // console.log("User: " + _userInfo.username);
+        // console.log("House: " + _userInfo.house);
+        // console.log("Chef: " + _userInfo.chef);
       }
 
       return _userInfo;
     },
-
-    // getUserInfo: function(location) {
-    //   console.log("inside getUserInfo(" + location + ")");
-    //   if (!_userInfo) {
-    //     console.log("_userInfo doesn't exist, so we're getting the info");
-    //     this.getUser().then(
-    //       function(user) {
-    //         var decoded = jwt_decode(user.token);
-
-    //         console.log("Token has been decoded");
-
-    //         _userInfo = {
-    //           id: decoded.user_id,
-    //           username: decoded.custom.username,
-    //           email: decoded.custom.email,
-    //           firstname: decoded.custom.firstname,
-    //           lastname: decoded.custom.lastname,
-    //           house: decoded.custom.house,
-    //           chef: decoded.custom.chef,
-    //           supervisor: decoded.custom.supervisor
-    //         };
-
-    //         console.log(_userInfo);
-
-    //         console.log("ID: " + _userInfo.id);
-    //         console.log("User: " + _userInfo.username);
-    //         console.log("House: " + _userInfo.house);
-    //         console.log("Supervisor: " + _userInfo.supervisor);
-    //         console.log("Chef: " + _userInfo.chef);
-    //       }, function(error) {
-    //         console.log(error.message);
-    //       }
-    //     );
-    //   }
-
-    //   return _userInfo;
-    // },
 
     updateProfile: function ($state) {
       // submit new user data to DB, refresh data
@@ -288,72 +248,41 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
 .factory('Menus', function ($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
   console.log("Menus factory initialized");
-  // var Menus = this;
-
-  // random id to test since mine doesn't have any data. -CML
-  // userid = 6641;
-
-  var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=';
 
   // 24 hour clock
-  var lunchLPEndTime = 10; // no lunch late plate orders after 10am
+  var lunchLPEndTime = 12; // no lunch late plate orders after 10am
   var dinnerLPEndTime = 15; // no dinner late plate orders after 3pm
   var afterDinnerLPEndTime = 20; // dinner ends after 8pm
 
+  var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=';
+
   return {
     requestLatePlate: function ($scope, mealId) {
-      var latePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
+      var latePlateSubmitAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
 
-      $http.get(latePlateURL).then(
-        function successCallback(response) {
-
-          $scope.meal.latePlateStatus = 'pending';
-          $window.location.reload();
-
-          $scope.modal.hide();
-
-        },
-        function errorCallback(response) {
-          $scope.modal.hide();
-          console.log(response);
+      return $http.get(latePlateSubmitAPI).then(function(response) {
+        if (response.data) {
+          return response.data;
         }
-      );
+      });
     },
 
     cancelLatePlate: function ($scope, mealId) {
-      var cancelLatePlateURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + userid + '&MealID=' + mealId;
+      var latePlateCancelAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
 
-      $http.get(cancelLatePlateURL).then(
-        function successCallback(response) {
-
-          $window.location.reload();
-
-          $scope.modal.hide();
-
-        },
-        function errorCallback(response) {
-          $scope.modal.hide();
-          console.log(response);
+      return $http.get(latePlateCancelAPI).then(function(response) {
+        if (response.data) {
+          return response.data;
         }
-      );
+      });
     },
 
     getAll: function (userId) {
-      console.log("Menus.getAll() called");
       dataSourceWithId = dataSource + userId;
-
       return $http.get(dataSourceWithId, {
         cache: true
       });
     },
-
-    // retrieve menu data
-    // getAll: function () {
-    //  console.log("Menus.getAll() called?");
-    //  return $http.get(dataSource, {
-    //    cache: true
-    //  });
-    // },
 
     getTodaysFirstMealIndex: function () {
       // return 8;
@@ -388,13 +317,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     mealHasPassed: function (mealType, mealDate) {
-
       var today = new Date();
       today.setHours(0, 0, 0, 0);
 
       var mealDateTime = new Date(mealDate);
       mealDateTime.setHours(0, 0, 0, 0);
-
 
       // if meal date is before today return true
       if (mealDateTime < today) {
@@ -432,12 +359,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
             break;
         }
       }
-      //default to false
+      // default to false
       return false;
     },
 
     showLatePlateButton: function (mealHasPassed, mealType, mealIsToday) {
-
       var currHour = new Date().getHours();
 
       // don't show if meal has passed
@@ -463,17 +389,19 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     goNext: function ($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
-      $state.go('tab.meal', {
-        menuId: nextIndex
-      });
+      console.log("nextIndex: " + nextIndex);
+      // $state.go('tab.meal', {
+      //   menuId: nextIndex
+      // });
     },
 
     goBack: function ($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       var prevIndex = Number($index) - 1;
-      $state.go('tab.meal', {
-        menuId: prevIndex
-      });
+      console.log("prevIndex: " + prevIndex);
+      // $state.go('tab.meal', {
+      //   menuId: prevIndex
+      // });
     }
   };
 })
@@ -487,7 +415,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     goForward: function ($state, toState, $ionicViewSwitcher, params) {
-      console.log('something something');
+      console.log('Globals.goForward() -- something something');
       $ionicViewSwitcher.nextDirection('forward');
       $state.go(toState, params);
     },
@@ -591,17 +519,8 @@ CollegeChefs.helpers = {
 
   // getUserID: function (Account) {
   //   var userInfo = Account.getUserInfo();
-
   //   var userid = userInfo.id;
   //   console.log("userid from helper: " + userid);
   //   return userid;
   // },
-
-  // getUserID: function ($ionicUser) {
-  //  if (ionic.Platform.is('browser')) {
-  //    return 7501;
-  //  } else {
-  //    return $ionicUser.get('dnnuserid');
-  //  }
-  // }
 };

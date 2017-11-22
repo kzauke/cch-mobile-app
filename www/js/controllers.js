@@ -9,38 +9,36 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 .controller('MenusCtrl', function ($scope, Account, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
   console.log("MenusCtrl is initialized");
 
-  var userInfo;
-  var userId;
   var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
 
-  Account.getUser().then(
-    function(success) {
-      userInfo = Account.getUserInfo(success);
-      userId = userInfo.id;
+  $scope.getMealListings = Account.getUser().then(
+    function(response) {
+      $scope.userInfo = Account.getUserInfo(response);
+      return Menus.getAll($scope.userInfo.id);
     },
     function(error) {
       console.log("Unable to get `userInfo` object");
     }
   );
 
-  var getMealListings = Menus.getAll(userId);
+  // var getMealListings = Menus.getAll($scope.userId);
   var modalTemplate;
 
   $scope.noItems = "";
 
   // Init
-  $ionicPlatform.ready(function () {
+  $ionicPlatform.ready(function() {
     getMealListingsData();
   });
 
-  $ionicPlatform.on('resume', function () {
+  $ionicPlatform.on('resume', function() {
     $window.location.reload();
   });
 
   // Init Get Meal
   if ($stateParams.menuId !== undefined) {
-    getMealListings.then(
-      function (response) {
+    $scope.getMealListings.then(
+      function(response) {
         var menus = response.data;
         var menuid = $stateParams.menuId;
 
@@ -57,96 +55,116 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
             break;
           }
         }
-        setTimeout(function () {
+        setTimeout(function() {
           if (!$scope.meal) {
             $scope.noItems = noItemsMessage;
           }
         }, 500)
       },
-      function (error) {
+      function(error) {
         $scope.noItems = noItemsMessage;
         console.log('error', error);
       });
   }
 
-  $scope.icon = function (mealType) {
+  $scope.icon = function(mealType) {
     return Menus.getIcon(mealType);
   };
 
-  $scope.getFormattedDate = function (mealDate) {
+  $scope.getFormattedDate = function(mealDate) {
     return Globals.getFormattedDate(mealDate);
   };
-  $scope.mealIsToday = function (mealDate) {
+
+  $scope.mealIsToday = function(mealDate) {
     var d1 = new Date();
     var d2 = new Date(mealDate);
     return Globals.isDateSame(d1, d2);
   };
-  $scope.mealHasPassed = function (mealType, mealDate) {
+
+  $scope.mealHasPassed = function(mealType, mealDate) {
     return Menus.mealHasPassed(mealType, mealDate);
   };
-  $scope.goForward = function (toState) {
+
+  $scope.goForward = function(toState) {
     Globals.goForward($state, toState, $ionicViewSwitcher, $stateParams);
   };
+
   $scope.dataLoaded = false;
-  $scope.showLatePlateButton = function (mealHasPassed, mealIsToday, mealType) {
+
+  $scope.showLatePlateButton = function(mealHasPassed, mealIsToday, mealType) {
     return Menus.showLatePlateButton(mealHasPassed, mealIsToday, mealType);
   };
-  $scope.getLatePlateMsg = function (mealType, mealIsToday) {
+
+  $scope.getLatePlateMsg = function(mealType, mealIsToday) {
     return Menus.getLatePlateMsg(mealType, mealIsToday);
   };
 
-  //Next / Previous Meal functionality
-  $scope.goNext = function () {
+  // Next meal
+  $scope.goNext = function() {
     Menus.goNext($scope.index, $state, $ionicViewSwitcher);
   };
-  $scope.goBack = function () {
+
+  // Previous meal
+  $scope.goBack = function() {
     Menus.goBack($scope.index, $state, $ionicViewSwitcher);
   };
 
-  $scope.openModal = function (action) {
-    if (action == "create") {
-      modalTemplate = "templates/modal-confirm-late-plate.html";
-    } else if (action == "delete") {
-      modalTemplate = "templates/modal-cancel-late-plate.html";
-    }
-    $scope.modal.show();
-  };
-
   // request late plate modal
-  $ionicModal.fromTemplateUrl('templates/modal-confirm-late-plate.html', {
-    id: '1',
+  $ionicModal.fromTemplateUrl('templates/modals/late-plate-confirm.html', {
+    id: '1', // pass the id into the function in the view to trigger this modal
     scope: $scope,
     animation: 'slide-in-up'
-  }).then(function (modal) {
-    $scope.oModal1 = modal;
+  }).then(function(modal) {
+    $scope.modalConfirm = modal;
   });
 
   // Cancel late plate modal
-  $ionicModal.fromTemplateUrl('templates/modal-cancel-late-plate.html', {
-    id: '2',
+  $ionicModal.fromTemplateUrl('templates/modals/late-plate-cancel.html', {
+    id: '2', // pass the id into the function in the view to trigger this modal
     scope: $scope,
     animation: 'slide-in-up'
-  }).then(function (modal) {
-    $scope.oModal2 = modal;
+  }).then(function(modal) {
+    $scope.modalCancel = modal;
   });
 
-  $scope.openModal = function (action) {
-    if (action == 'create') $scope.oModal1.show(); //on create
-    else $scope.oModal2.show(); //on delete
+  $scope.openModal = function(index) {
+    if (index === 1) $scope.modalConfirm.show();
+    else $scope.modalCancel.show();
   };
 
-  $scope.closeModal = function (action) {
-    if (action == 'create') $scope.oModal1.hide();
-    else $scope.oModal2.hide();
+  $scope.closeModal = function(index) {
+    if (index === 1) $scope.modalConfirm.hide();
+    else $scope.modalCancel.hide();
   };
 
+  $scope.$on('modal.shown', function(event, modal) {
+    console.log("Modal " + modal.id + " is shown");
+  });
 
-  $scope.requestLatePlate = function (mealId) {
-    Menus.requestLatePlate($scope, mealId);
+  $scope.$on('modal.hidden', function(event, modal) {
+    console.log("Modal " + modal.id + " is hidden");
+  });
+
+  $scope.requestLatePlate = function(mealId) {
+    Menus.requestLatePlate($scope, mealId).then(
+      function(response) {
+        $window.location.reload();
+      },
+      function(error) {
+        console.log(error);
+      }
+    );
   };
 
-  $scope.cancelLatePlate = function (mealId) {
-    Menus.cancelLatePlate($scope, mealId);
+  $scope.cancelLatePlate = function(mealId) {
+    Menus.cancelLatePlate($scope, mealId).then(
+      function(response) {
+        $window.location.reload();
+      },
+      function(error) {
+        console.log(error);
+      }
+    );
   };
 
   function getMealListingsData() {
@@ -155,9 +173,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
       template: '<ion-spinner class="spinner-assertive" icon="ripple"></ion-spinner>',
     });
 
-
-    getMealListings.then(
-      function (response) {
+    $scope.getMealListings.then(
+      function(response) {
 
         $scope.menus = response.data;
         $scope.mealCount = response.data.length;
@@ -170,43 +187,44 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
         $scope.dataLoaded = true;
         $ionicLoading.hide();
+        console.log("Meals.getMealListings.then() finished successfully");
       },
-      function (error) {
+      function(error) {
         $ionicLoading.hide();
+        console.log("Meals.getMealListings.then() failed");
+      }
+    );
 
-      });
-
-    //don't let the ionic loading wheel hang
-    $timeout(function () {
+    // don't let the ionic loading wheel hang
+    $timeout(function() {
       $ionicLoading.hide();
     }, 3000);
   }
-
 })
 
-.controller('ReviewsCtrl', function ($scope, Globals, Menus) {
-	var getMealListings = Menus.getAll();
+// .controller('ReviewsCtrl', function ($scope, Globals, Menus) {
+// 	var getMealListings = Menus.getAll();
 
-	$scope.icon = function (mealType) {
-		return Menus.getIcon(mealType);
-	};
+// 	$scope.icon = function (mealType) {
+// 		return Menus.getIcon(mealType);
+// 	};
 
-	$scope.mealIsToday = function (mealDate) {
-		var d1 = new Date();
-		var d2 = new Date(mealDate);
-		return Globals.isDateSame(d1, d2);
-	};
-	$scope.getFormattedDate = function (mealDate) {
-		return Globals.getFormattedDate(mealDate);
-	};
-	getMealListings.then(
-		function (response) {
-			$scope.menus = response.data;
-		},
-		function (error) {
-			console.log('error', error);
-		});
-})
+// 	$scope.mealIsToday = function (mealDate) {
+// 		var d1 = new Date();
+// 		var d2 = new Date(mealDate);
+// 		return Globals.isDateSame(d1, d2);
+// 	};
+// 	$scope.getFormattedDate = function (mealDate) {
+// 		return Globals.getFormattedDate(mealDate);
+// 	};
+// 	getMealListings.then(
+// 		function (response) {
+// 			$scope.menus = response.data;
+// 		},
+// 		function (error) {
+// 			console.log('error', error);
+// 		});
+// })
 
 
 
@@ -214,21 +232,19 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*********** Welcome / Login Screens ***********/
 /***********************************************/
 
-.controller('WelcomeCtrl', function ($scope, $state, Account, $ionicViewSwitcher) {
-	$scope.authenticateUser = function (method) {
+.controller('WelcomeCtrl', function($scope, $state, Account, $ionicViewSwitcher) {
+	$scope.authenticateUser = function(method) {
 		Account.authenticateUser($state, method, $ionicViewSwitcher);
 	};
 })
 
-.controller('LoginCtrl', function ($scope, $location, AuthenticationService, Account) {
-
+.controller('LoginCtrl', function ($scope, $location, AuthenticationService) {
   var vm = this;
   vm.formSubmit = formSubmit;
 
   function formSubmit() {
     AuthenticationService.login(vm.username, vm.password, function(result) {
       if (result === true) {
-        // Account.getUserInfo("LoginCtrl");
         $location.path('/tab/meal/next');
       } else {
         vm.error = 'There was an error logging you in. Please check your username or password and try again.';
@@ -284,18 +300,23 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*************************************/
 
 .controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $timeout, $ionicHistory) {
-
   console.log("AccountCtrl is initialized");
 
-	// $scope.userInfo = Account.getUserInfo();
-	$scope.logout = function() {
-		Account.logout($state, $ionicViewSwitcher);
+  Account.getUser().then(
+    function(success) {
+      $scope.userInfo = Account.getUserInfo(success);
+    },
+    function(error) {
+      console.log("Unable to get `userInfo` object");
+    }
+  );
+  $scope.logout = function() {
+    Account.logout($state, $ionicViewSwitcher);
     $timeout(function() {
       $ionicHistory.clearCache();
       $ionicHistory.clearHistory();
-      console.log("Clear cache and history");
     }, 150);
-	};
+  };
 })
 
 .controller('ContactUsCtrl', function ($scope) {})
@@ -331,4 +352,4 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	$scope.submitBugReport = function () {
 		Help.submitBugReport($state);
 	};
-})
+});
