@@ -32,7 +32,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       } else {
         return deferred.reject("There aren't items matching");
       }
-    }, function (error) {
+    }, function(error) {
       return deferred.reject(error);
     });
 
@@ -44,7 +44,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
     var queries = [
       "DROP TABLE IF EXISTS Session;",
-      "CREATE TABLE Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, token TEXT NOT NULL);"
+      "CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, token TEXT NOT NULL);"
     ];
 
     self.db().transaction(function(result) {
@@ -56,7 +56,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       }
     }, function(error) {
       deferred.reject(error);
-    }, function () {
+    }, function() {
       deferred.resolve("OK");
     });
 
@@ -96,7 +96,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       $http.get(loginAPI, config)
         .success(function(response) {
           if (response.token) {
-            $q.when($sqliteService.executeSql("INSERT INTO Session (username, token) VALUES (?, ?)", [username, response.token]));
+            $q.when($sqliteService.executeSql("INSERT INTO Session(username, token) VALUES (?, ?)", [username, response.token]));
             callback(true);
           } else {
             callback(false);
@@ -111,7 +111,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   }
 })
 
-.factory('Account', function ($q, $sqliteService, $http, $ionicAuth) {
+.factory('Account', function($q, $sqliteService, $http, $ionicAuth) {
   console.log("Account factory initialized");
 
   var _userInfo;
@@ -149,19 +149,19 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       return _userInfo;
     },
 
-    updateProfile: function ($state) {
+    updateProfile: function($state) {
       // submit new user data to DB, refresh data
       console.log('profile saved');
       $state.go('tab.account');
     },
 
-    updatePassword: function ($state) {
+    updatePassword: function($state) {
       // submit new user data to DB, refresh data
       console.log('password saved');
       $state.go('tab.account');
     },
 
-    registerUser: function ($state, $ionicViewSwitcher, method, loginData, $location, $q) {
+    registerUser: function($state, $ionicViewSwitcher, method, loginData, $location, $q) {
       var placeholder = {};
       var defer = $q.defer();
 
@@ -171,7 +171,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       var location = $location;
 
       $http.get(registerURL).then(
-        function (response) {
+        function(response) {
           // if return message is an error
           if (response.data.error !== undefined) {
             if (response.data.error === "UsernameAlreadyExists") {
@@ -200,11 +200,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
               'password': decoded.password
             };
 
-            $ionicAuth.login('custom', loginData, loginOptions).then(function (s) {
+            $ionicAuth.login('custom', loginData, loginOptions).then(function(s) {
               if ($ionicAuth.isAuthenticated()) {
                 location.path('/tab/meal/next');
               }
-            }, function (e) {
+            }, function(e) {
               console.log(e);
             });
           } else {
@@ -216,23 +216,23 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       return placeholder;
     },
 
-    requestActivation: function ($state, $ionicViewSwitcher) {
+    requestActivation: function($state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       console.log("request activation");
       $state.go('register');
     },
 
-    backToWelcome: function ($state, $ionicViewSwitcher) {
+    backToWelcome: function($state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       $state.go('login');
     },
 
-    newPasswordRequest: function ($state) {
+    newPasswordRequest: function($state) {
       console.log('password request');
       $state.go('login');
     },
 
-    logout: function ($state, $ionicViewSwitcher) {
+    logout: function($state, $ionicViewSwitcher) {
       $sqliteService.executeSql('DROP TABLE IF EXISTS Session')
         .then(function(result) {
             console.log("Session table deleted");
@@ -246,77 +246,54 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   };
 })
 
-.factory('Menus', function ($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
+.factory('Menus', function($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
   console.log("Menus factory initialized");
 
+  var Menus = this;
+
   // 24 hour clock
-  var lunchLPEndTime = 12; // no lunch late plate orders after 10am
+  var lunchLPEndTime = 10; // no lunch late plate orders after 10am
   var dinnerLPEndTime = 15; // no dinner late plate orders after 3pm
   var afterDinnerLPEndTime = 20; // dinner ends after 8pm
 
   var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=';
 
   return {
-    requestLatePlate: function ($scope, mealId) {
-      var latePlateSubmitAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
-
-      return $http.get(latePlateSubmitAPI).then(function(response) {
-        if (response.data) {
-          return response.data;
-        }
-      });
-    },
-
-    cancelLatePlate: function ($scope, mealId) {
-      var latePlateCancelAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
-
-      return $http.get(latePlateCancelAPI).then(function(response) {
-        if (response.data) {
-          return response.data;
-        }
-      });
-    },
-
-    getAll: function (userId) {
+    getMealData: function(userId) {
       dataSourceWithId = dataSource + userId;
       return $http.get(dataSourceWithId, {
         cache: true
       });
     },
 
-    getTodaysFirstMealIndex: function () {
-      // return 8;
-    },
+    organizeMeals: function(mealData, menuId) {
+      var meals = mealData.data;
+      var mealListings = [];
+      var isNextMeal = true;
 
-    getLatePlateMsg: function (mealType, mealIsToday) {
-      if (mealIsToday) {
-        var latePlateString = "<span class='ion-android-time'></span> Late plate orders due by ";
+      for (var i = 0; i < meals.length; i++) {
 
-        var lunchEnd = lunchLPEndTime + " a.m. today";
-        var dinnerEnd = (dinnerLPEndTime - 12) + " p.m. today";
+        if (this.mealHasPassed(meals[i].name, meals[i].date)) {
+          meals[i].hasPassed = true;
+          meals[i].isNext = false;
+        } else {
+          meals[i].hasPassed = false;
 
-        switch (mealType) {
-          case "Lunch":
-            return latePlateString + lunchEnd;
-          case "Dinner":
-            return latePlateString + dinnerEnd;
+          if (isNextMeal) {
+            meals[i].isNext = true;
+            isNextMeal = false;
+          } else {
+            meals[i].isNext = false;
+          }
         }
-        return null;
+
+        mealListings[i] = meals[i];
       }
+
+      return mealListings;
     },
 
-    getIcon: function (mealType) {
-      switch (mealType) {
-        case "Breakfast":
-          return "img/menu-breakfast.png";
-        case "Lunch":
-          return "img/menu-lunch.png";
-        case "Dinner":
-          return "img/menu-dinner.png";
-      }
-    },
-
-    mealHasPassed: function (mealType, mealDate) {
+    mealHasPassed: function(mealType, mealDate) {
       var today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -363,7 +340,59 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       return false;
     },
 
-    showLatePlateButton: function (mealHasPassed, mealType, mealIsToday) {
+    requestLatePlate: function($scope, mealId) {
+      var latePlateSubmitAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
+
+      return $http.get(latePlateSubmitAPI).then(function(response) {
+        if (response.data) {
+          return response.data;
+        }
+      });
+    },
+
+    cancelLatePlate: function($scope, mealId) {
+      var latePlateCancelAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
+
+      return $http.get(latePlateCancelAPI).then(function(response) {
+        if (response.data) {
+          return response.data;
+        }
+      });
+    },
+
+    getTodaysFirstMealIndex: function() {
+      // return 8;
+    },
+
+    getLatePlateMsg: function(mealType, mealIsToday) {
+      if (mealIsToday) {
+        var latePlateString = "<span class='ion-android-time'></span> Late plate orders due by ";
+
+        var lunchEnd = lunchLPEndTime + " a.m. today";
+        var dinnerEnd = (dinnerLPEndTime - 12) + " p.m. today";
+
+        switch (mealType) {
+          case "Lunch":
+            return latePlateString + lunchEnd;
+          case "Dinner":
+            return latePlateString + dinnerEnd;
+        }
+        return null;
+      }
+    },
+
+    getIcon: function(mealType) {
+      switch (mealType) {
+        case "Breakfast":
+          return "img/menu-breakfast.png";
+        case "Lunch":
+          return "img/menu-lunch.png";
+        case "Dinner":
+          return "img/menu-dinner.png";
+      }
+    },
+
+    showLatePlateButton: function(mealHasPassed, mealType, mealIsToday) {
       var currHour = new Date().getHours();
 
       // don't show if meal has passed
@@ -386,41 +415,41 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     // navigate menu data
-    goNext: function ($index, $state, $ionicViewSwitcher) {
+    goNext: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
       console.log("nextIndex: " + nextIndex);
-      // $state.go('tab.meal', {
-      //   menuId: nextIndex
-      // });
+      $state.go('tab.meal/:menuId', {
+        menuId: nextIndex
+      });
     },
 
-    goBack: function ($index, $state, $ionicViewSwitcher) {
+    goBack: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       var prevIndex = Number($index) - 1;
       console.log("prevIndex: " + prevIndex);
-      // $state.go('tab.meal', {
-      //   menuId: prevIndex
-      // });
+      $state.go('tab.meal', {
+        menuId: prevIndex
+      });
     }
   };
 })
 
-.factory('Globals', function () {
+.factory('Globals', function() {
   console.log("Globals factory initialized");
 
   return {
-    backButton: function ($ionicHistory) {
+    backButton: function($ionicHistory) {
       $ionicHistory.goBack();
     },
 
-    goForward: function ($state, toState, $ionicViewSwitcher, params) {
+    goForward: function($state, toState, $ionicViewSwitcher, params) {
       console.log('Globals.goForward() -- something something');
       $ionicViewSwitcher.nextDirection('forward');
       $state.go(toState, params);
     },
 
-    isDateSame: function (d1, d2) {
+    isDateSame: function(d1, d2) {
       d1 = new Date(d1);
       d1.setHours(0, 0, 0, 0);
       d2 = new Date(d2);
@@ -428,7 +457,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       return (d1.getUTCDate() === d2.getUTCDate());
     },
 
-    getFormattedDate: function (date) {
+    getFormattedDate: function(date) {
       date = new Date(date);
 
       var weekday = new Array(7);
@@ -465,7 +494,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   };
 })
 
-.factory('Help', function () {
+.factory('Help', function() {
   console.log("Help factory initialized");
 
   var faqs = [{
@@ -489,10 +518,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   return {
 
     // retrieve menu data
-    all: function () {
+    all: function() {
       return faqs;
     },
-    get: function (faqId) {
+
+    get: function(faqId) {
       for (var i = 0; i < faqs.length; i++) {
         if (faqs[i].id === parseInt(faqId)) {
           return faqs[i];
@@ -500,7 +530,8 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       }
       return null;
     },
-    submitBugReport: function () {
+
+    submitBugReport: function() {
       // submit bug report here
     }
   };
@@ -510,14 +541,14 @@ var CollegeChefs = CollegeChefs || {};
 
 CollegeChefs.helpers = {
 
-  goToTodaysMeals: function ($state, $ionicViewSwitcher) {
+  goToTodaysMeals: function($state, $ionicViewSwitcher) {
     $ionicViewSwitcher.nextDirection('forward');
     $state.go('tab.meal', {
       menuId: 1
     });
   },
 
-  // getUserID: function (Account) {
+  // getUserID: function(Account) {
   //   var userInfo = Account.getUserInfo();
   //   var userid = userInfo.id;
   //   console.log("userid from helper: " + userid);

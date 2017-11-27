@@ -14,14 +14,13 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
   $scope.getMealListings = Account.getUser().then(
     function(response) {
       $scope.userInfo = Account.getUserInfo(response);
-      return Menus.getAll($scope.userInfo.id);
+      return Menus.getMealData($scope.userInfo.id);
     },
     function(error) {
       console.log("Unable to get `userInfo` object");
     }
   );
 
-  // var getMealListings = Menus.getAll($scope.userId);
   var modalTemplate;
 
   $scope.noItems = "";
@@ -40,19 +39,24 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
     $scope.getMealListings.then(
       function(response) {
         var menus = response.data;
-        var menuid = $stateParams.menuId;
+        var menuId = $stateParams.menuId;
 
         for (var i = 0; i < menus.length; i++) {
-          if (menuid === "next") {
+          if (menuId === "next") {
             if (!$scope.mealHasPassed(menus[i].name, menus[i].date)) {
               $scope.meal = menus[i];
               $scope.index = i;
               break;
             }
           } else if ($scope.index === i) {
+            console.log("Where am I?");
             $scope.meal = menus[i];
-
-            break;
+            br eak;
+          } else {
+            console.log("Not 'next' and not the other one");
+            $scope.meal = menus[i];
+            $scope.index = i;
+            bre ak;
           }
         }
         setTimeout(function() {
@@ -64,7 +68,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
       function(error) {
         $scope.noItems = noItemsMessage;
         console.log('error', error);
-      });
+      }
+    );
   }
 
   $scope.icon = function(mealType) {
@@ -175,7 +180,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
     $scope.getMealListings.then(
       function(response) {
-
         $scope.menus = response.data;
         $scope.mealCount = response.data.length;
         if (response.data.length > 0) {
@@ -191,7 +195,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
       },
       function(error) {
         $ionicLoading.hide();
-        console.log("Meals.getMealListings.then() failed");
       }
     );
 
@@ -345,7 +348,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
 .controller('HelpDetailCtrl', function ($scope, $stateParams, Help) {
 	$scope.faq = Help.get($stateParams.faqId);
-
 })
 
 .controller('ReportBugCtrl', function ($scope, $state, Help) {
