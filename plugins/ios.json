@@ -30,6 +30,9 @@
     },
     "cordova-sqlite-storage": {
       "PACKAGE_NAME": "com.collegechefs.meals"
+    },
+    "cordova-plugin-app-version": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
     }
   },
   "dependent_plugins": {}

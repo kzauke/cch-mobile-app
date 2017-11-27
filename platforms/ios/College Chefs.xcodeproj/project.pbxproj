@@ -26,6 +26,7 @@
 		FB390B9318A64BACBC6D0A06 /* SQLitePlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B630C9E2B7D4944A25D297E /* SQLitePlugin.m */; };
 		38FA862DC4244CEE88618AC5 /* PSPDFThreadSafeMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = A5B779B48E9C41FB8226D37B /* PSPDFThreadSafeMutableDictionary.m */; settings = {COMPILER_FLAGS = "-w"; }; };
 		DA4A8E7CF1ED4F6DB96A0B91 /* sqlite3.c in Resources */ = {isa = PBXBuildFile; fileRef = 0CCB0BB20A9A46E2B008FE88 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w -DSQLITE_THREADSAFE=2 -DSQLITE_DEFAULT_MEMSTATUS=0 -DSQLITE_OMIT_DECLTYPE -DSQLITE_OMIT_DEPRECATED -DSQLITE_OMIT_PROGRESS_CALLBACK -DSQLITE_OMIT_SHARED_CACHE -DSQLITE_TEMP_STORE=2 -DSQLITE_OMIT_LOAD_EXTENSION -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_RTREE -DSQLITE_DEFAULT_PAGE_SIZE=1024 -DSQLITE_DEFAULT_CACHE_SIZE=2000"; }; };
+		AC4E4BA94F9D4865BF21BC72 /* AppVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D128D0F616246159E0CC6C4 /* AppVersion.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,8 @@
 		50FFD5C60CD3457590F74574 /* SQLitePlugin.h */ = {isa = PBXFileReference; name = "SQLitePlugin.h"; path = "cordova-sqlite-storage/SQLitePlugin.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		4D5FFCC07ADC49FB85FAFB56 /* PSPDFThreadSafeMutableDictionary.h */ = {isa = PBXFileReference; name = "PSPDFThreadSafeMutableDictionary.h"; path = "cordova-sqlite-storage/PSPDFThreadSafeMutableDictionary.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 		80B602917EDF4D54A18D46F0 /* sqlite3.h */ = {isa = PBXFileReference; name = "sqlite3.h"; path = "cordova-sqlite-storage/sqlite3.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		9D128D0F616246159E0CC6C4 /* AppVersion.m */ = {isa = PBXFileReference; name = "AppVersion.m"; path = "cordova-plugin-app-version/AppVersion.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		1CB6DB01FFAD4E948923C79A /* AppVersion.h */ = {isa = PBXFileReference; name = "AppVersion.h"; path = "cordova-plugin-app-version/AppVersion.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,6 +212,8 @@
 				50FFD5C60CD3457590F74574 /* SQLitePlugin.h */,
 				4D5FFCC07ADC49FB85FAFB56 /* PSPDFThreadSafeMutableDictionary.h */,
 				80B602917EDF4D54A18D46F0 /* sqlite3.h */,
+				9D128D0F616246159E0CC6C4 /* AppVersion.m */,
+				1CB6DB01FFAD4E948923C79A /* AppVersion.h */,
 			);
 			name = Plugins;
 			path = "College Chefs/Plugins";
@@ -331,6 +336,7 @@
 				FB390B9318A64BACBC6D0A06 /* SQLitePlugin.m in Sources */,
 				38FA862DC4244CEE88618AC5 /* PSPDFThreadSafeMutableDictionary.m in Sources */,
 				DA4A8E7CF1ED4F6DB96A0B91 /* sqlite3.c in Resources */,
+				AC4E4BA94F9D4865BF21BC72 /* AppVersion.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

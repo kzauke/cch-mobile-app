@@ -28,7 +28,7 @@
     <div ng-switch on="meal.latePlateStatus">
       <div ng-switch-when="eligible" ng-if="meal.name != 'Breakfast' && meal.entree.toUpperCase() != 'NO SERVICE'">
         <div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), meal.name, mealIsToday(meal.date))">
-          <button type="button" class="button button-assertive request-lp" ng-click="openModal('create')">Request Late Plate</button>
+          <button type="button" class="button button-assertive request-lp" ng-click="openModal(1)">Request Late Plate</button>
           <p class="is-red" ng-bind-html="getLatePlateMsg(meal.name, mealIsToday(meal.date))"></p>
         </div>
       </div>
@@ -40,7 +40,7 @@
           <small>Your request has been submitted</small>
         </div>
         <div ng-if="showLatePlateButton(mealHasPassed(meal.name, meal.date), meal.name, mealIsToday(meal.date))">
-          <button class="button button-assertive request-lp cancel-lp" ng-click="openModal('delete')">Cancel Late Plate</button>
+          <button class="button button-assertive request-lp" ng-click="openModal(2)">Cancel Late Plate</button>
         </div>
       </div>
 

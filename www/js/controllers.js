@@ -9,6 +9,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 .controller('MenusCtrl', function ($scope, Account, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
   console.log("MenusCtrl is initialized");
 
+  $scope.index = Number($stateParams.menuId);
+
   var noItemsMessage = '<i class="padding icon icon-strawberry assertive no-items-icon"></i><p>There is no meal data available.<br />Please try back later.</p>';
 
   $scope.getMealListings = Account.getUser().then(
@@ -49,14 +51,8 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
               break;
             }
           } else if ($scope.index === i) {
-            console.log("Where am I?");
             $scope.meal = menus[i];
-            br eak;
-          } else {
-            console.log("Not 'next' and not the other one");
-            $scope.meal = menus[i];
-            $scope.index = i;
-            bre ak;
+            break;
           }
         }
         setTimeout(function() {
@@ -241,9 +237,29 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 	};
 })
 
-.controller('LoginCtrl', function ($scope, $location, AuthenticationService) {
+.controller('LoginCtrl', function ($scope, $location, Globals, AuthenticationService, $ionicPlatform, $cordovaAppVersion) {
   var vm = this;
   vm.formSubmit = formSubmit;
+  vm.loginAssistance = loginAssistance;
+
+  vm.version = null;
+
+  $ionicPlatform.ready(function() {
+    $cordovaAppVersion.getVersionNumber().then(function(version) {
+      vm.version = version;
+    });
+  });
+
+  function loginAssistance() {
+    var url = "http://chefnet.collegechefs.com/tabid/395";
+
+    if (vm.email !== undefined) {
+      url += /uid/ + vm.email;
+    }
+
+    window.open(url, '_system', 'location=no');
+    return false;
+  };
 
   function formSubmit() {
     AuthenticationService.login(vm.username, vm.password, function(result) {
@@ -256,13 +272,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
   }
 })
 
-.controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {
-
-	$scope.backToWelcome = function () {
-		Account.backToWelcome($state, $ionicViewSwitcher);
-	};
-
-	$scope.registerMessage = "No Error Message Yet";
+.controller('RegisterCtrl', function ($scope, $location, Account, AuthenticationService, $state, $ionicViewSwitcher) {
 
 	$scope.registerUser = function (user, method) {
 
@@ -272,8 +282,28 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 			'lastname': user.lastname,
 			'activation': user.activation
 		};
-		$scope.registerMessage = Account.registerUser($state, $ionicViewSwitcher, method, loginData, $location, $q);
+
+    Account.registerUser(loginData).then(function(result) {
+      if (result.error) {
+        $scope.registerMessage = Account.getRegistrationError(result.error);
+      } else if (result.token) {
+
+        var _token = jwt_decode(result.token);
+
+        AuthenticationService.login(_token.username, _token.password, function(result) {
+          if (result === true) {
+            $location.path('/tab/meal/next');
+          } else {
+            $scope.registerMessage = 'There was an error logging you in. Please check your username or password and try again.';
+          }
+        })
+      }
+    });
 	};
+
+  $scope.backToWelcome = function () {
+    Account.backToWelcome($state, $ionicViewSwitcher);
+  };
 })
 
 .controller('ActivationCtrl', function ($scope, $state, Account) {})
@@ -302,7 +332,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*********** Account Tab ***********/
 /*************************************/
 
-.controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $timeout, $ionicHistory) {
+.controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $ionicPlatform, $cordovaAppVersion, $timeout, $ionicHistory) {
   console.log("AccountCtrl is initialized");
 
   Account.getUser().then(
@@ -313,6 +343,15 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
       console.log("Unable to get `userInfo` object");
     }
   );
+
+  $scope.version = null;
+
+  $ionicPlatform.ready(function() {
+    $cordovaAppVersion.getVersionNumber().then(function(version) {
+      $scope.version = version;
+    });
+  });
+
   $scope.logout = function() {
     Account.logout($state, $ionicViewSwitcher);
     $timeout(function() {

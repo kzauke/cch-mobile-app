@@ -48,6 +48,14 @@ module.exports = [
     "clobbers": [
       "SQLitePlugin"
     ]
+  },
+  {
+    "id": "cordova-plugin-app-version.AppVersionPlugin",
+    "file": "plugins/cordova-plugin-app-version/www/AppVersionPlugin.js",
+    "pluginId": "cordova-plugin-app-version",
+    "clobbers": [
+      "cordova.getAppVersion"
+    ]
   }
 ];
 module.exports.metadata = 
@@ -61,7 +69,8 @@ module.exports.metadata =
   "cordova-plugin-statusbar": "2.2.0",
   "cordova-plugin-whitelist": "1.3.0",
   "cordova-sqlite-ext": "0.10.6",
-  "cordova-sqlite-storage": "2.1.2"
+  "cordova-sqlite-storage": "2.1.2",
+  "cordova-plugin-app-version": "0.1.9"
 };
 // BOTTOM OF METADATA
 });

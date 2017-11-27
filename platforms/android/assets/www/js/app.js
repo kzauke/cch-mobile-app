@@ -1,5 +1,7 @@
 // College Chefs app
 
+var appVersion = "0.0.0";
+
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
 
 .run(['$ionicPlatform',
@@ -21,9 +23,6 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-
-    // Load the database, true = debug
-    // $sqliteService.loadDatabase(true);
 	});
 }])
 
@@ -42,7 +41,14 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 .config(['$stateProvider',
          '$urlRouterProvider',
          '$ionicConfigProvider',
-         function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+         '$ionicCloudProvider',
+         function ($stateProvider, $urlRouterProvider, $ionicConfigProvider, $ionicCloudProvider) {
+
+  $ionicCloudProvider.init({
+    "core": {
+      "app_id": "d6716ba8"
+    }
+  });
 
   $ionicConfigProvider.scrolling.jsScrolling(ionic.Platform.isIOS());
   $ionicConfigProvider.tabs.position('bottom');
@@ -86,11 +92,6 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				'tab-meal': {
 					templateUrl: 'templates/tab-meal.html',
 					controller: 'MenusCtrl',
-          // resolve: {
-          //   'UserData': function(Account) {
-          //     return Account.getUserInfo;
-          //   }
-          // }
 				}
 			}
 		})
@@ -185,10 +186,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
       cache: false,
 			templateUrl: 'templates/login.html',
 			controller: 'LoginCtrl',
-			controllerAs: 'vm',
-      onEnter: function ($state) {
-        console.log("You have now entered the login state");
-      }
+			controllerAs: 'vm'
 		})
     .state('forgot-password', {
 			url: '/forgot-password',
@@ -214,20 +212,15 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
   // default route
   // return correct result based on datetime.now
-  // $urlRouterProvider.otherwise('/tab/meal/next');
-  $urlRouterProvider.otherwise(function ($injector, $location) {
-      // var $state = $injector.get('$state');
-      // $state.go('tab.meal');
+  $urlRouterProvider.otherwise('/tab/meal/next');
+  // $urlRouterProvider.otherwise(function ($injector, $location) {
+  //     var $state = $injector.get('$state');
+  //     $state.go('tab.meal');
 
-      if (1 === 2) {
-        return '/login';
-      } else {
-        return '/tab/meal/next'
-      }
-  });
+  //     // if (1 === 2) {
+  //     //   return '/login';
+  //     // } else {
+  //     //   return '/tab/meal/next'
+  //     // }
+  // });
 }]);
-
-
-// function userAccountInfo(Account) {
-//   return Account.getUserInfo();
-// }

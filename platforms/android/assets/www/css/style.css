@@ -8,19 +8,19 @@
 		 font-size: 1.01em;
 }
 .padding {
-	padding :20px;	
+	padding :20px;
 }
 .is-red {
     color: #e03730 !important;
 }
 .right {
-	float: right;	
+	float: right;
 	text-align: right;
 }
 small {
     font-size: 80%;
 }
-.bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before, .bar button.button-icon .icon:before, .bar button.button-icon:before, .bar button.button-icon.icon-left:before, .bar button.button-icon.icon-right:before {
+.bar .button.button-icon .icon::before, .bar .button.button-icon::before, .bar .button.button-icon.icon-left::before, .bar .button.button-icon.icon-right::before, .bar button.button-icon .icon::before, .bar button.button-icon::before, .bar button.button-icon.icon-left::before, .bar button.button-icon.icon-right::before {
     font-size: 16px
 }
 
@@ -35,7 +35,7 @@ small {
     font-weight: 400;
 }
 .item-avatar > img:first-child, .item-avatar .item-image, .item-avatar .item-content > img:first-child, .item-avatar .item-content .item-image, .item-avatar-left > img:first-child, .item-avatar-left .item-image, .item-avatar-left .item-content > img:first-child, .item-avatar-left .item-content .item-image {
-	border-radius: 0;	
+	border-radius: 0;
     max-width: 48px;
     max-height: 48px;
     top: 10px;
@@ -43,11 +43,11 @@ small {
 }
 
 .item, .pane, .view, .item-divider, .item-stacked-label input, .item-stacked-label textarea, .modal {
-	background-color: #faf8ed;	
+	background-color: #faf8ed;
 }
 
 .item-bg-white {
-	background-color: #fff;	
+	background-color: #fff;
 }
 .item {
     font-size: 15px;
@@ -125,68 +125,68 @@ ul.meal-items li {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.icon-check:before {
+.icon-check::before {
   content: ""; }
 
-.icon-check-circle:before {
+.icon-check-circle::before {
   content: ""; }
 
-.icon-chevron-left:before {
+.icon-chevron-left::before {
   content: ""; }
 
-.icon-chevron-right:before {
+.icon-chevron-right::before {
   content: ""; }
 
-.icon-clock:before {
+.icon-clock::before {
   content: ""; }
 
-.icon-exclamation:before {
+.icon-exclamation::before {
   content: ""; }
 
-.icon-exclamation-circle:before {
+.icon-exclamation-circle::before {
   content: ""; }
 
-.icon-gear:before {
+.icon-gear::before {
   content: ""; }
 
-.icon-heart:before {
+.icon-heart::before {
   content: ""; }
 
-.icon-list:before {
+.icon-list::before {
   content: ""; }
 
-.icon-minus:before {
+.icon-minus::before {
   content: ""; }
 
-.icon-minus-circle:before {
+.icon-minus-circle::before {
   content: ""; }
 
-.icon-plate:before {
+.icon-plate::before {
   content: ""; }
 
-.icon-plus:before {
+.icon-plus::before {
   content: ""; }
 
-.icon-plus-circle:before {
+.icon-plus-circle::before {
   content: ""; }
 
-.icon-star:before {
+.icon-star::before {
   content: ""; }
 
-.icon-strawberry:before {
+.icon-strawberry::before {
   content: ""; }
 
-.icon-x:before {
+.icon-x::before {
   content: ""; }
 
-.icon-x-circle:before {
+.icon-x-circle::before {
   content: ""; }
-  
-.icon-exit:before {
+
+.icon-exit::before {
   content: "\ea14";
 }
 .background-dark {
-	background-color: #333333;	
+	background-color: #333333;
 }
 .bottom {
     position: absolute;
@@ -208,7 +208,7 @@ ul.meal-items li {
 
 .account-text a {
     color: #eaec92;
-    
+
 }
 img.welcome-logo {
     display: block;
@@ -218,7 +218,7 @@ img.welcome-logo {
     box-shadow: 2px 2px 1px #7e1713;
 }
 p.password-help {
-    margin: 10px 0;
+    margin: 20px 0 10px;
     text-align: center;
 }
 
@@ -229,13 +229,13 @@ label.item.item-input {
     /* margin-bottom: 10px; */
 }
 .account-actions {
-	margin-top: 30px;	
+	margin-top: 30px;
 }
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
 .hideElements {
-	display:none;	
+	display:none;
 }
 .loading-container .loading {
     background: transparent;
@@ -261,7 +261,7 @@ label.item.item-input {
 .error-message h3 {
     font-size: 21px;
     color: white;
-}	
+}
 .alert.alert-warning.pending-warning-meal {
     margin-top: 30px;
     font-size: 23px;
@@ -295,7 +295,7 @@ label.item.item-input {
 span.back-text {
     display: none !important;
 }
-ion-view.pane:before {
+ion-view.pane::before {
     /* content: ""; */
     display:block;
     position: absolute;
@@ -307,4 +307,16 @@ ion-view.pane:before {
 }
 .register-form {
     margin-top:30px;
+}
+
+.app-version {
+  color: #5a5a5a;
+  font-size: 13px;
+}
+
+.login-note {
+  color: #a5a5a5;
+  font-size: 13px;
+  line-height: 17px;
+  padding: 10px 0 5px;
 }
