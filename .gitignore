@@ -5,7 +5,7 @@ node_modules/
 platforms/
 plugins/
 CollegeChefs.apk
-my-release-key.keystore
+*.keystore
 genurl.js
 .gitignore
 .io-config.json

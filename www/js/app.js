@@ -55,14 +55,6 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
   // app routes
 	$stateProvider
-    //
-    // NEW MEAL TAB FOR TESTING
-    // ========================
-    .state('new', {
-      url: '/new',
-      templateUrl: 'templates/_new.html',
-      controller: 'MenusController'
-    })
 		.state('tab', {
 			url: '/tab',
 			abstract: true,
@@ -213,14 +205,4 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
   // default route
   // return correct result based on datetime.now
   $urlRouterProvider.otherwise('/tab/meal/next');
-  // $urlRouterProvider.otherwise(function ($injector, $location) {
-  //     var $state = $injector.get('$state');
-  //     $state.go('tab.meal');
-
-  //     // if (1 === 2) {
-  //     //   return '/login';
-  //     // } else {
-  //     //   return '/tab/meal/next'
-  //     // }
-  // });
 }]);

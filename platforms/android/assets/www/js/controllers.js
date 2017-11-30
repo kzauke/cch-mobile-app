@@ -138,13 +138,13 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
     else $scope.modalCancel.hide();
   };
 
-  $scope.$on('modal.shown', function(event, modal) {
-    console.log("Modal " + modal.id + " is shown");
-  });
+  // $scope.$on('modal.shown', function(event, modal) {
+  //   console.log("Modal " + modal.id + " is shown");
+  // });
 
-  $scope.$on('modal.hidden', function(event, modal) {
-    console.log("Modal " + modal.id + " is hidden");
-  });
+  // $scope.$on('modal.hidden', function(event, modal) {
+  //   console.log("Modal " + modal.id + " is hidden");
+  // });
 
   $scope.requestLatePlate = function(mealId) {
     Menus.requestLatePlate($scope, mealId).then(
@@ -187,7 +187,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
         $scope.dataLoaded = true;
         $ionicLoading.hide();
-        console.log("Meals.getMealListings.then() finished successfully");
       },
       function(error) {
         $ionicLoading.hide();
@@ -272,13 +271,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
   }
 })
 
-.controller('RegisterCtrl', function ($scope, $state, Account, $ionicViewSwitcher, $location, $q) {
-
-	$scope.backToWelcome = function () {
-		Account.backToWelcome($state, $ionicViewSwitcher);
-	};
-
-	$scope.registerMessage = "No Error Message Yet";
+.controller('RegisterCtrl', function ($scope, $location, Account, AuthenticationService, $state, $ionicViewSwitcher) {
 
 	$scope.registerUser = function (user, method) {
 
@@ -288,8 +281,28 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 			'lastname': user.lastname,
 			'activation': user.activation
 		};
-		$scope.registerMessage = Account.registerUser($state, $ionicViewSwitcher, method, loginData, $location, $q);
+
+    Account.registerUser(loginData).then(function(result) {
+      if (result.error) {
+        $scope.registerMessage = Account.getRegistrationError(result.error);
+      } else if (result.token) {
+
+        var _token = jwt_decode(result.token);
+
+        AuthenticationService.login(_token.username, _token.password, function(result) {
+          if (result === true) {
+            $location.path('/tab/meal/next');
+          } else {
+            $scope.registerMessage = 'There was an error logging you in. Please check your username or password and try again.';
+          }
+        })
+      }
+    });
 	};
+
+  $scope.backToWelcome = function () {
+    Account.backToWelcome($state, $ionicViewSwitcher);
+  };
 })
 
 .controller('ActivationCtrl', function ($scope, $state, Account) {})
@@ -333,9 +346,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
   $scope.version = null;
 
   $ionicPlatform.ready(function() {
-    console.log($scope.version);
     $cordovaAppVersion.getVersionNumber().then(function(version) {
-      console.log("version: " + $scope.version);
       $scope.version = version;
     });
   });

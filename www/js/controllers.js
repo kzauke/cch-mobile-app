@@ -138,13 +138,13 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
     else $scope.modalCancel.hide();
   };
 
-  $scope.$on('modal.shown', function(event, modal) {
-    console.log("Modal " + modal.id + " is shown");
-  });
+  // $scope.$on('modal.shown', function(event, modal) {
+  //   console.log("Modal " + modal.id + " is shown");
+  // });
 
-  $scope.$on('modal.hidden', function(event, modal) {
-    console.log("Modal " + modal.id + " is hidden");
-  });
+  // $scope.$on('modal.hidden', function(event, modal) {
+  //   console.log("Modal " + modal.id + " is hidden");
+  // });
 
   $scope.requestLatePlate = function(mealId) {
     Menus.requestLatePlate($scope, mealId).then(
@@ -187,7 +187,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
         $scope.dataLoaded = true;
         $ionicLoading.hide();
-        console.log("Meals.getMealListings.then() finished successfully");
       },
       function(error) {
         $ionicLoading.hide();

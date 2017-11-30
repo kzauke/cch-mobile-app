@@ -1,35 +1,13 @@
-// // Database instance
-// var db = null;
-// console.log("Just created db object");
+// College Chefs app
+
+var appVersion = "0.0.0";
 
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
 
 .run(['$ionicPlatform',
-      '$sqliteFactory',
-      function($ionicPlatform, $sqliteFactory, $rootScope, $cordovaSQLite, $injector, $state) {
+      '$sqliteService',
+      function($ionicPlatform, $sqliteService) {
   $ionicPlatform.ready(function() {
-
-    // // Instantiate SQLite database connection after platform is ready
-    // db = $cordovaSQLite.openDB({ name: 'options.db', location: 'default' });
-    // console.log("Opened the database");
-    // $cordovaSQLite.execute(db, 'CREATE TABLE IF NOT EXISTS Session (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, token TEXT)');
-    // console.log("Created the table, if it doesn't exist yet.");
-
-
-
-    // var AuthenticationService = $injector.get('AuthenticationService');
-    // $rootScope.userInfo = AuthenticationService.getUserInfo(db, function(result){
-    //   if (!result) {
-    //     $state.go('login');
-    //   } else {
-    //     console.log("username is: " + $rootScope.userInfo.username);
-    //     console.log("firstname is: " + $rootScope.userInfo.firstname);
-    //     console.log("house is: " + $rootScope.userInfo.house);
-
-    //     console.log("$rootScope.userInfo = " + $rootScope.userInfo);
-    //   }
-    // });
-
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default
       // (remove to show accessory bar above keyboard for form inputs)
@@ -43,27 +21,34 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
-      // StatusBar.styleDefault();
+      StatusBar.styleDefault();
     }
 	});
 }])
 
 /********************************************************/
-	// prevents preflight by Chrome when testing locally,
-	// COMMENT OUT FOR PRODUCTION
+  // prevents preflight by Chrome when testing locally,
+  // COMMENT OUT FOR PRODUCTION
 
-	// .config(function ($httpProvider) {
-	// 	$httpProvider.defaults.headers.common = {};
-	// 	$httpProvider.defaults.headers.post = {};
-	// 	$httpProvider.defaults.headers.put = {};
-	// 	$httpProvider.defaults.headers.patch = {};
-	// })
+  // .config(function ($httpProvider) {
+  // 	$httpProvider.defaults.headers.common = {};
+  // 	$httpProvider.defaults.headers.post = {};
+  // 	$httpProvider.defaults.headers.put = {};
+  // 	$httpProvider.defaults.headers.patch = {};
+  // })
 /******************************************************/
 
 .config(['$stateProvider',
          '$urlRouterProvider',
          '$ionicConfigProvider',
-         function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+         '$ionicCloudProvider',
+         function ($stateProvider, $urlRouterProvider, $ionicConfigProvider, $ionicCloudProvider) {
+
+  $ionicCloudProvider.init({
+    "core": {
+      "app_id": "d6716ba8"
+    }
+  });
 
   $ionicConfigProvider.scrolling.jsScrolling(ionic.Platform.isIOS());
   $ionicConfigProvider.tabs.position('bottom');
@@ -98,7 +83,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			views: {
 				'tab-meal': {
 					templateUrl: 'templates/tab-meal.html',
-					controller: 'MenusCtrl'
+					controller: 'MenusCtrl',
 				}
 			}
 		})
@@ -125,7 +110,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 			views: {
 				'tab-account': {
 					templateUrl: 'templates/profile.html',
-					controller: 'EditProfileCtrl'
+					controller: 'AccountCtrl'
 				}
 			}
 		})
@@ -190,12 +175,10 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 		})
     .state('login', {
 			url: '/login',
+      cache: false,
 			templateUrl: 'templates/login.html',
 			controller: 'LoginCtrl',
-			controllerAs: 'vm',
-      onEnter: function ($state) {
-        console.log("You have now entered the login state");
-      }
+			controllerAs: 'vm'
 		})
     .state('forgot-password', {
 			url: '/forgot-password',

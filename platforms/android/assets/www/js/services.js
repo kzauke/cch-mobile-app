@@ -1,8 +1,5 @@
 angular.module('collegeChefs.services', ['ionic.cloud'])
 
-// clean up by reading this article
-// http://stackoverflow.com/questions/30752841/how-to-call-other-functions-of-same-services-in-ionic-angular-js
-
 .service('$sqliteService', function($q, $cordovaSQLite) {
   console.log("$sqliteService initialized");
 
@@ -111,7 +108,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   }
 })
 
-.factory('Account', function($q, $sqliteService, $http, $ionicAuth) {
+.factory('Account', function($q, $http, $sqliteService) {
   console.log("Account factory initialized");
 
   var _userInfo;
@@ -132,18 +129,14 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           email: decoded.custom.email,
           firstname: decoded.custom.firstname,
           lastname: decoded.custom.lastname,
-          // house: decoded.custom.house,
-          house: "Alpha Beta Testa",
-          // chef: decoded.custom.chef,
-          chef: "Swedish Chef",
+          house: decoded.custom.house,
+          // house: "Alpha Beta Testa",
+          chef: decoded.custom.chef,
+          // chef: "Swedish Chef",
           supervisor: decoded.custom.supervisor
         };
 
         console.log(_userInfo);
-        // console.log("ID: " + _userInfo.id);
-        // console.log("User: " + _userInfo.username);
-        // console.log("House: " + _userInfo.house);
-        // console.log("Chef: " + _userInfo.chef);
       }
 
       return _userInfo;
@@ -161,59 +154,28 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       $state.go('tab.account');
     },
 
-    registerUser: function($state, $ionicViewSwitcher, method, loginData, $location, $q) {
-      var placeholder = {};
-      var defer = $q.defer();
+    registerUser: function(loginData) {
+      console.log("registerUserNEW() running");
 
-      // send registration data to custom handler that adds user to our system
-      var registerURL = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
+      var registerAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
 
-      var location = $location;
+      return $http.get(registerAPI).then(function(response) {
+        return response.data;
+      });
+    },
 
-      $http.get(registerURL).then(
-        function(response) {
-          // if return message is an error
-          if (response.data.error !== undefined) {
-            if (response.data.error === "UsernameAlreadyExists") {
-              placeholder.text = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
-            } else if (response.data.error === "ActivationNotValid") {
-              placeholder.text = "Your house code is invalid. To get the correct house code for your house, please talk to your chef.";
-            } else {
-              placeholder.text = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
-            }
-          } else if (response.data.token !== undefined) {
-            var expToken = response.data.token;
+    getRegistrationError: function(error) {
+      var _placeholder;
 
-            // decode token
-            var decoded = jwt_decode(expToken);
-            console.log(decoded.username);
-
-            // if valid, authenticate user with our custom login
-            var loginOptions = {
-              'inAppBrowserOptions': {
-                'hidden': true
-              }
-            };
-
-            var loginData = {
-              'username': decoded.username,
-              'password': decoded.password
-            };
-
-            $ionicAuth.login('custom', loginData, loginOptions).then(function(s) {
-              if ($ionicAuth.isAuthenticated()) {
-                location.path('/tab/meal/next');
-              }
-            }, function(e) {
-              console.log(e);
-            });
-          } else {
-            console.log("Something went wrong while registering your account. Please contact your administrator");
-          }
-        }
-      );
-      defer.resolve();
-      return placeholder;
+      if (error === "UsernameAlreadyExists") {
+        _placeholder = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
+      } else if (error === "ActivationNotValid") {
+        _placeholder = "Your house code is invalid. To get the correct house code for your house, please talk to your chef.";
+      } else {
+        _placeholder = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
+      }
+      console.log(_placeholder);
+      return _placeholder;
     },
 
     requestActivation: function($state, $ionicViewSwitcher) {
@@ -414,7 +376,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       return true;
     },
 
-    // navigate menu data
     goNext: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
@@ -482,8 +443,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       month[9] = "Oct";
       month[10] = "Nov";
       month[11] = "Dec";
-
-      // return weekday[date.getUTCDay()];
 
       if (isNaN(date.getUTCDay())) {
         return "";
