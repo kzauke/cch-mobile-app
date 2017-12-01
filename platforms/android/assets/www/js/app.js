@@ -54,20 +54,16 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
   $ionicConfigProvider.tabs.position('bottom');
 
   // app routes
-	$stateProvider
-		.state('tab', {
-			url: '/tab',
-			abstract: true,
-			templateUrl: 'templates/tabs.html',
-			onEnter: function ($state) {
-				// if user is not authenticated, go to welcome screen
-        // query the db, see if there's a user id
-
-        // if (!isAuthenticated) {
-          $state.go('login');
-        // }
-			}
+  $stateProvider
+    .state('tab', {
+      url: '/tab',
+      templateUrl: 'templates/tabs.html',
+      abstract: true,
+      resolve: {
+        resolvedUser: checkForAuthenticatedUser
+      }
 		})
+
 		// Each tab has its own nav history stack:
 		.state('tab.menus', {
 			url: '/menus',
@@ -205,4 +201,18 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
   // default route
   // return correct result based on datetime.now
   $urlRouterProvider.otherwise('/tab/meal/next');
+
+  function checkForAuthenticatedUser(Account, $state) {
+    return Account.getUser().then(
+      function(_user) {
+        // console.log(_user);
+        _userInfo = Account.getUserInfo(_user);
+        return _userInfo;
+      },
+      function(_error) {
+        // console.log("Error! " + _error);
+        $state.go('login');
+      }
+    );
+  }
 }]);

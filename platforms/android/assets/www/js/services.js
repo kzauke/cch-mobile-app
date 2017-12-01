@@ -123,8 +123,8 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       if (!_userInfo) {
         var decoded = jwt_decode(user.token);
         _userInfo = {
-          // id: decoded.user_id,
-          id: 6441,
+          id: decoded.user_id,
+          // id: 6441,
           username: decoded.custom.username,
           email: decoded.custom.email,
           firstname: decoded.custom.firstname,
