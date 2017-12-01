@@ -138,14 +138,6 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
     else $scope.modalCancel.hide();
   };
 
-  // $scope.$on('modal.shown', function(event, modal) {
-  //   console.log("Modal " + modal.id + " is shown");
-  // });
-
-  // $scope.$on('modal.hidden', function(event, modal) {
-  //   console.log("Modal " + modal.id + " is hidden");
-  // });
-
   $scope.requestLatePlate = function(mealId) {
     Menus.requestLatePlate($scope, mealId).then(
       function(response) {
