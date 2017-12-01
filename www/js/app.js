@@ -205,11 +205,12 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
   function checkForAuthenticatedUser(Account, $state) {
     return Account.getUser().then(
       function(_user) {
-        console.log(_user);
-        return _user;
+        // console.log(_user);
+        _userInfo = Account.getUserInfo(_user);
+        return _userInfo;
       },
       function(_error) {
-        console.log("Error! " + _error);
+        // console.log("Error! " + _error);
         $state.go('login');
       }
     );
