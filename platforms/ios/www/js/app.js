@@ -64,7 +64,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
         // query the db, see if there's a user id
 
         // if (!isAuthenticated) {
-          // $state.go('login');
+          $state.go('login');
         // }
 			}
 		})

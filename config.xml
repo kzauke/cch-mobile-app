@@ -21,6 +21,7 @@
     <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreen" value="screen" />
+    <preference name="orientation" value="portrait" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
@@ -66,9 +67,6 @@
         <splash height="1136" src="resources/ios/splash/Default-568h@2x~iphone.png" width="640" />
         <splash height="1334" src="resources/ios/splash/Default-667h.png" width="750" />
         <splash height="2208" src="resources/ios/splash/Default-736h.png" width="1242" />
-        <splash height="1242" src="resources/ios/splash/Default-Landscape-736h.png" width="2208" />
-        <splash height="1536" src="resources/ios/splash/Default-Landscape@2x~ipad.png" width="2048" />
-        <splash height="768" src="resources/ios/splash/Default-Landscape~ipad.png" width="1024" />
         <splash height="2048" src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" />
         <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
@@ -78,14 +76,15 @@
     <allow-navigation href="http://192.168.188.2:8100" />
     <allow-navigation href="http://172.24.64.50:8100" />
     <allow-navigation href="http://10.0.0.4:8100" />
-    <engine name="ios" spec="4.5.3" />
-    <plugin name="cordova-plugin-console" spec="~1.0.4" />
-    <plugin name="cordova-plugin-device" spec="~1.1.3" />
     <plugin name="cordova-plugin-inappbrowser" spec="~1.6.1" />
-    <plugin name="cordova-plugin-splashscreen" spec="~4.0.0" />
-    <plugin name="cordova-plugin-statusbar" spec="~2.2.0" />
-    <plugin name="cordova-plugin-whitelist" spec="~1.3.0" />
     <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
-    <plugin name="cordova-sqlite-storage" spec="^2.1.2" />
     <plugin name="cordova-plugin-app-version" spec="git+https://github.com/whiteoctober/cordova-plugin-app-version.git" />
+    <allow-navigation href="http://10.0.0.9:8100" />
+    <plugin name="cordova-plugin-console" spec="~1.0.4" />
+    <engine name="ios" spec="~4.5.4" />
+    <plugin name="cordova-plugin-device" spec="~1.1.3" />
+    <plugin name="cordova-plugin-statusbar" spec="~2.2.0" />
+    <plugin name="cordova-plugin-splashscreen" spec="~4.0.0" />
+    <plugin name="cordova-sqlite-storage" spec="^2.1.2" />
+    <plugin name="cordova-plugin-whitelist" spec="~1.3.0" />
 </widget>

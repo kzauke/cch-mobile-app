@@ -7,6 +7,9 @@
     "files": {}
   },
   "installed_plugins": {
+    "cordova-plugin-app-version": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
     "cordova-plugin-console": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     },
@@ -25,13 +28,10 @@
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     },
-    "ionic-plugin-keyboard": {
-      "PACKAGE_NAME": "com.collegechefs.meals"
-    },
     "cordova-sqlite-storage": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     },
-    "cordova-plugin-app-version": {
+    "ionic-plugin-keyboard": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     }
   },
