@@ -28,13 +28,13 @@
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     },
-    "cordova-sqlite-ext": {
-      "PACKAGE_NAME": "com.collegechefs.meals"
-    },
     "cordova-sqlite-storage": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     },
     "ionic-plugin-keyboard": {
+      "PACKAGE_NAME": "com.collegechefs.meals"
+    },
+    "cordova-sqlite-ext": {
       "PACKAGE_NAME": "com.collegechefs.meals"
     }
   },
