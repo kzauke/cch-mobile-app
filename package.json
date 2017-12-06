@@ -1,9 +1,10 @@
 {
   "name": "collegechefsapp",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "collegeChefsApp: An Ionic project",
   "dependencies": {
     "@ionic-native/sqlite": "^4.3.3",
+    "cordova-android": "~6.3.0",
     "cordova-ios": "4.5.4",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-device": "^1.1.7",
@@ -12,6 +13,7 @@
     "cordova-plugin-splashscreen": "^4.1.0",
     "cordova-plugin-statusbar": "^2.3.0",
     "cordova-plugin-whitelist": "^1.3.3",
+    "cordova-sqlite-ext": "^0.10.6",
     "cordova-sqlite-storage": "^2.1.2",
     "express": "^4.14.0",
     "gulp": "^3.5.6",
@@ -21,8 +23,7 @@
     "gulp-sass": "^2.0.4",
     "ionic-native": "^2.9.0",
     "ionic-plugin-keyboard": "^2.2.1",
-    "jwt-decode": "git+https://github.com/auth0/jwt-decode.git",
-    "cordova-sqlite-ext": "^0.10.6"
+    "jwt-decode": "git+https://github.com/auth0/jwt-decode.git"
   },
   "devDependencies": {
     "bower": "^1.3.3",
@@ -41,7 +42,9 @@
     "cordova-plugin-whitelist",
     "cordova-sqlite-storage",
     "ionic-plugin-keyboard",
-    "cordova-sqlite-ext@^0.10.6"
+    "cordova-sqlite-ext@^0.10.6",
+    "cordova-sqlite-storage@2.1.1",
+    "cordova-sqlite-ext"
   ],
   "cordovaPlatforms": [],
   "cordova": {
@@ -58,7 +61,8 @@
       "cordova-sqlite-ext": {}
     },
     "platforms": [
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
