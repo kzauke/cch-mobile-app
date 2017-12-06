@@ -1,7 +1,7 @@
 angular.module('collegeChefs.services', ['ionic.cloud'])
 
 .service('$sqliteService', function($q, $cordovaSQLite) {
-  console.log("$sqliteService initialized");
+  // console.log("$sqliteService initialized");
 
   var self = this;
   var _db;
@@ -66,25 +66,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('AuthenticationService',  function($q, $http, $sqliteService){
-  console.log("AuthenticationService factory initialized");
-
-  // Load the database, true = debug
-  $sqliteService.loadDatabase(true);
+  // console.log("AuthenticationService factory initialized");
 
   var _token;
 
   return {
-    // getToken: function(username, password) {
-    //   console.log("getToken() running");
-    //   var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
-    //   var config = { params: { username: username, password: password } };
-
-    //   return $http.get(loginAPI, config).then(function(response) {
-    //     if (response.data.token) {
-    //       return response.data.token;
-    //     }
-    //   });
-    // },
 
     login: function(username, password, callback) {
       var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
@@ -103,13 +89,12 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           console.log(error);
           callback(false);
         });
-    },
-
+    }
   }
 })
 
 .factory('Account', function($q, $http, $sqliteService) {
-  console.log("Account factory initialized");
+  // console.log("Account factory initialized");
 
   var _userInfo;
 
@@ -130,13 +115,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           firstname: decoded.custom.firstname,
           lastname: decoded.custom.lastname,
           house: decoded.custom.house,
-          // house: "Alpha Beta Testa",
           chef: decoded.custom.chef,
-          // chef: "Swedish Chef",
           supervisor: decoded.custom.supervisor
         };
 
-        console.log(_userInfo);
+        // console.log(_userInfo);
       }
 
       return _userInfo;
@@ -197,7 +180,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     logout: function($state, $ionicViewSwitcher) {
       $sqliteService.executeSql('DROP TABLE IF EXISTS Session')
         .then(function(result) {
-            console.log("Session table deleted");
             $ionicViewSwitcher.nextDirection('forward');
             $state.go('login');
         }, function(error) {
@@ -209,7 +191,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Menus', function($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
-  console.log("Menus factory initialized");
+  // console.log("Menus factory initialized");
 
   var Menus = this;
 
@@ -379,7 +361,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     goNext: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
-      console.log("nextIndex: " + nextIndex);
+      // console.log("nextIndex: " + nextIndex);
       $state.go('tab.meal/:menuId', {
         menuId: nextIndex
       });
@@ -388,7 +370,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     goBack: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       var prevIndex = Number($index) - 1;
-      console.log("prevIndex: " + prevIndex);
+      // console.log("prevIndex: " + prevIndex);
       $state.go('tab.meal', {
         menuId: prevIndex
       });
@@ -397,7 +379,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Globals', function() {
-  console.log("Globals factory initialized");
+  // console.log("Globals factory initialized");
 
   return {
     backButton: function($ionicHistory) {
@@ -454,7 +436,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Help', function() {
-  console.log("Help factory initialized");
+  // console.log("Help factory initialized");
 
   var faqs = [{
     id: 1,

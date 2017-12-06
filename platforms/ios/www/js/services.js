@@ -1,7 +1,7 @@
 angular.module('collegeChefs.services', ['ionic.cloud'])
 
 .service('$sqliteService', function($q, $cordovaSQLite) {
-  console.log("$sqliteService initialized");
+  // console.log("$sqliteService initialized");
 
   var self = this;
   var _db;
@@ -66,10 +66,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('AuthenticationService',  function($q, $http, $sqliteService){
-  console.log("AuthenticationService factory initialized");
-
-  // Load the database, true = debug
-  $sqliteService.loadDatabase(true);
+  // console.log("AuthenticationService factory initialized");
 
   var _token;
 
@@ -109,7 +106,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Account', function($q, $http, $sqliteService) {
-  console.log("Account factory initialized");
+  // console.log("Account factory initialized");
 
   var _userInfo;
 
@@ -130,13 +127,11 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           firstname: decoded.custom.firstname,
           lastname: decoded.custom.lastname,
           house: decoded.custom.house,
-          // house: "Alpha Beta Testa",
           chef: decoded.custom.chef,
-          // chef: "Swedish Chef",
           supervisor: decoded.custom.supervisor
         };
 
-        console.log(_userInfo);
+        // console.log(_userInfo);
       }
 
       return _userInfo;
@@ -209,7 +204,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Menus', function($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
-  console.log("Menus factory initialized");
+  // console.log("Menus factory initialized");
 
   var Menus = this;
 
@@ -397,7 +392,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Globals', function() {
-  console.log("Globals factory initialized");
+  // console.log("Globals factory initialized");
 
   return {
     backButton: function($ionicHistory) {
@@ -454,7 +449,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 })
 
 .factory('Help', function() {
-  console.log("Help factory initialized");
+  // console.log("Help factory initialized");
 
   var faqs = [{
     id: 1,

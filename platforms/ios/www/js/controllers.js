@@ -7,7 +7,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*************************************/
 
 .controller('MenusCtrl', function ($scope, Account, Globals, Menus, $state, $ionicViewSwitcher, $stateParams, $ionicScrollDelegate, $location, $anchorScroll, $ionicPlatform, $ionicLoading, $ionicModal, $window, $timeout) {
-  console.log("MenusCtrl is initialized");
+  // console.log("MenusCtrl is initialized");
 
   $scope.index = Number($stateParams.menuId);
 
@@ -222,13 +222,18 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*********** Welcome / Login Screens ***********/
 /***********************************************/
 
-.controller('WelcomeCtrl', function($scope, $state, Account, $ionicViewSwitcher) {
-	$scope.authenticateUser = function(method) {
-		Account.authenticateUser($state, method, $ionicViewSwitcher);
-	};
-})
+// .controller('WelcomeCtrl', function($scope, $state, Account, $ionicViewSwitcher) {
+// 	$scope.authenticateUser = function(method) {
+// 		Account.authenticateUser($state, method, $ionicViewSwitcher);
+// 	};
+// })
 
-.controller('LoginCtrl', function ($scope, $location, Globals, AuthenticationService, $ionicPlatform, $cordovaAppVersion) {
+.controller('LoginCtrl', function ($scope, $location, $sqliteService, AuthenticationService, $ionicPlatform, $cordovaAppVersion) {
+  // console.log("LoginCtrl initialized");
+
+  // Load the database, true = debug
+  $sqliteService.loadDatabase(false);
+
   var vm = this;
   vm.formSubmit = formSubmit;
   vm.loginAssistance = loginAssistance;
@@ -324,7 +329,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 /*************************************/
 
 .controller('AccountCtrl', function ($scope, Account, $state, $ionicViewSwitcher, $ionicPlatform, $cordovaAppVersion, $timeout, $ionicHistory) {
-  console.log("AccountCtrl is initialized");
+  // console.log("AccountCtrl initialized");
 
   Account.getUser().then(
     function(success) {

@@ -210,7 +210,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
         return _userInfo;
       },
       function(_error) {
-        // console.log("Error! " + _error);
+        console.log("Error! " + _error);
         $state.go('login');
       }
     );
