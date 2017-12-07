@@ -71,17 +71,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   var _token;
 
   return {
-    // getToken: function(username, password) {
-    //   console.log("getToken() running");
-    //   var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
-    //   var config = { params: { username: username, password: password } };
-
-    //   return $http.get(loginAPI, config).then(function(response) {
-    //     if (response.data.token) {
-    //       return response.data.token;
-    //     }
-    //   });
-    // },
 
     login: function(username, password, callback) {
       var loginAPI = "http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetDNNAuthUserData";
@@ -100,8 +89,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           console.log(error);
           callback(false);
         });
-    },
-
+    }
   }
 })
 
@@ -192,7 +180,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     logout: function($state, $ionicViewSwitcher) {
       $sqliteService.executeSql('DROP TABLE IF EXISTS Session')
         .then(function(result) {
-            console.log("Session table deleted");
             $ionicViewSwitcher.nextDirection('forward');
             $state.go('login');
         }, function(error) {
@@ -374,7 +361,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     goNext: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
-      console.log("nextIndex: " + nextIndex);
+      // console.log("nextIndex: " + nextIndex);
       $state.go('tab.meal/:menuId', {
         menuId: nextIndex
       });
@@ -383,7 +370,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     goBack: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       var prevIndex = Number($index) - 1;
-      console.log("prevIndex: " + prevIndex);
+      // console.log("prevIndex: " + prevIndex);
       $state.go('tab.meal', {
         menuId: prevIndex
       });
