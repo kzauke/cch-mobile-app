@@ -1,6 +1,6 @@
 {
   "name": "collegechefsapp",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "collegeChefsApp: An Ionic project",
   "dependencies": {
     "@ionic-native/sqlite": "^4.3.3",
