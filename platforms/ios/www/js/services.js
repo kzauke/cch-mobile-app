@@ -109,7 +109,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
         var decoded = jwt_decode(user.token);
         _userInfo = {
           id: decoded.user_id,
-          // id: 6441,
           username: decoded.custom.username,
           email: decoded.custom.email,
           firstname: decoded.custom.firstname,
@@ -118,8 +117,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           chef: decoded.custom.chef,
           supervisor: decoded.custom.supervisor
         };
-
-        // console.log(_userInfo);
       }
 
       return _userInfo;
@@ -138,8 +135,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     registerUser: function(loginData) {
-      console.log("registerUserNEW() running");
-
       var registerAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=RegisterAppUser&firstname=' + loginData.firstname + '&lastname=' + loginData.lastname + '&email=' + loginData.email + '&activation=' + loginData.activation;
 
       return $http.get(registerAPI).then(function(response) {
@@ -149,6 +144,8 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
     getRegistrationError: function(error) {
       var _placeholder;
+
+      console.log(error);
 
       if (error === "UsernameAlreadyExists") {
         _placeholder = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
@@ -182,6 +179,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
         .then(function(result) {
             $ionicViewSwitcher.nextDirection('forward');
             $state.go('login');
+            window.location.reload();
         }, function(error) {
             console.log("Error deleting table: " + error.message);
         }
