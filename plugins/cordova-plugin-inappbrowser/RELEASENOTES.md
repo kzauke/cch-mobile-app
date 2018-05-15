@@ -20,31 +20,6 @@
 -->
 # Release Notes
 
-### 1.7.2 (Nov 06, 2017)
-* [CB-13473](https://issues.apache.org/jira/browse/CB-13473) (CI) Removed **Browser** builds from AppVeyor
-* [CB-13472](https://issues.apache.org/jira/browse/CB-13472) (CI) Fixed Travis **Android** builds again
-* [CB-13347](https://issues.apache.org/jira/browse/CB-13347) Enable thirdparty cookies on `>=Android 5.0` device
-* [CB-12895](https://issues.apache.org/jira/browse/CB-12895) added `eslint` and removed `jshint`
-* [CB-12975](https://issues.apache.org/jira/browse/CB-12975) (docs) Resort and reword `cordova.InAppBrowser.open` `options` lists
-* [CB-12586](https://issues.apache.org/jira/browse/CB-12586) (iOS) fix method `hide` doesn't work
-* [CB-12847](https://issues.apache.org/jira/browse/CB-12847) added `bugs` entry to `package.json`.
-
-### 1.7.1 (Apr 27, 2017)
-* [CB-12622](https://issues.apache.org/jira/browse/CB-12622) Added **Android 6.0** build badges to `README`
-* [CB-12266](https://issues.apache.org/jira/browse/CB-12266) (browser platform) loadstop event.url is now a string instead of an object, aligning it with the other platforms.
-* [CB-12685](https://issues.apache.org/jira/browse/CB-12685) added `package.json` to tests folder
-* [CB-11248](https://issues.apache.org/jira/browse/CB-11248) `InAppBrowser` no focus on input text fields
-
-### 1.7.0 (Feb 28, 2017)
-* [CB-12366](https://issues.apache.org/jira/browse/CB-12366) **iOS:** Reduce `tmpWindow` level to prevent overlapping statusbar
-* [CB-12364](https://issues.apache.org/jira/browse/CB-12364) **Windows:** `Inappbrowser` inject file manual tests are not working
-* [CB-12353](https://issues.apache.org/jira/browse/CB-12353) Corrected merges usage in `plugin.xml`
-* [CB-12369](https://issues.apache.org/jira/browse/CB-12369) Add plugin typings from `DefinitelyTyped`
-* [CB-12363](https://issues.apache.org/jira/browse/CB-12363) Added build badges for **iOS 9.3** and **iOS 10.0** 
-* [CB-9148](https://issues.apache.org/jira/browse/CB-9148) **Android:** Add Support for `input[type=file]` File Chooser
-* [CB-11136](https://issues.apache.org/jira/browse/CB-11136) (ios) Fix `InAppBrowser` when closing with `WKWebView`
-* [CB-10799](https://issues.apache.org/jira/browse/CB-10799) **iOS:** fix toolbar is shown in incorrect position when in-call status bar
-
 ### 1.6.1 (Dec 14, 2016)
 * [CB-12237](https://issues.apache.org/jira/browse/CB-12237) - Update version in package.json to correct 1.6.1-dev
 * [CB-12236](https://issues.apache.org/jira/browse/CB-12236) - Fixed RELEASENOTES for cordova-plugin-inappbrowser

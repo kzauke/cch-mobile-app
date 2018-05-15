@@ -1,0 +1,25 @@
+<ion-view hide-nav-bar="true" hide-back-button="true" view-title="Sign Up">
+	<ion-content class="">
+		<div class="list">
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">First Name</span>
+			 <input type="text" value="{{userInfo.firstName}}">
+		  </label>
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">Last Name</span>
+			 <input type="text" value="{{userInfo.lastName}}">
+		  </label>
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">Email</span>
+			 <input type="text" value="{{userInfo.email}}">
+		  </label>
+		  <label class="item item-input item-stacked-label">
+			 <span class="input-label">RSVP Code</span>
+			 <input type="text" value="{{userInfo.activationCode}}">
+		  </label>
+		  <div class="padding">
+			  <button ng-click="updateProfile()" class="button button-block button-positive">Save Profile Information</button>
+		  </div>
+		</div>
+	</ion-content>
+</ion-view>

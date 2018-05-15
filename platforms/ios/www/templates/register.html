@@ -1,6 +1,6 @@
 <ion-view hide-nav-bar="true" hide-back-button="true" view-title="Register" class="background-dark">
 	<ion-content class="padding" scroll="false">
-		<div ng-show="registerMessage"  class="error-message card padding" ng-bind-html="registerMessage"></div>
+		<div ng-show="registerMessage.text"  class="error-message card padding" ng-bind-html="registerMessage.text"></div>
 		<form ng-submit="registerUser(user, 'chefnet')">
 		<div class="list register-form">
 			<label class="item item-input">
