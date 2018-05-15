@@ -1,67 +1,47 @@
-// College Chefs app
 
-var appVersion = "0.0.0";
+angular.module('collegeChefs', ['ionic', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter'])
+	.run(function ($ionicPlatform) {
+		$ionicPlatform.ready(function () {
+			// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+			// for form inputs)
+			if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+				cordova.plugins.Keyboard.disableScroll(true);
+			}
+			if (window.StatusBar) {
+				// org.apache.cordova.statusbar required
+				//StatusBar.styleDefault();
+			}
+		});
+	})
 
-angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
+.config(function ($ionicCloudProvider) {
+		$ionicCloudProvider.init({
+			"core": {
+				"app_id": "d6716ba8"
+			}
+		});
+	})
+	.config(function ($ionicConfigProvider) {
+		$ionicConfigProvider.tabs.position('bottom');
+	})
+	.config(function ($stateProvider, $urlRouterProvider) {
 
-.run(['$ionicPlatform',
-      '$sqliteService',
-      function($ionicPlatform, $sqliteService) {
-  $ionicPlatform.ready(function() {
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-      // Hide the accessory bar by default
-      // (remove to show accessory bar above keyboard for form inputs)
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+		$stateProvider
 
-      // HEY! Don't remove this unless you know what you are doing!
-      // It stops the viewport from snapping when text inputs are focused.
-      // Ionic handles this internally for a much nicer keyboard experience.
-      cordova.plugins.Keyboard.disableScroll(true);
-    }
+		.state('tab', {
+			url: '/tab',
+			abstract: true,
+			templateUrl: 'templates/tabs.html',
 
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-	});
-}])
 
-/********************************************************/
-  // prevents preflight by Chrome when testing locally,
-  // COMMENT OUT FOR PRODUCTION
+			onEnter: function ($state, $ionicAuth) {
+				//if user is not authenticated, go to welcome screen
+				if (!$ionicAuth.isAuthenticated()) {
+					$state.go('login');
+				}
+			}
 
-  // .config(function ($httpProvider) {
-  // 	$httpProvider.defaults.headers.common = {};
-  // 	$httpProvider.defaults.headers.post = {};
-  // 	$httpProvider.defaults.headers.put = {};
-  // 	$httpProvider.defaults.headers.patch = {};
-  // })
-/******************************************************/
-
-.config(['$stateProvider',
-         '$urlRouterProvider',
-         '$ionicConfigProvider',
-         '$ionicCloudProvider',
-         function ($stateProvider, $urlRouterProvider, $ionicConfigProvider, $ionicCloudProvider) {
-
-  $ionicCloudProvider.init({
-    "core": {
-      "app_id": "d6716ba8"
-    }
-  });
-
-  $ionicConfigProvider.scrolling.jsScrolling(ionic.Platform.isIOS());
-  $ionicConfigProvider.tabs.position('bottom');
-
-  // app routes
-  $stateProvider
-    .state('tab', {
-      url: '/tab',
-      templateUrl: 'templates/tabs.html',
-      abstract: true,
-      resolve: {
-        resolvedUser: checkForAuthenticatedUser
-      }
 		})
 
 		// Each tab has its own nav history stack:
@@ -74,16 +54,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.meal', {
-			url: '/meal/:menuId',
-			views: {
-				'tab-meal': {
-					templateUrl: 'templates/tab-meal.html',
-					controller: 'MenusCtrl',
-				}
-			}
-		})
-    .state('tab.meal/:menuId', {
+
+		.state('tab.meal', {
 			url: '/meal/:menuId',
 			views: {
 				'tab-meal': {
@@ -92,7 +64,18 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.reviews', {
+
+		.state('tab.meal/:menuId', {
+			url: '/meal/:menuId',
+			views: {
+				'tab-meal': {
+					templateUrl: 'templates/tab-meal.html',
+					controller: 'MenusCtrl'
+				}
+			}
+		})
+
+		.state('tab.reviews', {
 			url: '/reviews',
 			views: {
 				'tab-reviews': {
@@ -101,16 +84,18 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.profile', {
+
+		.state('tab.profile', {
 			url: '/profile',
 			views: {
 				'tab-account': {
 					templateUrl: 'templates/profile.html',
-					controller: 'AccountCtrl'
+					controller: 'EditProfileCtrl'
 				}
 			}
 		})
-    .state('tab.password', {
+
+		.state('tab.password', {
 			url: '/password',
 			views: {
 				'tab-account': {
@@ -119,7 +104,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.contact', {
+
+		.state('tab.contact', {
 			url: '/contact',
 			views: {
 				'tab-account': {
@@ -128,7 +114,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.reporting', {
+
+		.state('tab.reporting', {
 			url: '/reporting',
 			views: {
 				'tab-account': {
@@ -137,7 +124,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.help', {
+
+		.state('tab.help', {
 			url: '/help',
 			views: {
 				'tab-account': {
@@ -146,7 +134,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.help/:faqId', {
+
+		.state('tab.help/:faqId', {
 			url: '/help/:faqId',
 			views: {
 				'tab-account': {
@@ -155,7 +144,8 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('tab.account', {
+
+		.state('tab.account', {
 			url: '/account',
 			views: {
 				'tab-account': {
@@ -164,55 +154,45 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
 				}
 			}
 		})
-    .state('activation', {
+
+		.state('activation', {
 			url: '/activation',
 			templateUrl: 'templates/activation.html',
 			controller: 'ActivationCtrl'
 		})
-    .state('login', {
+
+		.state('login', {
 			url: '/login',
-      cache: false,
 			templateUrl: 'templates/login.html',
-			controller: 'LoginCtrl',
-			controllerAs: 'vm'
+			controller: 'LoginCtrl'
 		})
-    .state('forgot-password', {
+
+		.state('forgot-password', {
 			url: '/forgot-password',
 			templateUrl: 'templates/forgot-password.html',
 			controller: 'ForgotPasswordCtrl'
 		})
-    .state('request-activation', {
+
+		.state('request-activation', {
 			url: '/request-activation',
 			templateUrl: 'templates/request-activation.html',
 			controller: 'RequestActivationCtrl'
 		})
-    .state('register', {
+
+		.state('register', {
 			url: '/register',
 			templateUrl: 'templates/register.html',
 			controller: 'RegisterCtrl'
 		})
-    .state('welcome', {
+
+		.state('welcome', {
 			url: '/welcome',
 			templateUrl: 'templates/welcome.html',
 			controller: 'WelcomeCtrl'
-		}
-  );
+		});
 
-  // default route
-  // return correct result based on datetime.now
-  $urlRouterProvider.otherwise('/tab/meal/next');
+		// if none of the above states are matched, use this as the fallback
 
-  function checkForAuthenticatedUser(Account, $state) {
-    return Account.getUser().then(
-      function(_user) {
-        // console.log(_user);
-        _userInfo = Account.getUserInfo(_user);
-        return _userInfo;
-      },
-      function(_error) {
-        console.log("Error! " + _error);
-        $state.go('login');
-      }
-    );
-  }
-}]);
+		$urlRouterProvider.otherwise('/tab/meal/next'); //return correct result based on datetime.now
+
+	});

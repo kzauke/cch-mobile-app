@@ -1,0 +1,13 @@
+<!--
+  This template loads for the 'tab.faq' and tab.faq/:menuId states (app.js)
+  'meal' is a $scope variable created in the MealCtrl controller (controllers.js)
+  The MealCtrl pulls data from the Menus service (service.js)
+-->
+
+<ion-view>
+	<ion-nav-title ng-bind-html="FAQs"></ion-nav-title>
+  <ion-content class="padding">
+		<h3>{{faq.question}}</h3>
+		<div ng-bind-html="faq.answer"></div>
+  </ion-content>
+</ion-view>
