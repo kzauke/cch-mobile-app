@@ -23,7 +23,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   self.getFirstItem = function(query, parameters) {
     var deferred = $q.defer();
     self.executeSql(query, parameters).then(function(result) {
-      // console.log("Rows length: " + result.rows.length);
       if (result.rows.length > 0) {
         return deferred.resolve(result.rows.item(0));
       } else {
@@ -34,6 +33,10 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     });
 
     return deferred.promise;
+  };
+
+  self.executeSql = function(query, parameters) {
+    return $cordovaSQLite.execute(self.db(), query, parameters);
   };
 
   self.loadDatabase = function(enableLog) {
@@ -59,10 +62,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
 
     return deferred.promise;
   };
-
-  self.executeSql = function(query, parameters) {
-    return $cordovaSQLite.execute(self.db(), query, parameters);
-  };
 })
 
 .factory('AuthenticationService',  function($q, $http, $sqliteService){
@@ -86,7 +85,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
           }
         })
         .error(function(error) {
-          console.log(error);
           callback(false);
         });
     }
@@ -123,14 +121,10 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     updateProfile: function($state) {
-      // submit new user data to DB, refresh data
-      console.log('profile saved');
       $state.go('tab.account');
     },
 
     updatePassword: function($state) {
-      // submit new user data to DB, refresh data
-      console.log('password saved');
       $state.go('tab.account');
     },
 
@@ -145,22 +139,19 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     getRegistrationError: function(error) {
       var _placeholder;
 
-      console.log(error);
-
       if (error === "UsernameAlreadyExists") {
-        _placeholder = "A user with that email address is already registered. Would you like to <a href='#/login'>log in now?</a>";
+        _placeholder = "<p>A user with that email address is already registered. Would you like to log in or reset your password?</p><p><a href='#/login' class='button'>Log in</a><a href='http://chefnet.collegechefs.com/Password-Reset' class='button'>Reset password</a></p>";
       } else if (error === "ActivationNotValid") {
-        _placeholder = "Your house code is invalid. To get the correct house code for your house, please talk to your chef.";
+        _placeholder = "<p>Your house code is invalid. To get the correct house code for your house, please talk to your chef.</p>";
       } else {
-        _placeholder = "Something went wrong when creating your account. <a href='#/contact'>Please contact us for further assistance.</a>";
+        _placeholder = "<p>Something went wrong when creating your account. Please contact us for further assistance.</p><p><a href='#/contact' class='button'>Contact us</a></p>";
       }
-      console.log(_placeholder);
+
       return _placeholder;
     },
 
     requestActivation: function($state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
-      console.log("request activation");
       $state.go('register');
     },
 
@@ -170,7 +161,6 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
     },
 
     newPasswordRequest: function($state) {
-      console.log('password request');
       $state.go('login');
     },
 
@@ -188,24 +178,25 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
   };
 })
 
-.factory('Menus', function($http, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
+.factory('Menus', function($http, Globals, Account, $ionicLoading, $cacheFactory, $ionicUser, $window, $timeout) {
   // console.log("Menus factory initialized");
 
   var Menus = this;
 
+  var timeNow = new Date().getHours();
+
   // 24 hour clock
-  var lunchLPEndTime = 10; // no lunch late plate orders after 10am
-  var dinnerLPEndTime = 15; // no dinner late plate orders after 3pm
-  var afterDinnerLPEndTime = 20; // dinner ends after 8pm
+  var latePlateLunchTime = 10; // no lunch late plate orders after 10am
+  var lunchEndTime = 16; // lunch ends after 2pm
+  var latePlateDinnerTime = 15; // no dinner late plate orders after 3pm
+  var dinnerEndTime = 20; // dinner ends after 8pm
 
   var dataSource = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=GetMeals&UserID=';
 
   return {
     getMealData: function(userId) {
       dataSourceWithId = dataSource + userId;
-      return $http.get(dataSourceWithId, {
-        cache: true
-      });
+      return $http.get(dataSourceWithId, { cache: true });
     },
 
     organizeMeals: function(mealData, menuId) {
@@ -235,6 +226,12 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       return mealListings;
     },
 
+    mealIsToday: function(mealDate) {
+      var d1 = new Date();
+      var d2 = new Date(mealDate);
+      return Globals.isDateSame(d1, d2);
+    },
+
     mealHasPassed: function(mealType, mealDate) {
       var today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -242,43 +239,27 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       var mealDateTime = new Date(mealDate);
       mealDateTime.setHours(0, 0, 0, 0);
 
-      // if meal date is before today return true
-      if (mealDateTime < today) {
-        return true;
-      }
+      if (mealDateTime < today) return true;
 
-      // if meal date is after today return false
-      if (mealDateTime > today) {
-        return false;
-      }
+      if (mealDateTime > today) return false;
 
-      // if meal date is today
       if (mealDateTime.getUTCDate() === today.getUTCDate()) {
-
-        var curTime = new Date().getHours();
 
         switch (mealType) {
           case "Breakfast":
-            // if meal type is breakfast and current time is after lunchLPEndTime(10) return true
-            if (curTime >= lunchLPEndTime) {
-              return true;
-            }
+            if (timeNow >= latePlateLunchTime) return true;
             break;
           case "Lunch":
-            // if meal type is lunch and current time is after dinnerLPEndTime(3) return true
-            if (curTime >= dinnerLPEndTime) {
-              return true;
-            }
+            if (timeNow >= lunchEndTime) return true;
             break;
           case "Dinner":
-            // if meal type is dinner and current time is after afterDinnerLPEndTime (8) return true
-            if (curTime >= afterDinnerLPEndTime) {
-              return true;
-            }
+            if (timeNow >= dinnerEndTime) return true;
+            break;
+          default:
             break;
         }
       }
-      // default to false
+
       return false;
     },
 
@@ -286,9 +267,7 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       var latePlateSubmitAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=SubmitLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
 
       return $http.get(latePlateSubmitAPI).then(function(response) {
-        if (response.data) {
-          return response.data;
-        }
+        if (response.data) return response.data;
       });
     },
 
@@ -296,29 +275,30 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       var latePlateCancelAPI = 'http://chefnet.collegechefs.com/DesktopModules/DnnSharp/DnnApiEndpoint/Api.ashx?method=CancelLatePlateOrder&UserID=' + $scope.userInfo.id + '&MealID=' + mealId;
 
       return $http.get(latePlateCancelAPI).then(function(response) {
-        if (response.data) {
-          return response.data;
-        }
+        if (response.data) return response.data;
       });
     },
 
-    getTodaysFirstMealIndex: function() {
-      // return 8;
-    },
+    getTodaysFirstMealIndex: function() {},
 
-    getLatePlateMsg: function(mealType, mealIsToday) {
-      if (mealIsToday) {
-        var latePlateString = "<span class='ion-android-time'></span> Late plate orders due by ";
+    getLatePlateMsg: function(mealType, mealDate, showIcon) {
+      if (this.mealIsToday(mealDate)) {
 
-        var lunchEnd = lunchLPEndTime + " a.m. today";
-        var dinnerEnd = (dinnerLPEndTime - 12) + " p.m. today";
+        if (!this.latePlateDeadlineHasPassed(mealType, mealDate)) {
+           var icon = showIcon ? "<i class='icon icon-clock'></i> " : "";
+          var latePlateString = "Late Plate orders due by ";
 
-        switch (mealType) {
-          case "Lunch":
-            return latePlateString + lunchEnd;
-          case "Dinner":
-            return latePlateString + dinnerEnd;
+          var lunchEnd = latePlateLunchTime + " a.m. today!";
+          var dinnerEnd = (latePlateDinnerTime - 12) + " p.m. today!";
+
+          switch (mealType) {
+            case "Lunch":
+              return icon + latePlateString + lunchEnd;
+            case "Dinner":
+              return icon + latePlateString + dinnerEnd;
+          }
         }
+
         return null;
       }
     },
@@ -334,44 +314,41 @@ angular.module('collegeChefs.services', ['ionic.cloud'])
       }
     },
 
-    showLatePlateButton: function(mealHasPassed, mealType, mealIsToday) {
-      var currHour = new Date().getHours();
+    latePlateDeadlineHasPassed: function(mealType, mealDate) {
+      if (this.mealIsToday(mealDate)) {
+        if (mealType === "Lunch" && (timeNow >= latePlateLunchTime)) {
+          return true;
+        }
+        if (mealType === "Dinner" && (timeNow >= latePlateDinnerTime)) {
+          return true;
+        }
+      }
 
-      // don't show if meal has passed
-      if (mealHasPassed) {
+      return false;
+    },
+
+    showLatePlateButton: function(mealType, mealDate) {
+      if (this.mealHasPassed(mealType, mealDate)) {
         return false;
       }
 
-      // if meal is today, only show if it is still before cutoff times
-      if (mealIsToday) {
-        if (mealType === "Lunch" && (currHour >= lunchLPEndTime)) {
-          return false;
-        }
-        if (mealType === "Dinner" && (currHour >= dinnerLPEndTime)) {
-          return false;
-        }
+      if (this.latePlateDeadlineHasPassed(mealType, mealDate)) {
+        return (timeNow < lunchEndTime);
       }
 
-      // show by default
       return true;
     },
 
     goNext: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('forward');
       var nextIndex = Number($index) + 1;
-      // console.log("nextIndex: " + nextIndex);
-      $state.go('tab.meal/:menuId', {
-        menuId: nextIndex
-      });
+      $state.go('tab.meal/:menuId', { menuId: nextIndex });
     },
 
     goBack: function($index, $state, $ionicViewSwitcher) {
       $ionicViewSwitcher.nextDirection('back');
       var prevIndex = Number($index) - 1;
-      // console.log("prevIndex: " + prevIndex);
-      $state.go('tab.meal', {
-        menuId: prevIndex
-      });
+      $state.go('tab.meal', { menuId: prevIndex });
     }
   };
 })
@@ -482,8 +459,6 @@ CollegeChefs.helpers = {
 
   goToTodaysMeals: function($state, $ionicViewSwitcher) {
     $ionicViewSwitcher.nextDirection('forward');
-    $state.go('tab.meal', {
-      menuId: 1
-    });
+    $state.go('tab.meal', { menuId: 1 });
   },
 };

@@ -1,5 +1,4 @@
 // College Chefs app
-
 var appVersion = "0.0.0";
 
 angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers', 'collegeChefs.services', 'angular.filter', 'ngStorage', 'ui.router'])
@@ -8,7 +7,7 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
       '$sqliteService',
       function($ionicPlatform, $sqliteService) {
   $ionicPlatform.ready(function() {
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+    if (window.cordova && window.cordova.plugins.Keyboard) {
       // Hide the accessory bar by default
       // (remove to show accessory bar above keyboard for form inputs)
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -25,18 +24,6 @@ angular.module('collegeChefs', ['ionic', 'ngCordova', 'collegeChefs.controllers'
     }
 	});
 }])
-
-/********************************************************/
-  // prevents preflight by Chrome when testing locally,
-  // COMMENT OUT FOR PRODUCTION
-
-  // .config(function ($httpProvider) {
-  // 	$httpProvider.defaults.headers.common = {};
-  // 	$httpProvider.defaults.headers.post = {};
-  // 	$httpProvider.defaults.headers.put = {};
-  // 	$httpProvider.defaults.headers.patch = {};
-  // })
-/******************************************************/
 
 .config(['$stateProvider',
          '$urlRouterProvider',

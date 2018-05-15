@@ -1,39 +1,138 @@
-/* Empty. Add your own CSS if you like */
+/**
+ * VARIABLES
+ *
+ * red:       #ef473a;
+ * green:     #33cd5f;
+ */
 
-/* @import url("http://chefnet.collegechefs.com/Portals/_default/Skins/App/bootstrap/css/bootstrap.css");
-@import url("http://chefnet.collegechefs.com/Portals/_default/Skins/App/css/styles.css?cdv=69"); */
+@font-face {
+  font-family: 'icomoon';
+  src:
+    url('fonts/icomoon.ttf?bd4vpu') format('truetype'),
+    url('fonts/icomoon.woff?bd4vpu') format('woff'),
+    url('fonts/icomoon.svg?bd4vpu#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-list:before {
+  content: "\f03a";
+}
+.icon-external-link:before {
+  content: "\f08e";
+}
+.icon-check:before {
+  content: "\e900";
+}
+.icon-check-circle:before {
+  content: "\e901";
+}
+.icon-chevron-left:before {
+  content: "\e902";
+}
+.icon-chevron-right:before {
+  content: "\e903";
+}
+.icon-clock:before {
+  content: "\e904";
+}
+.icon-exclamation:before {
+  content: "\e905";
+}
+.icon-exclamation-circle:before {
+  content: "\e906";
+}
+.icon-gear:before {
+  content: "\e907";
+}
+.icon-heart:before {
+  content: "\e908";
+}
+.icon-minus:before {
+  content: "\e90a";
+}
+.icon-minus-circle:before {
+  content: "\e90b";
+}
+.icon-plate:before {
+  content: "\e90c";
+}
+.icon-plus:before {
+  content: "\e90d";
+}
+.icon-plus-circle:before {
+  content: "\e90e";
+}
+.icon-star:before {
+  content: "\e90f";
+}
+.icon-strawberry:before {
+  content: "\e910";
+}
+.icon-x:before {
+  content: "\e911";
+}
+.icon-x-circle:before {
+  content: "\e912";
+}
 
 * {
-	    font-family: 'Roboto', sans-serif !important;
-		 font-size: 1.01em;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 1.01em;
 }
+
 .padding {
-	padding :20px;
+	padding: 20px;
 }
+
 .is-red {
     color: #e03730 !important;
 }
+
 .right {
 	float: right;
 	text-align: right;
 }
-small {
-    font-size: 80%;
+
+h2 {
+  font-size: 34px;
 }
+
+small {
+  font-size: 80%;
+}
+
 .bar .button.button-icon .icon::before, .bar .button.button-icon::before, .bar .button.button-icon.icon-left::before, .bar .button.button-icon.icon-right::before, .bar button.button-icon .icon::before, .bar button.button-icon::before, .bar button.button-icon.icon-left::before, .bar button.button-icon.icon-right::before {
     font-size: 16px
 }
 
 .item h2 {
-    font-weight: 500;
-	 font-size:.9em;
+  font-weight: 500;
+	font-size: .9em;
 }
 .help-content .item h2 {
-    font-size: 1em;
+  font-size: 1em;
 }
+
 .item-note {
-    font-weight: 400;
+  font-weight: 400;
 }
+
 .item-avatar > img:first-child, .item-avatar .item-image, .item-avatar .item-content > img:first-child, .item-avatar .item-content .item-image, .item-avatar-left > img:first-child, .item-avatar-left .item-image, .item-avatar-left .item-content > img:first-child, .item-avatar-left .item-content .item-image {
 	border-radius: 0;
     max-width: 48px;
@@ -60,9 +159,19 @@ ion-item.has-passed {
     width: 100%;
     box-shadow: 2px 2px 1px #7e1713;
     color: #faf8ed;
-    margin: 30px 0 10px;
-    padding: 10px;
+    margin: 30px 0 15px;
+    padding: 15px 10px;
     font-size: 1.25em;
+}
+
+.button.request-lp + p {
+  margin: 5px 0 0;
+}
+
+.button.request-lp + p .icon {
+  margin-right: 2px;
+  position: relative;
+  top: 1px;
 }
 
 button.button.request-lp-cancel {
@@ -92,12 +201,23 @@ button.button.request-lp-cancel {
     padding-top: 20px;
     min-height: 0px;
 }
-ul.meal-items {
-    list-style: disc;
-    padding-left: 15px;
+
+.item.item-divider.is-today {
+  color: #5d5a4b;
+  font-weight: 700;
 }
-ul.meal-items li {
-    padding: 2px 0;
+
+ul.meal-items {
+  font-size: 16px;
+  list-style: disc outside;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 16px;
+  padding-left: 6px;
+}
+
+ul.meal-items li + li {
+  padding-top: 6px;
 }
 .tab-item .icon {
     font-size: 29px;
@@ -107,86 +227,14 @@ ul.meal-items li {
 .tab-item .icon.yellow {
     color: #eaec92;
 }
-@font-face {
-  font-family: 'icomoon';
-  src: url("fonts/icomoon.ttf?9v48iv") format("truetype"), url("fonts/icomoon.woff?9v48iv") format("woff"), url("fonts/icomoon.svg?9v48iv#icomoon") format("svg");
-  font-weight: normal;
-  font-style: normal; }
-[class^="icon-"], [class*=" icon-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; }
 
-.icon-check::before {
-  content: ""; }
-
-.icon-check-circle::before {
-  content: ""; }
-
-.icon-chevron-left::before {
-  content: ""; }
-
-.icon-chevron-right::before {
-  content: ""; }
-
-.icon-clock::before {
-  content: ""; }
-
-.icon-exclamation::before {
-  content: ""; }
-
-.icon-exclamation-circle::before {
-  content: ""; }
-
-.icon-gear::before {
-  content: ""; }
-
-.icon-heart::before {
-  content: ""; }
-
-.icon-list::before {
-  content: ""; }
-
-.icon-minus::before {
-  content: ""; }
-
-.icon-minus-circle::before {
-  content: ""; }
-
-.icon-plate::before {
-  content: ""; }
-
-.icon-plus::before {
-  content: ""; }
-
-.icon-plus-circle::before {
-  content: ""; }
-
-.icon-star::before {
-  content: ""; }
-
-.icon-strawberry::before {
-  content: ""; }
-
-.icon-x::before {
-  content: ""; }
-
-.icon-x-circle::before {
-  content: ""; }
-
-.icon-exit::before {
-  content: "\ea14";
+.tab-item.tab-item-active {
+  border: 0 !important;
+  margin: 0 !important;
 }
+
 .background-dark {
-	background-color: #333333;
+	background-color: #333;
 }
 .bottom {
     position: absolute;
@@ -208,7 +256,6 @@ ul.meal-items li {
 
 .account-text a {
     color: #eaec92;
-
 }
 img.welcome-logo {
     display: block;
@@ -223,11 +270,9 @@ p.password-help {
 }
 
 p.password-help a {
-    color: #a4a4a4;
+  color: #a4a4a4;
 }
-label.item.item-input {
-    /* margin-bottom: 10px; */
-}
+
 .account-actions {
 	margin-top: 30px;
 }
@@ -250,29 +295,36 @@ label.item.item-input {
     height: 50px;
 }
 .error-message {
-    background: #585858;
-    color: white;
+    background-color: #585858;
+    color: #fff;
 }
-.error-message a {
-    color: #ef473a;
-    font-weight: bold;
-    text-decoration: none;
+.error-message.card {
+  margin-top: 0;
 }
 .error-message h3 {
-    font-size: 21px;
-    color: white;
+  font-size: 21px;
+  color: white;
+}
+.error-message p:last-child {
+  margin-bottom: 0;
+}
+.error-message a {
+  color: #ef473a;
+  font-weight: 700;
+  text-decoration: none;
+}
+.error-message a.button + a.button {
+  margin-left: 10px;
 }
 .alert.alert-warning.pending-warning-meal {
-    margin-top: 30px;
-    font-size: 23px;
-    line-height: 25px;
-	 font-weight:bold;
+  margin-top: 30px;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 25px;
 }
-
 .alert.alert-warning {
-    color: #2b8838;
+  color: #2b8838;
 }
-
 .pending-warning-meal small {
     display: block;
 	 font-size:60%
@@ -319,4 +371,98 @@ ion-view.pane::before {
   font-size: 13px;
   line-height: 17px;
   padding: 10px 0 5px;
+}
+
+
+.item-icon-left .icon,
+.item-icon-right .icon {
+  font-size: 16px;
+  padding: 0 10px;
+}
+
+.item-icon-left .icon {
+  left: 0;
+}
+
+.item-icon-right .icon {
+  right: 0;
+}
+
+
+
+
+
+.late-plate-message {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.late-plate-message .has-expired {
+  color: #999;
+}
+
+.late-plate-message .is-due {
+  color: #ef473a;
+}
+
+.late-plate-message .is-requested {
+  color: #999;
+}
+
+.late-plate-message .is-complete {
+  color: #33cd5f;
+}
+
+.late-plate-message .icon {
+  margin-right: 3px;
+  position: relative;
+  top: 1px;
+}
+
+
+
+
+
+.tab-menu .item-content {
+  display: flex;
+  padding: 16px !important;
+}
+
+.tab-menu .item-meal-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.tab-menu .item-meal-description {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding-right: 16px;
+  padding-left: 16px;
+  position: relative;
+}
+
+.tab-menu .item-meal-title {
+  font-size: 18px;
+}
+
+.tab-menu .late-plate-message {
+  font-size: 12px;
+  line-height: 1;
+  position: absolute;
+  top: 0;
+}
+
+.tab-menu .icon {
+  position: relative;
+  height: auto;
+  padding: 0;
+}
+
+.tab-menu .icon::before {
+  width: auto;
 }

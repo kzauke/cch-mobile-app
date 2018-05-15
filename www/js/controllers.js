@@ -63,7 +63,7 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
       },
       function(error) {
         $scope.noItems = noItemsMessage;
-        console.log('error', error);
+        // console.log('error', error);
       }
     );
   }
@@ -92,12 +92,16 @@ angular.module('collegeChefs.controllers', ['ionic.cloud'])
 
   $scope.dataLoaded = false;
 
-  $scope.showLatePlateButton = function(mealHasPassed, mealIsToday, mealType) {
-    return Menus.showLatePlateButton(mealHasPassed, mealIsToday, mealType);
+  $scope.showLatePlateButton = function(mealType, mealDate) {
+    return Menus.showLatePlateButton(mealType, mealDate);
   };
 
-  $scope.getLatePlateMsg = function(mealType, mealIsToday) {
-    return Menus.getLatePlateMsg(mealType, mealIsToday);
+  $scope.latePlateDeadlineHasPassed = function(mealType, mealIsToday) {
+    return Menus.latePlateDeadlineHasPassed(mealType, mealIsToday);
+  };
+
+  $scope.getLatePlateMsg = function(mealType, mealIsToday, showIcon) {
+    return Menus.getLatePlateMsg(mealType, mealIsToday, showIcon);
   };
 
   // Next meal
