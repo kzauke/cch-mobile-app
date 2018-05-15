@@ -1,22 +1,27 @@
 <ion-view hide-nav-bar="true" hide-back-button="true" view-title="Login" class="background-dark">
-	<ion-content class="padding" scroll="false">
-	 <img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo"> 
-         <div ng-show="loginMessage.text"  class="error-message card padding" ng-bind-html="loginMessage.text"></div>
-		<form ng-submit="authenticateUser(email, password, 'chefnet')">
-			<div class="list">
-				<label class="item item-input">
-					<input type="text" name="email" id="email" placeholder="Email" ng-model="email" autocorrect="off" autocapitalize="none">
-				</label>
-				<label class="item item-input">
-					<input type="password" name="password" id="password" placeholder="Password" ng-model="password" autocorrect="off" autocapitalize="none">
-				</label>
-				<!-- <p class="password-help"><a href="#/forgot-password">Forgot your password?</a></p> -->
-				<div class="account-actions">
-					<button class="button button-block button-assertive">Log in</button>
-					<!-- <button ng-click="backToWelcome()" class="button button-block button-stable">Cancel</button> -->
-				</div>
-			</div>
-		</form>
-	<div class="padding account-text"> <span class="is-block">Don't have an account?</span> <span class="is-block"><a href="#/register">Register</a></span> </div>
-	</ion-content>
+    <ion-content class="padding" scroll="false" has-header="false">
+        <img alt="College Chefs" src="http://chefnet.collegechefs.com/Portals/_default/Skins/App/img/logo.png" class="welcome-logo">
+        <form name="form" ng-submit="vm.formSubmit()">
+            <div ng-if="vm.error" class="error-message card padding">{{ vm.error }}</div>
+
+            <div class="list">
+                <label class="item item-input">
+                    <input type="text" name="username" id="username" placeholder="Email" ng-model="vm.username" autocorrect="off" autocapitalize="none">
+                </label>
+                <label class="item item-input">
+                    <input type="password" name="password" id="password" placeholder="Password" ng-model="vm.password" autocorrect="off" autocapitalize="none">
+                </label>
+                <p class="login-note">This password was emailed to you upon registering your account.</p>
+                <div class="account-actions">
+                    <button class="button button-block button-assertive">Log in</button>
+                </div>
+                <p class="password-help"><a ng-click="vm.loginAssistance()">Login Assistance</a></p>
+            </div>
+        </form>
+        <div class="padding account-text">
+            <span class="is-block">Don't have an account?</span>
+            <span class="is-block"><a href="#/register">Register</a></span>
+            <div class="app-version">v. {{vm.version}}</div>
+        </div>
+    </ion-content>
 </ion-view>

@@ -7,14 +7,11 @@
 		<ion-item class="item item-divider">{{getFormattedDate(value[0].date)}} <small ng-if="mealIsToday(value[0].date)" name="today">Today</small></ion-item>
 			<ion-item class="item-avatar item-icon-right" ng-class="mealHasPassed(menu.name, menu.date) ? 'has-passed' : ''" ng-repeat="menu in value" type="item-text-wrap" nav-direction="forward">
 			  <img ng-src="{{icon(menu.name)}}">
-			  
-					
-					
-				
+
 				<p class="late-plate-detail" ng-bind-html="menu.latePlateMsg"></p>
 				<h2 class="menu-detail">{{menu.entree}}</h2>
 						<div class="is-red"><small class="assertive">Tap to rate this meal</small></div>
-			  
+
 			</ion-item>
 		 </ion-list>
 	 </div>

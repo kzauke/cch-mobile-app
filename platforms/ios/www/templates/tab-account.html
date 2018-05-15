@@ -6,12 +6,14 @@
 		<ion-list>
 			<ion-item href="#/tab/profile" class="item item-icon-right">Profile <i class="icon ion-ios-arrow-right"></i></ion-item>
 			<!-- <ion-item href="#/tab/password"  class="item item-icon-right">Change Password <i class="icon ion-ios-arrow-right"></i></ion-item> -->
-			<ion-item class="item item-bg-white">House <span class="item-note">{{userInfo.house}}</span></ion-item>
-			<ion-item class="item item-bg-white">Chef <span class="item-note">{{userInfo.chef}}</span></ion-item>
-			<ion-item ng-click="logoff()" class="item item-icon-right item-bg-white"><i class="icon ion-log-out assertive" style="font-size:25px"></i>Log Out</ion-item>
+			<ion-item class="item item-bg-white">House <span class="item-note">{{ userInfo.house }}</span></ion-item>
+			<!-- <ion-item class="item item-bg-white">House <span class="item-note" ng-bind="userInfo.house"></span></ion-item> -->
+			<ion-item class="item item-bg-white">Chef <span class="item-note">{{ userInfo.chef }}</span></ion-item>
+			<!-- <ion-item class="item item-bg-white">Chef <span class="item-note" ng-bind="userInfo.chef"></span></ion-item> -->
+			<ion-item ng-click="logout()" class="item item-icon-right item-bg-white"><i class="icon ion-log-out assertive" style="font-size:25px"></i>Log Out</ion-item>
 		</ion-list>
 		<ion-item class="item item-divider">
-			Support
+			Support v. {{version}}
 		</ion-item>
 		<ion-list>
 			<ion-item href="#/tab/help" class="item item-icon-right">Help Center <i class="icon ion-ios-arrow-right"></i></ion-item>

@@ -1,21 +1,22 @@
 <ion-view view-title="User Profile">
 	<ion-content class="">
 		<div class="list">
-		  <ion-item class="item item-divider ng-binding">User ID: {{userInfo.userid}}</ion-item>
+		  <ion-item class="item item-divider ng-binding">User ID: {{ userInfo.id }}</ion-item>
 		  <label class="item item-input item-stacked-label">
 			 <span class="input-label">First Name</span>
-			 <input type="text" value="{{userInfo.firstname}}" disabled>
+			 <input type="text" value="{{ userInfo.firstname }}" disabled>
 		  </label>
 		  <label class="item item-input item-stacked-label">
 			 <span class="input-label">Last Name</span>
-			 <input type="text" value="{{userInfo.lastname}}" disabled>
+			 <input type="text" value="{{ userInfo.lastname }}" disabled>
 		  </label>
 		  <label class="item item-input item-stacked-label">
 			 <span class="input-label">Email</span>
-			 <input type="text" value="{{userInfo.email}}" disabled>
+			 <input type="text" value="{{ userInfo.email }}" disabled>
 		  </label>
+		  <ion-item href="#" class="item item-icon-right" onclick="window.open('http://chefnet.collegechefs.com/Password-Reset', '_system', 'location=yes'); return false;">Update your Password<i class="icon ion-ios-arrow-right"></i></ion-item>
 		  <div class="padding">
-			<!--   <button ng-click="updateProfile()" class="button button-block button-assertive">Save Profile Information</button> -->
+				<!-- <button ng-click="updateProfile()" class="button button-block button-assertive">Save Profile Information</button> -->
 		  </div>
 		</div>
 	</ion-content>
